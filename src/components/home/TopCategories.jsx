@@ -1,0 +1,27 @@
+import { Link } from 'react-router-dom'
+import Placeholder from '../ui/Placeholder'
+import { categories } from '../../data/products'
+
+export default function TopCategories() {
+  return (
+    <section className="container-ambika py-10">
+      <h2 className="font-display text-center text-3xl text-maroon">Top Categories</h2>
+      <div className="mt-8 grid grid-cols-2 gap-5 sm:grid-cols-4">
+        {categories.map((category) => (
+          <Link key={category.slug} to={`/shop/${category.slug}`} className="group text-center">
+            <div className="overflow-hidden rounded-full">
+              <Placeholder
+                tone={category.tone}
+                ratio="aspect-square"
+                className="transition-transform duration-300 group-hover:scale-105"
+              />
+            </div>
+            <p className="mt-3 text-sm font-medium uppercase tracking-wide text-brown">
+              {category.name}
+            </p>
+          </Link>
+        ))}
+      </div>
+    </section>
+  )
+}
