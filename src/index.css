@@ -1,0 +1,47 @@
+@import "tailwindcss";
+
+@theme {
+  --font-display: "Judson", ui-serif, Georgia, serif;
+  --font-body: "Teachers", ui-sans-serif, system-ui, sans-serif;
+
+  /* Ambika brand palette, sampled from the Behance style guide */
+  --color-ivory: #fbf7f2;
+  --color-cream: #f4ebe1;
+  --color-cream-dark: #e9dcc9;
+  --color-brown: #5d350e;
+  --color-brown-light: #8a6a4a;
+  --color-maroon: #3e150b;
+  --color-mauve: #ab86a4;
+  --color-olive: #b7ba5d;
+  --color-stone: #9d9d9d;
+
+  --shadow-card: 0 10px 30px -12px rgba(62, 21, 11, 0.25);
+}
+
+@layer base {
+  * {
+    border-color: var(--color-cream-dark);
+  }
+
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    @apply bg-cream text-maroon font-body antialiased;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  .font-display {
+    font-family: var(--font-display);
+  }
+}
+
+@layer utilities {
+  .container-ambika {
+    @apply mx-auto w-full max-w-[1280px] px-5 sm:px-8 lg:px-12;
+  }
+}
