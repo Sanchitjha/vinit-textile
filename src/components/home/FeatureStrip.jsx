@@ -1,0 +1,25 @@
+import { HeadsetIcon, ReturnIcon, TruckIcon } from '../icons/Icons'
+
+const features = [
+  { icon: TruckIcon, title: 'Free Shipping', desc: 'On all orders above ₹1,999' },
+  { icon: ReturnIcon, title: 'Easy Returns', desc: '7-day hassle-free returns' },
+  { icon: HeadsetIcon, title: '24/7 Support', desc: "We're here whenever you need" },
+]
+
+export default function FeatureStrip() {
+  return (
+    <section className="container-ambika py-10">
+      <div className="grid gap-6 border-y border-cream-dark py-8 sm:grid-cols-3">
+        {features.map(({ icon: Icon, title, desc }) => (
+          <div key={title} className="flex items-center justify-center gap-4">
+            <Icon className="shrink-0 text-brown" />
+            <div>
+              <p className="text-sm font-semibold text-maroon">{title}</p>
+              <p className="text-xs text-stone">{desc}</p>
+            </div>
+          </div>
+        ))}
+      </div>
+    </section>
+  )
+}
