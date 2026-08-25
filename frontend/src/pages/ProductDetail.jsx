@@ -1,23 +1,57 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { Link, useNavigate, useParams } from 'react-router-dom'
 import Placeholder from '../components/ui/Placeholder'
 import ProductCard from '../components/ui/ProductCard'
 import Button from '../components/ui/Button'
 import { HeartIcon, MinusIcon, PlusIcon, StarIcon } from '../components/icons/Icons'
-import { categories, getProductById, getProductsByCategory, toneFor } from '../data/products'
 import { useCart } from '../context/CartContext'
+import { apiClient } from '../api/client'
+import { toneFor } from '../data/products'
 
 const sizes = ['S', 'M', 'L', 'XL']
 
 export default function ProductDetail() {
-  const { id } = useParams()
+  const { id } = useParams() // id could be slug or actual id
   const navigate = useNavigate()
   const { addToCart } = useCart()
-  const product = getProductById(id)
+  const [product, setProduct] = useState(null)
+  const [loading, setLoading] = useState(true)
+  const [related, setRelated] = useState([])
+  const [categoryMeta, setCategoryMeta] = useState(null)
+
   const [size, setSize] = useState('M')
   const [qty, setQty] = useState(1)
   const [activeThumb, setActiveThumb] = useState(0)
   const [added, setAdded] = useState(false)
+
+  useEffect(() => {
+    async function fetchProduct() {
+      setLoading(true)
+      try {
+        const res = await apiClient.get(`/sarees/${id}`).catch(() => apiClient.get(`/sarees/slug/${id}`))
+        const fetchedProduct = res.data
+        setProduct(fetchedProduct)
+
+        if (fetchedProduct) {
+          const [catRes, relatedRes] = await Promise.all([
+            apiClient.get(`/categories/${fetchedProduct.category}`),
+            apiClient.get(`/sarees?category=${fetchedProduct.category}&limit=4`)
+          ]).catch(() => [{data: null}, {data: {items: []}}])
+          setCategoryMeta(catRes.data)
+          setRelated(relatedRes.data?.items?.filter(p => p.id !== fetchedProduct.id) || [])
+        }
+      } catch (err) {
+        console.error(err)
+      } finally {
+        setLoading(false)
+      }
+    }
+    fetchProduct()
+  }, [id])
+
+  if (loading) {
+    return <div className="py-20 text-center">Loading...</div>
+  }
 
   if (!product) {
     return (
@@ -31,9 +65,7 @@ export default function ProductDetail() {
     )
   }
 
-  const categoryMeta = categories.find((c) => c.slug === product.category)
   const discount = Math.round(100 - (product.price / product.mrp) * 100)
-  const related = getProductsByCategory(product.category).filter((p) => p.id !== product.id).slice(0, 4)
 
   return (
     <section className="container-ambika py-10">

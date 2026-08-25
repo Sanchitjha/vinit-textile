@@ -2,22 +2,29 @@ import { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import AuthShell from '../components/layout/AuthShell'
 import Button from '../components/ui/Button'
+import { useAuth } from '../context/AuthContext'
 
 export default function SignUp() {
   const navigate = useNavigate()
+  const { register } = useAuth()
   const [form, setForm] = useState({ name: '', email: '', password: '', confirm: '' })
   const [error, setError] = useState('')
 
   const update = (field) => (event) => setForm((prev) => ({ ...prev, [field]: event.target.value }))
 
-  const handleSubmit = (event) => {
+  const handleSubmit = async (event) => {
     event.preventDefault()
     if (form.password !== form.confirm) {
       setError('Passwords do not match.')
       return
     }
     setError('')
-    navigate('/account')
+    try {
+      await register({ name: form.name, email: form.email, password: form.password })
+      navigate('/account')
+    } catch (err) {
+      setError(err.message || 'Signup failed')
+    }
   }
 
   return (

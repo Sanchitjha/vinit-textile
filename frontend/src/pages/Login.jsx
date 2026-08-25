@@ -2,16 +2,24 @@ import { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import AuthShell from '../components/layout/AuthShell'
 import Button from '../components/ui/Button'
+import { useAuth } from '../context/AuthContext'
 
 export default function Login() {
   const navigate = useNavigate()
+  const { login } = useAuth()
   const [form, setForm] = useState({ email: '', password: '' })
+  const [error, setError] = useState('')
 
   const update = (field) => (event) => setForm((prev) => ({ ...prev, [field]: event.target.value }))
 
-  const handleSubmit = (event) => {
+  const handleSubmit = async (event) => {
     event.preventDefault()
-    navigate('/account')
+    try {
+      await login(form.email, form.password)
+      navigate('/account')
+    } catch (err) {
+      setError(err.message || 'Login failed')
+    }
   }
 
   return (
@@ -57,6 +65,8 @@ export default function Login() {
             Forgot password?
           </a>
         </div>
+
+        {error && <p className="text-xs font-medium text-red-700">{error}</p>}
 
         <Button type="submit" variant="primary" className="w-full">
           Log In

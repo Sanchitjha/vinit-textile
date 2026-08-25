@@ -1,7 +1,7 @@
-import { useMemo, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { Link, useParams } from 'react-router-dom'
 import ProductCard from '../components/ui/ProductCard'
-import { categories, getProductsByCategory } from '../data/products'
+import { apiClient } from '../api/client'
 
 const filterGroups = [
   { title: 'Price', options: ['Under ₹2,000', '₹2,000 – ₹5,000', '₹5,000 – ₹10,000', 'Above ₹10,000'] },
@@ -15,15 +15,37 @@ const sortOptions = ['Featured', 'Price: Low to High', 'Price: High to Low', 'Ne
 export default function ProductListing() {
   const { category } = useParams()
   const [sort, setSort] = useState(sortOptions[0])
+  const [categories, setCategories] = useState([])
+  const [products, setProducts] = useState([])
+  const [loading, setLoading] = useState(true)
 
-  const meta = categories.find((c) => c.slug === category) ?? categories[0]
+  useEffect(() => {
+    async function fetchData() {
+      setLoading(true)
+      try {
+        const [catRes, prodRes] = await Promise.all([
+          apiClient.get('/categories'),
+          apiClient.get(`/sarees?categorySlug=${category}`)
+        ])
+        setCategories(catRes.data || [])
+        setProducts(prodRes.data?.items || [])
+      } catch (err) {
+        console.error(err)
+      } finally {
+        setLoading(false)
+      }
+    }
+    fetchData()
+  }, [category])
+
+  const meta = categories.find((c) => c.slug === category) ?? { name: category, slug: category }
 
   const items = useMemo(() => {
-    const list = [...getProductsByCategory(meta.slug)]
+    const list = [...products]
     if (sort === 'Price: Low to High') list.sort((a, b) => a.price - b.price)
     if (sort === 'Price: High to Low') list.sort((a, b) => b.price - a.price)
     return list
-  }, [meta.slug, sort])
+  }, [products, sort])
 
   return (
     <section className="container-ambika py-10">

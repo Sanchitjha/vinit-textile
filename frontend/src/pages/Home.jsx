@@ -1,3 +1,4 @@
+import { useEffect, useState } from 'react'
 import Hero from '../components/home/Hero'
 import FeatureStrip from '../components/home/FeatureStrip'
 import TopCategories from '../components/home/TopCategories'
@@ -6,9 +7,23 @@ import ProductGrid from '../components/home/ProductGrid'
 import SplitFeature from '../components/home/SplitFeature'
 import LookbookStrip from '../components/home/LookbookStrip'
 import Newsletter from '../components/home/Newsletter'
-import { products } from '../data/products'
+import { apiClient } from '../api/client'
 
 export default function Home() {
+  const [products, setProducts] = useState([])
+
+  useEffect(() => {
+    async function fetchProducts() {
+      try {
+        const res = await apiClient.get('/sarees?limit=4&sort=newest')
+        setProducts(res.data?.items || [])
+      } catch (err) {
+        console.error(err)
+      }
+    }
+    fetchProducts()
+  }, [])
+
   return (
     <>
       <Hero />
@@ -28,7 +43,7 @@ export default function Home() {
       <ProductGrid
         title="Newest Collection"
         subtitle="Fresh drops from this season's edit"
-        items={products.slice(0, 4)}
+        items={products}
         to="/shop/saree"
       />
 
