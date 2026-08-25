@@ -48,17 +48,17 @@ export default function ProductListing() {
   }, [products, sort])
 
   return (
-    <section className="container-ambika py-10">
-      <nav className="text-xs uppercase tracking-wide text-stone">
+    <section className="container-ambika py-16">
+      <nav className="text-[10px] uppercase tracking-[0.2em] text-brown-light">
         <Link to="/" className="hover:text-brown">
-          Home
+          HOME
         </Link>{' '}
         / <span className="text-brown">{meta.name}</span>
       </nav>
 
-      <div className="mt-4 flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
-        <h1 className="font-display text-4xl text-maroon">{meta.name}</h1>
-        <p className="text-sm text-stone">{items.length} products</p>
+      <div className="mt-8 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+        <h1 className="font-display text-4xl text-brown sm:text-5xl">{meta.name}</h1>
+        <p className="text-xs uppercase tracking-widest text-brown-light">{items.length} PRODUCTS</p>
       </div>
 
       <div className="mt-8 flex flex-col gap-10 lg:flex-row">
@@ -79,16 +79,16 @@ export default function ProductListing() {
             ))}
           </div>
 
-          <div className="hidden space-y-8 lg:block">
+          <div className="hidden space-y-12 lg:block">
             <div>
-              <h2 className="font-display text-lg text-maroon">Categories</h2>
-              <ul className="mt-3 space-y-2">
+              <h2 className="font-display text-xl text-brown">Categories</h2>
+              <ul className="mt-5 space-y-3 text-[13px]">
                 {categories.map((cat) => (
                   <li key={cat.slug}>
                     <Link
                       to={`/shop/${cat.slug}`}
-                      className={`text-sm ${
-                        cat.slug === meta.slug ? 'font-semibold text-brown' : 'text-brown/70 hover:text-brown'
+                      className={`${
+                        cat.slug === meta.slug ? 'font-medium text-brown' : 'text-brown-light hover:text-brown'
                       }`}
                     >
                       {cat.name}
@@ -100,12 +100,12 @@ export default function ProductListing() {
 
             {filterGroups.map((group) => (
               <div key={group.title}>
-                <h2 className="font-display text-lg text-maroon">{group.title}</h2>
-                <ul className="mt-3 space-y-2">
+                <h2 className="font-display text-xl text-brown">{group.title}</h2>
+                <ul className="mt-5 space-y-3 text-[13px]">
                   {group.options.map((option) => (
                     <li key={option}>
-                      <label className="flex items-center gap-2 text-sm text-brown/80">
-                        <input type="checkbox" className="accent-brown" />
+                      <label className="flex cursor-pointer items-center gap-3 text-brown-light hover:text-brown transition-colors">
+                        <input type="checkbox" className="h-4 w-4 rounded-none border-brown/20 accent-brown bg-transparent" />
                         {option}
                       </label>
                     </li>
@@ -117,13 +117,13 @@ export default function ProductListing() {
         </aside>
 
         <div className="flex-1">
-          <div className="mb-6 flex justify-end">
-            <label className="flex items-center gap-2 text-xs text-brown">
-              Sort by
+          <div className="mb-10 flex justify-end">
+            <label className="flex items-center gap-3 text-[10px] uppercase tracking-widest text-brown-light">
+              SORT BY
               <select
                 value={sort}
                 onChange={(event) => setSort(event.target.value)}
-                className="border border-cream-dark bg-ivory px-3 py-2 text-xs text-maroon focus:border-brown focus:outline-none"
+                className="border-b border-brown/20 bg-transparent py-1 pr-6 text-[11px] font-medium text-brown uppercase tracking-widest focus:border-brown focus:outline-none appearance-none"
               >
                 {sortOptions.map((option) => (
                   <option key={option} value={option}>
@@ -135,9 +135,9 @@ export default function ProductListing() {
           </div>
 
           {items.length === 0 ? (
-            <p className="text-sm text-stone">No products found in this category yet.</p>
+            <p className="text-sm text-brown-light">No products found in this category yet.</p>
           ) : (
-            <div className="grid grid-cols-2 gap-x-5 gap-y-10 sm:grid-cols-3">
+            <div className="grid grid-cols-2 gap-x-8 gap-y-16 sm:grid-cols-3">
               {items.map((product) => (
                 <ProductCard key={product.id} product={product} />
               ))}

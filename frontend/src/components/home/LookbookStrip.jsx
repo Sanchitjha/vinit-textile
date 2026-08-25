@@ -8,10 +8,12 @@ const looks = [
 
 export default function LookbookStrip() {
   return (
-    <section className="container-ambika py-10">
-      <div className="grid grid-cols-1 gap-5 sm:grid-cols-3">
+    <section className="container-ambika py-16">
+      <div className="grid grid-cols-1 gap-8 sm:grid-cols-3">
         {looks.map((look) => (
-          <Placeholder key={look.label} label={look.label} tone={look.tone} ratio="aspect-[3/4]" />
+          <div key={look.label} className="overflow-hidden bg-cream">
+            <Placeholder label={look.label} tone={look.tone} ratio="aspect-[3/4]" className="transition-transform duration-1000 hover:scale-105" />
+          </div>
         ))}
       </div>
     </section>

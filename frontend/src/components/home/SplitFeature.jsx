@@ -12,18 +12,18 @@ export default function SplitFeature({
   reverse = false,
 }) {
   return (
-    <section className="container-ambika py-10">
-      <div className={`flex flex-col items-center gap-10 lg:flex-row ${reverse ? 'lg:flex-row-reverse' : ''}`}>
-        <div className="w-full lg:w-1/2">
-          <Placeholder label={label} tone={tone} ratio="aspect-[4/3]" />
+    <section className="container-ambika py-20">
+      <div className={`flex flex-col items-center gap-16 lg:flex-row ${reverse ? 'lg:flex-row-reverse' : ''}`}>
+        <div className="w-full lg:w-1/2 overflow-hidden bg-cream">
+          <Placeholder label={label} tone={tone} ratio="aspect-[4/5] sm:aspect-[4/5] w-full" className="transition-transform duration-1000 hover:scale-105" />
         </div>
-        <div className="w-full lg:w-1/2">
+        <div className="w-full lg:w-1/2 lg:px-8">
           {eyebrow && (
-            <p className="text-xs font-semibold uppercase tracking-[0.3em] text-olive">{eyebrow}</p>
+            <p className="text-[11px] font-semibold uppercase tracking-[0.3em] text-brown-light">{eyebrow}</p>
           )}
-          <h2 className="font-display mt-3 text-3xl text-maroon">{title}</h2>
-          <p className="mt-4 max-w-md text-sm leading-relaxed text-brown/80">{description}</p>
-          <div className="mt-6">
+          <h2 className="font-display mt-4 text-4xl text-brown sm:text-5xl leading-tight">{title}</h2>
+          <p className="mt-6 max-w-md text-sm leading-relaxed text-brown-light">{description}</p>
+          <div className="mt-10">
             <Button to={to} variant="outline">
               {cta}
             </Button>

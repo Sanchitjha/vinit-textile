@@ -29,72 +29,74 @@ export default function SignUp() {
 
   return (
     <AuthShell tone="mauve" label="Bridal editorial — join the club">
-      <p className="text-xs font-semibold uppercase tracking-[0.3em] text-olive">Join The Club</p>
-      <h1 className="font-display mt-3 text-3xl text-maroon">Create Your Account</h1>
-      <p className="mt-3 text-sm leading-relaxed text-brown/80">
+      <p className="text-[10px] font-semibold uppercase tracking-[0.3em] text-brown-light">Join The Club</p>
+      <h1 className="font-display mt-4 text-4xl text-brown">Create Your Account</h1>
+      <p className="mt-4 text-sm leading-relaxed text-brown-light">
         Sign up for early access to new arrivals, festive edits and members-only offers.
       </p>
 
-      <form onSubmit={handleSubmit} className="mt-8 space-y-5">
+      <form onSubmit={handleSubmit} className="mt-10 space-y-6">
         <label className="block">
-          <span className="text-xs font-semibold uppercase tracking-wide text-brown">Full Name</span>
+          <span className="text-[10px] font-semibold uppercase tracking-widest text-brown">Full Name</span>
           <input
             type="text"
             required
             value={form.name}
             onChange={update('name')}
             placeholder="Riya Sharma"
-            className="mt-2 w-full border border-brown/30 bg-transparent px-4 py-3 text-sm text-maroon placeholder:text-stone focus:border-brown focus:outline-none"
+            className="mt-3 w-full rounded-none border border-brown/20 bg-transparent px-5 py-3.5 text-[13px] text-brown placeholder:text-brown-light focus:border-brown focus:outline-none"
           />
         </label>
 
         <label className="block">
-          <span className="text-xs font-semibold uppercase tracking-wide text-brown">Email</span>
+          <span className="text-[10px] font-semibold uppercase tracking-widest text-brown">Email</span>
           <input
             type="email"
             required
             value={form.email}
             onChange={update('email')}
             placeholder="you@example.com"
-            className="mt-2 w-full border border-brown/30 bg-transparent px-4 py-3 text-sm text-maroon placeholder:text-stone focus:border-brown focus:outline-none"
+            className="mt-3 w-full rounded-none border border-brown/20 bg-transparent px-5 py-3.5 text-[13px] text-brown placeholder:text-brown-light focus:border-brown focus:outline-none"
           />
         </label>
 
-        <div className="grid grid-cols-2 gap-4">
+        <div className="grid grid-cols-2 gap-6">
           <label className="block">
-            <span className="text-xs font-semibold uppercase tracking-wide text-brown">Password</span>
+            <span className="text-[10px] font-semibold uppercase tracking-widest text-brown">Password</span>
             <input
               type="password"
               required
               value={form.password}
               onChange={update('password')}
               placeholder="••••••••"
-              className="mt-2 w-full border border-brown/30 bg-transparent px-4 py-3 text-sm text-maroon placeholder:text-stone focus:border-brown focus:outline-none"
+              className="mt-3 w-full rounded-none border border-brown/20 bg-transparent px-5 py-3.5 text-[13px] text-brown placeholder:text-brown-light focus:border-brown focus:outline-none"
             />
           </label>
           <label className="block">
-            <span className="text-xs font-semibold uppercase tracking-wide text-brown">Confirm</span>
+            <span className="text-[10px] font-semibold uppercase tracking-widest text-brown">Confirm</span>
             <input
               type="password"
               required
               value={form.confirm}
               onChange={update('confirm')}
               placeholder="••••••••"
-              className="mt-2 w-full border border-brown/30 bg-transparent px-4 py-3 text-sm text-maroon placeholder:text-stone focus:border-brown focus:outline-none"
+              className="mt-3 w-full rounded-none border border-brown/20 bg-transparent px-5 py-3.5 text-[13px] text-brown placeholder:text-brown-light focus:border-brown focus:outline-none"
             />
           </label>
         </div>
 
-        {error && <p className="text-xs font-medium text-red-700">{error}</p>}
+        {error && <p className="text-[11px] font-medium text-red-700">{error}</p>}
 
-        <Button type="submit" variant="primary" className="w-full">
-          Sign Up
-        </Button>
+        <div className="pt-2">
+          <Button type="submit" variant="primary" className="w-full">
+            Sign Up
+          </Button>
+        </div>
       </form>
 
-      <p className="mt-6 text-sm text-brown/80">
+      <p className="mt-8 text-sm text-brown-light">
         Already have an account?{' '}
-        <Link to="/login" className="font-semibold text-maroon hover:underline">
+        <Link to="/login" className="font-semibold text-brown hover:underline">
           Log in
         </Link>
       </p>

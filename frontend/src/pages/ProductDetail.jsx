@@ -56,9 +56,9 @@ export default function ProductDetail() {
   if (!product) {
     return (
       <section className="container-ambika py-20 text-center">
-        <h1 className="font-display text-3xl text-maroon">Product not found</h1>
-        <p className="mt-3 text-sm text-stone">This piece may have sold out or moved.</p>
-        <Link to="/shop/saree" className="mt-6 inline-block text-sm font-semibold text-brown hover:underline">
+        <h1 className="font-display text-4xl text-brown">Product not found</h1>
+        <p className="mt-4 text-sm text-brown-light">This piece may have sold out or moved.</p>
+        <Link to="/shop/saree" className="mt-8 inline-block text-[11px] font-semibold uppercase tracking-widest text-brown hover:underline">
           Back to Saree collection
         </Link>
       </section>
@@ -68,10 +68,10 @@ export default function ProductDetail() {
   const discount = Math.round(100 - (product.price / product.mrp) * 100)
 
   return (
-    <section className="container-ambika py-10">
-      <nav className="text-xs uppercase tracking-wide text-stone">
+    <section className="container-ambika py-16">
+      <nav className="text-[10px] uppercase tracking-[0.2em] text-brown-light">
         <Link to="/" className="hover:text-brown">
-          Home
+          HOME
         </Link>{' '}
         /{' '}
         <Link to={`/shop/${product.category}`} className="hover:text-brown">
@@ -80,7 +80,7 @@ export default function ProductDetail() {
         / <span className="text-brown">{product.name}</span>
       </nav>
 
-      <div className="mt-6 grid gap-10 lg:grid-cols-2">
+      <div className="mt-10 grid gap-12 lg:grid-cols-2 lg:items-start">
         <div className="flex gap-4">
           <div className="hidden flex-col gap-3 sm:flex">
             {[0, 1, 2, 3].map((thumb) => (
@@ -88,59 +88,59 @@ export default function ProductDetail() {
                 key={thumb}
                 type="button"
                 onClick={() => setActiveThumb(thumb)}
-                className={`h-20 w-16 overflow-hidden border ${
-                  activeThumb === thumb ? 'border-brown' : 'border-cream-dark'
-                }`}
+                className={`h-24 w-20 overflow-hidden border ${
+                  activeThumb === thumb ? 'border-brown' : 'border-transparent'
+                } transition-colors`}
               >
                 <Placeholder tone={toneFor(product.id)} ratio="aspect-[3/4]" />
               </button>
             ))}
           </div>
-          <div className="flex-1">
-            <Placeholder label={product.name} tone={toneFor(product.id)} ratio="aspect-[3/4]" />
+          <div className="flex-1 overflow-hidden bg-cream">
+            <Placeholder label={product.name} tone={toneFor(product.id)} ratio="aspect-[3/4] sm:aspect-[4/5] w-full" />
           </div>
         </div>
 
-        <div>
-          <p className="text-xs font-semibold uppercase tracking-[0.3em] text-olive">
+        <div className="lg:sticky lg:top-32 h-fit">
+          <p className="text-[10px] font-semibold uppercase tracking-[0.3em] text-brown-light">
             {categoryMeta?.name}
           </p>
-          <h1 className="font-display mt-3 text-3xl text-maroon">{product.name}</h1>
+          <h1 className="font-display mt-4 text-4xl text-brown leading-tight">{product.name}</h1>
 
-          <div className="mt-3 flex items-center gap-2">
+          <div className="mt-4 flex items-center gap-2">
             {[...Array(5)].map((_, i) => (
-              <StarIcon key={i} className="text-olive" />
+              <StarIcon key={i} className="text-brown" />
             ))}
-            <span className="text-xs text-stone">(24 reviews)</span>
+            <span className="text-[11px] uppercase tracking-widest text-brown-light">(24 REVIEWS)</span>
           </div>
 
-          <div className="mt-4 flex items-baseline gap-3">
-            <span className="text-2xl font-semibold text-brown">
+          <div className="mt-6 flex items-baseline gap-4">
+            <span className="text-xl font-medium text-brown">
               ₹{product.price.toLocaleString('en-IN')}
             </span>
-            <span className="text-sm text-stone line-through">
+            <span className="text-sm text-brown-light line-through">
               ₹{product.mrp.toLocaleString('en-IN')}
             </span>
-            <span className="text-xs font-semibold text-maroon">{discount}% off</span>
+            <span className="text-[10px] uppercase tracking-widest font-semibold text-brown">{discount}% off</span>
           </div>
 
-          <p className="mt-5 max-w-md text-sm leading-relaxed text-brown/80">
+          <p className="mt-8 max-w-md text-sm leading-relaxed text-brown-light">
             Handcrafted with care, this piece blends heritage-inspired design with a contemporary
             silhouette — finished with fine detailing so every thread tells a story.
           </p>
 
-          <div className="mt-6">
-            <p className="text-xs font-semibold uppercase tracking-wide text-brown">Size</p>
-            <div className="mt-2 flex gap-2">
+          <div className="mt-10">
+            <p className="text-[10px] font-semibold uppercase tracking-widest text-brown">Size</p>
+            <div className="mt-3 flex gap-3">
               {sizes.map((option) => (
                 <button
                   key={option}
                   type="button"
                   onClick={() => setSize(option)}
-                  className={`h-10 w-10 border text-xs font-semibold ${
+                  className={`flex h-12 w-12 items-center justify-center border text-[11px] font-semibold transition-colors rounded-none ${
                     size === option
                       ? 'border-brown bg-brown text-ivory'
-                      : 'border-cream-dark text-brown hover:border-brown'
+                      : 'border-brown/20 text-brown hover:border-brown'
                   }`}
                 >
                   {option}
@@ -149,24 +149,24 @@ export default function ProductDetail() {
             </div>
           </div>
 
-          <div className="mt-6 flex items-center gap-6">
+          <div className="mt-8 flex items-center gap-6">
             <div>
-              <p className="text-xs font-semibold uppercase tracking-wide text-brown">Quantity</p>
-              <div className="mt-2 flex items-center border border-cream-dark">
+              <p className="text-[10px] font-semibold uppercase tracking-widest text-brown">Quantity</p>
+              <div className="mt-3 flex items-center border border-brown/20 bg-transparent">
                 <button
                   type="button"
                   aria-label="Decrease quantity"
                   onClick={() => setQty((n) => Math.max(1, n - 1))}
-                  className="flex h-10 w-10 items-center justify-center text-brown hover:bg-cream"
+                  className="flex h-12 w-12 items-center justify-center text-brown hover:bg-cream transition-colors"
                 >
                   <MinusIcon />
                 </button>
-                <span className="w-8 text-center text-sm text-maroon">{qty}</span>
+                <span className="w-10 text-center text-[13px] font-medium text-brown">{qty}</span>
                 <button
                   type="button"
                   aria-label="Increase quantity"
                   onClick={() => setQty((n) => n + 1)}
-                  className="flex h-10 w-10 items-center justify-center text-brown hover:bg-cream"
+                  className="flex h-12 w-12 items-center justify-center text-brown hover:bg-cream transition-colors"
                 >
                   <PlusIcon />
                 </button>
@@ -174,7 +174,7 @@ export default function ProductDetail() {
             </div>
           </div>
 
-          <div className="mt-8 flex flex-col gap-3 sm:flex-row">
+          <div className="mt-10 flex flex-col gap-4 sm:flex-row">
             <Button
               variant="primary"
               className="sm:flex-1"
@@ -183,43 +183,43 @@ export default function ProductDetail() {
                 setAdded(true)
               }}
             >
-              Add to Cart
+              ADD TO CART
             </Button>
             <Button variant="outline" className="sm:flex-1">
-              <HeartIcon width={16} height={16} /> Wishlist
+              <HeartIcon width={16} height={16} /> WISHLIST
             </Button>
           </div>
 
           {added && (
-            <p className="mt-3 text-xs font-medium text-brown">
+            <p className="mt-4 text-[11px] uppercase tracking-widest font-medium text-brown">
               Added to cart.{' '}
-              <button type="button" onClick={() => navigate('/cart')} className="underline hover:text-maroon">
-                View cart
+              <button type="button" onClick={() => navigate('/cart')} className="underline hover:text-brown-light">
+                VIEW CART
               </button>
             </p>
           )}
 
-          <dl className="mt-10 space-y-3 border-t border-cream-dark pt-6 text-sm">
+          <dl className="mt-12 space-y-4 border-t border-brown/10 pt-8 text-[13px]">
             <div className="flex justify-between">
-              <dt className="text-stone">Fabric</dt>
-              <dd className="text-brown">Pure silk blend</dd>
+              <dt className="text-brown-light uppercase tracking-widest text-[10px] font-semibold">Fabric</dt>
+              <dd className="text-brown font-medium">Pure silk blend</dd>
             </div>
             <div className="flex justify-between">
-              <dt className="text-stone">Work</dt>
-              <dd className="text-brown">Zari &amp; thread embroidery</dd>
+              <dt className="text-brown-light uppercase tracking-widest text-[10px] font-semibold">Work</dt>
+              <dd className="text-brown font-medium">Zari &amp; thread embroidery</dd>
             </div>
             <div className="flex justify-between">
-              <dt className="text-stone">Care</dt>
-              <dd className="text-brown">Dry clean only</dd>
+              <dt className="text-brown-light uppercase tracking-widest text-[10px] font-semibold">Care</dt>
+              <dd className="text-brown font-medium">Dry clean only</dd>
             </div>
           </dl>
         </div>
       </div>
 
       {related.length > 0 && (
-        <div className="mt-20">
-          <h2 className="font-display text-center text-3xl text-maroon">You May Also Like</h2>
-          <div className="mt-8 grid grid-cols-2 gap-x-5 gap-y-8 sm:grid-cols-4">
+        <div className="mt-32">
+          <h2 className="font-display text-center text-4xl text-brown">You May Also Like</h2>
+          <div className="mt-12 grid grid-cols-2 gap-x-8 gap-y-16 sm:grid-cols-4">
             {related.map((item) => (
               <ProductCard key={item.id} product={item} />
             ))}

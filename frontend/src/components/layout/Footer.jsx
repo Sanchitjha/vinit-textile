@@ -6,22 +6,22 @@ const companyLinks = ['About Us', 'Careers', 'Contact Us', 'Store Locator']
 
 export default function Footer() {
   return (
-    <footer className="bg-maroon text-cream">
+    <footer className="bg-brown text-ivory">
       <div className="container-ambika grid gap-10 py-16 sm:grid-cols-2 lg:grid-cols-4">
         <div>
-          <Link to="/" className="font-display text-3xl tracking-[0.12em] text-ivory">
+          <Link to="/" className="font-display text-2xl tracking-[0.2em] text-ivory">
             AMBIKA
           </Link>
-          <p className="mt-4 max-w-xs text-sm leading-relaxed text-cream/70">
+          <p className="mt-4 max-w-xs text-sm leading-relaxed text-ivory/60">
             Discover timeless elegance and craftsmanship, styled with tradition for the modern
             woman.
           </p>
-          <div className="mt-5 flex gap-3">
+          <div className="mt-6 flex gap-4">
             {[FacebookIcon, InstagramIcon, PinterestIcon].map((Icon, index) => (
               <a
                 key={index}
                 href="#"
-                className="flex h-8 w-8 items-center justify-center rounded-full border border-cream/30 text-cream/80 transition-colors hover:border-olive hover:text-olive"
+                className="flex h-10 w-10 items-center justify-center rounded-none border border-ivory/20 text-ivory/60 transition-colors hover:border-ivory hover:text-ivory"
               >
                 <Icon />
               </a>
@@ -31,10 +31,10 @@ export default function Footer() {
 
         <div>
           <h4 className="font-display text-lg text-ivory">Help</h4>
-          <ul className="mt-4 space-y-2 text-sm text-cream/70">
+          <ul className="mt-4 space-y-3 text-[13px] text-ivory/60">
             {helpLinks.map((link) => (
               <li key={link}>
-                <a href="#" className="transition-colors hover:text-olive">
+                <a href="#" className="transition-colors hover:text-ivory">
                   {link}
                 </a>
               </li>
@@ -44,10 +44,10 @@ export default function Footer() {
 
         <div>
           <h4 className="font-display text-lg text-ivory">Company</h4>
-          <ul className="mt-4 space-y-2 text-sm text-cream/70">
+          <ul className="mt-4 space-y-3 text-[13px] text-ivory/60">
             {companyLinks.map((link) => (
               <li key={link}>
-                <a href="#" className="transition-colors hover:text-olive">
+                <a href="#" className="transition-colors hover:text-ivory">
                   {link}
                 </a>
               </li>
@@ -57,7 +57,7 @@ export default function Footer() {
 
         <div>
           <h4 className="font-display text-lg text-ivory">Contact</h4>
-          <ul className="mt-4 space-y-2 text-sm text-cream/70">
+          <ul className="mt-4 space-y-3 text-[13px] text-ivory/60">
             <li>123 Heritage Lane, Ahmedabad, Gujarat</li>
             <li>+91 98765 43210</li>
             <li className="flex items-center gap-2">
@@ -67,14 +67,14 @@ export default function Footer() {
         </div>
       </div>
 
-      <div className="border-t border-cream/15">
-        <div className="container-ambika flex flex-col items-center justify-between gap-4 py-6 text-xs text-cream/60 sm:flex-row">
+      <div className="border-t border-ivory/10">
+        <div className="container-ambika flex flex-col items-center justify-between gap-4 py-8 text-xs text-ivory/40 sm:flex-row">
           <p>© {new Date().getFullYear()} Ambika. All rights reserved.</p>
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-4">
             {['Visa', 'Mastercard', 'UPI'].map((method) => (
               <span
                 key={method}
-                className="rounded border border-cream/25 px-2 py-1 text-[10px] uppercase tracking-wide"
+                className="rounded-none border border-ivory/20 px-3 py-1.5 text-[10px] uppercase tracking-widest"
               >
                 {method}
               </span>

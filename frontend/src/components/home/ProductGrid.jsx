@@ -3,20 +3,20 @@ import ProductCard from '../ui/ProductCard'
 
 export default function ProductGrid({ title, subtitle, items, to }) {
   return (
-    <section className="container-ambika py-10">
+    <section className="container-ambika py-20">
       <div className="text-center">
-        <h2 className="font-display text-3xl text-maroon">{title}</h2>
-        {subtitle && <p className="mt-2 text-sm text-stone">{subtitle}</p>}
+        <h2 className="font-display text-4xl text-brown">{title}</h2>
+        {subtitle && <p className="mt-3 text-sm text-brown-light">{subtitle}</p>}
       </div>
 
-      <div className="mt-8 grid grid-cols-2 gap-x-5 gap-y-8 sm:grid-cols-4">
+      <div className="mt-12 grid grid-cols-2 gap-x-8 gap-y-16 sm:grid-cols-4">
         {items.map((product) => (
           <ProductCard key={product.id} product={product} />
         ))}
       </div>
 
       {to && (
-        <div className="mt-10 text-center">
+        <div className="mt-16 text-center">
           <Button to={to} variant="outline">
             View All
           </Button>

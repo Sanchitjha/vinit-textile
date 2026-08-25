@@ -16,19 +16,19 @@ export default function Banner({
   const alignClass = align === 'left' ? 'items-start text-left' : 'items-center text-center'
 
   return (
-    <section className="container-ambika py-10">
-      <div className="relative overflow-hidden">
+    <section className="container-ambika py-16">
+      <div className="relative overflow-hidden bg-cream">
         <Placeholder label={label} tone={tone} ratio="aspect-[21/9] sm:aspect-[3/1]" />
-        <div className={`absolute inset-0 flex flex-col justify-center gap-3 px-8 sm:px-16 ${alignClass}`}>
+        <div className={`absolute inset-0 flex flex-col justify-center gap-4 px-8 sm:px-16 ${alignClass}`}>
           {eyebrow && (
-            <p className={`text-xs font-semibold uppercase tracking-[0.3em] ${textColor} opacity-80`}>
+            <p className={`text-[11px] font-semibold uppercase tracking-[0.3em] ${textColor} opacity-80`}>
               {eyebrow}
             </p>
           )}
-          <h2 className={`font-display max-w-md text-3xl sm:text-4xl ${textColor}`}>{title}</h2>
+          <h2 className={`font-display max-w-md text-3xl sm:text-5xl leading-tight ${textColor}`}>{title}</h2>
           {subtitle && <p className={`max-w-sm text-sm ${textColor} opacity-80`}>{subtitle}</p>}
-          <div className="mt-2">
-            <Button to={to} variant={variant === 'dark' ? 'gold' : 'primary'}>
+          <div className="mt-4">
+            <Button to={to} variant={variant === 'dark' ? 'primary' : 'dark'}>
               {cta}
             </Button>
           </div>

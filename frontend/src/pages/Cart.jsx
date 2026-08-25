@@ -16,9 +16,9 @@ export default function Cart() {
   if (items.length === 0) {
     return (
       <section className="container-ambika py-24 text-center">
-        <h1 className="font-display text-3xl text-maroon">Your cart is empty</h1>
-        <p className="mt-3 text-sm text-stone">Explore the collection and find something you love.</p>
-        <Button to="/shop/saree" variant="primary" className="mt-6">
+        <h1 className="font-display text-4xl text-brown">Your cart is empty</h1>
+        <p className="mt-4 text-sm text-brown-light">Explore the collection and find something you love.</p>
+        <Button to="/shop/saree" variant="primary" className="mt-8">
           Continue Shopping
         </Button>
       </section>
@@ -26,48 +26,48 @@ export default function Cart() {
   }
 
   return (
-    <section className="container-ambika py-10">
-      <h1 className="font-display text-4xl text-maroon">Shopping Cart</h1>
+    <section className="container-ambika py-16">
+      <h1 className="font-display text-5xl text-brown">Shopping Cart</h1>
 
-      <div className="mt-8 flex flex-col gap-10 lg:flex-row">
-        <div className="flex-1 divide-y divide-cream-dark border-y border-cream-dark">
+      <div className="mt-12 flex flex-col gap-12 lg:flex-row">
+        <div className="flex-1 divide-y divide-brown/10 border-y border-brown/10">
           {items.map((item) => (
-            <div key={item.key} className="flex gap-4 py-6">
-              <div className="w-20 shrink-0 sm:w-28">
-                <Placeholder tone={toneFor(item.product.id)} ratio="aspect-[3/4]" />
+            <div key={item.key} className="flex gap-6 py-8">
+              <div className="w-24 shrink-0 sm:w-32 bg-cream">
+                <Placeholder tone={toneFor(item.product.id)} ratio="aspect-[4/5]" />
               </div>
               <div className="flex flex-1 flex-col justify-between">
                 <div className="flex justify-between gap-4">
                   <div>
                     <Link
                       to={`/product/${item.product.id}`}
-                      className="text-sm font-medium text-maroon hover:text-brown"
+                      className="text-sm font-medium text-brown hover:text-brown-light transition-colors"
                     >
                       {item.product.name}
                     </Link>
-                    <p className="mt-1 text-xs text-stone">Size: {item.size}</p>
+                    <p className="mt-2 text-[11px] uppercase tracking-widest text-brown-light">Size: {item.size}</p>
                   </div>
-                  <p className="text-sm font-semibold text-brown">
+                  <p className="text-sm font-medium text-brown">
                     ₹{(item.product.price * item.qty).toLocaleString('en-IN')}
                   </p>
                 </div>
 
                 <div className="flex items-center justify-between">
-                  <div className="flex items-center border border-cream-dark">
+                  <div className="flex items-center border border-brown/20 bg-transparent">
                     <button
                       type="button"
                       aria-label="Decrease quantity"
                       onClick={() => updateQty(item.key, item.qty - 1)}
-                      className="flex h-8 w-8 items-center justify-center text-brown hover:bg-cream"
+                      className="flex h-10 w-10 items-center justify-center text-brown hover:bg-cream transition-colors"
                     >
                       <MinusIcon width={14} height={14} />
                     </button>
-                    <span className="w-8 text-center text-xs text-maroon">{item.qty}</span>
+                    <span className="w-8 text-center text-[13px] font-medium text-brown">{item.qty}</span>
                     <button
                       type="button"
                       aria-label="Increase quantity"
                       onClick={() => updateQty(item.key, item.qty + 1)}
-                      className="flex h-8 w-8 items-center justify-center text-brown hover:bg-cream"
+                      className="flex h-10 w-10 items-center justify-center text-brown hover:bg-cream transition-colors"
                     >
                       <PlusIcon width={14} height={14} />
                     </button>
@@ -75,7 +75,7 @@ export default function Cart() {
                   <button
                     type="button"
                     onClick={() => removeFromCart(item.key)}
-                    className="text-xs font-medium text-stone hover:text-maroon hover:underline"
+                    className="text-[10px] uppercase tracking-widest font-medium text-brown-light hover:text-brown transition-colors"
                   >
                     Remove
                   </button>
@@ -85,28 +85,28 @@ export default function Cart() {
           ))}
         </div>
 
-        <aside className="w-full shrink-0 self-start border border-cream-dark bg-ivory p-6 lg:w-80">
-          <h2 className="font-display text-xl text-maroon">Order Summary</h2>
-          <dl className="mt-4 space-y-3 text-sm">
+        <aside className="w-full shrink-0 self-start border border-brown/10 bg-cream p-8 lg:w-96">
+          <h2 className="font-display text-2xl text-brown">Order Summary</h2>
+          <dl className="mt-6 space-y-4 text-[13px]">
             <div className="flex justify-between">
-              <dt className="text-stone">Subtotal</dt>
-              <dd className="text-brown">₹{subtotal.toLocaleString('en-IN')}</dd>
+              <dt className="text-brown-light">Subtotal</dt>
+              <dd className="text-brown font-medium">₹{subtotal.toLocaleString('en-IN')}</dd>
             </div>
             <div className="flex justify-between">
-              <dt className="text-stone">Shipping</dt>
-              <dd className="text-brown">{shipping === 0 ? 'Free' : `₹${shipping}`}</dd>
+              <dt className="text-brown-light">Shipping</dt>
+              <dd className="text-brown font-medium">{shipping === 0 ? 'Free' : `₹${shipping}`}</dd>
             </div>
-            <div className="flex justify-between border-t border-cream-dark pt-3 text-base font-semibold">
-              <dt className="text-maroon">Total</dt>
-              <dd className="text-maroon">₹{total.toLocaleString('en-IN')}</dd>
+            <div className="flex justify-between border-t border-brown/10 pt-4 text-base font-medium">
+              <dt className="text-brown">Total</dt>
+              <dd className="text-brown">₹{total.toLocaleString('en-IN')}</dd>
             </div>
           </dl>
-          <Button variant="primary" className="mt-6 w-full">
+          <Button variant="primary" className="mt-8 w-full">
             Checkout
           </Button>
           <Link
             to="/shop/saree"
-            className="mt-4 block text-center text-xs font-medium text-brown hover:underline"
+            className="mt-6 block text-center text-[10px] uppercase tracking-widest font-medium text-brown hover:text-brown-light transition-colors"
           >
             Continue Shopping
           </Link>

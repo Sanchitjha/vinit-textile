@@ -8,28 +8,33 @@ export default function ProductCard({ product }) {
 
   return (
     <Link to={`/product/${product.id}`} className="group block">
-      <div className="relative">
-        <Placeholder label={product.name} tone={toneFor(product.id)} />
+      <div className="relative overflow-hidden bg-cream">
+        <Placeholder 
+          label={product.name} 
+          tone={toneFor(product.id)} 
+          className="transition-transform duration-700 ease-in-out group-hover:scale-105" 
+        />
         <button
           type="button"
           aria-label="Add to wishlist"
           onClick={(event) => event.preventDefault()}
-          className="absolute right-3 top-3 flex h-8 w-8 items-center justify-center rounded-full bg-ivory/90 text-brown shadow-sm transition-colors hover:bg-brown hover:text-ivory"
+          className="absolute right-3 top-3 flex h-8 w-8 items-center justify-center rounded-none bg-ivory/90 text-brown opacity-0 shadow-sm transition-all duration-300 group-hover:opacity-100 hover:bg-brown hover:text-ivory"
         >
           <HeartIcon width={15} height={15} />
         </button>
         {discount > 0 && (
-          <span className="absolute left-3 top-3 bg-maroon px-2 py-1 text-[10px] font-semibold uppercase tracking-wide text-ivory">
+          <span className="absolute left-3 top-3 bg-ivory px-2 py-1 text-[10px] font-medium uppercase tracking-widest text-brown">
             {discount}% off
           </span>
         )}
       </div>
-      <div className="mt-3 space-y-1">
-        <h3 className="text-sm text-maroon transition-colors group-hover:text-brown">
+      <div className="mt-4 flex flex-col items-center space-y-1 text-center">
+        <span className="text-[10px] uppercase tracking-widest text-brown-light">Saree</span>
+        <h3 className="font-display text-lg text-brown transition-colors group-hover:text-maroon">
           {product.name}
         </h3>
-        <p className="text-sm">
-          <span className="font-semibold text-brown">₹{product.price.toLocaleString('en-IN')}</span>{' '}
+        <p className="text-sm pt-1">
+          <span className="font-medium text-brown">₹{product.price.toLocaleString('en-IN')}</span>{' '}
           <span className="text-stone line-through">₹{product.mrp.toLocaleString('en-IN')}</span>
         </p>
       </div>

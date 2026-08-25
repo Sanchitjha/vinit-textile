@@ -33,22 +33,22 @@ export default function Hero() {
   }
 
   return (
-    <section className="container-ambika pt-6">
-      <div className="relative overflow-hidden">
+    <section className="container-ambika pt-4 pb-12">
+      <div className="relative overflow-hidden bg-cream">
         <Placeholder label={slide.label} tone={slide.tone} ratio="aspect-[16/9] sm:aspect-[21/9]" />
 
-        <div className="absolute inset-0 bg-gradient-to-r from-ivory/95 via-ivory/70 to-transparent sm:from-ivory/90 sm:via-ivory/30" />
+        <div className="absolute inset-0 bg-gradient-to-r from-ivory/90 via-ivory/50 to-transparent sm:from-ivory/80 sm:via-ivory/20" />
 
         <div className="absolute inset-0 flex items-center">
-          <div className="max-w-lg px-6 sm:px-12">
-            <p className="text-xs font-semibold uppercase tracking-[0.3em] text-maroon/80">
+          <div className="max-w-lg px-6 sm:px-16">
+            <p className="text-[11px] font-semibold uppercase tracking-[0.3em] text-brown-light">
               {slide.eyebrow}
             </p>
-            <h1 className="font-display mt-3 text-4xl leading-tight text-maroon sm:text-5xl">
+            <h1 className="font-display mt-4 text-4xl leading-tight text-brown sm:text-6xl">
               {slide.title}
             </h1>
-            <div className="mt-6">
-              <Button to="/shop/saree" variant="gold">
+            <div className="mt-8">
+              <Button to="/shop/saree" variant="primary">
                 Shop Now
               </Button>
             </div>

@@ -22,7 +22,7 @@ export default function Header() {
   const { count } = useCart()
 
   return (
-    <header className="sticky top-0 z-40 border-b border-cream-dark bg-cream/95 backdrop-blur">
+    <header className="sticky top-0 z-40 border-b border-cream-dark bg-ivory/95 backdrop-blur">
       <div className="container-ambika flex items-center justify-between py-4">
         <button
           type="button"
@@ -41,9 +41,9 @@ export default function Header() {
           )}
         </button>
 
-        <nav className="hidden items-center gap-6 text-xs font-medium uppercase tracking-[0.15em] text-brown lg:flex">
+        <nav className="hidden items-center gap-6 text-[11px] font-medium uppercase tracking-[0.2em] text-brown lg:flex">
           {primaryLinks.map((link) => (
-            <NavLink key={link.to} to={link.to} className="hover:text-maroon">
+            <NavLink key={link.to} to={link.to} className="transition-colors hover:text-maroon">
               {link.label}
             </NavLink>
           ))}
@@ -51,7 +51,7 @@ export default function Header() {
 
         <Link
           to="/"
-          className="font-display absolute left-1/2 -translate-x-1/2 text-3xl tracking-[0.12em] text-maroon lg:static lg:translate-x-0"
+          className="font-display absolute left-1/2 -translate-x-1/2 text-2xl tracking-[0.2em] text-brown lg:static lg:translate-x-0"
         >
           AMBIKA
         </Link>
@@ -80,12 +80,12 @@ export default function Header() {
       <nav
         className={`border-t border-cream-dark ${menuOpen ? 'block' : 'hidden'} lg:block`}
       >
-        <div className="container-ambika flex flex-col items-center gap-4 py-3 text-xs font-medium uppercase tracking-[0.15em] text-brown lg:flex-row lg:justify-center lg:gap-10">
+        <div className="container-ambika flex flex-col items-center gap-4 py-3 text-[10px] font-medium uppercase tracking-[0.2em] text-brown-light lg:flex-row lg:justify-center lg:gap-10">
           {categoryLinks.map((link, index) => (
             <NavLink
               key={`${link.to}-${link.label}-${index}`}
               to={link.to}
-              className="transition-colors hover:text-maroon"
+              className="transition-colors hover:text-brown"
             >
               {link.label}
             </NavLink>

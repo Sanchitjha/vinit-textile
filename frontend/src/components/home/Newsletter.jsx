@@ -12,10 +12,10 @@ export default function Newsletter() {
   }
 
   return (
-    <section className="bg-cream-dark/60">
-      <div className="container-ambika flex flex-col items-center gap-5 py-16 text-center">
-        <h2 className="font-display text-3xl text-maroon">Be The First To Know</h2>
-        <p className="max-w-sm text-sm text-brown/80">
+    <section className="bg-cream">
+      <div className="container-ambika flex flex-col items-center gap-6 py-20 text-center">
+        <h2 className="font-display text-4xl text-brown">Be The First To Know</h2>
+        <p className="max-w-sm text-sm text-brown-light">
           Join the club &amp; get exclusive access to new arrivals, festive edits and members-only
           offers.
         </p>
@@ -25,16 +25,16 @@ export default function Newsletter() {
             Thank you — you&apos;re on the list, {email}.
           </p>
         ) : (
-          <form onSubmit={handleSubmit} className="flex w-full max-w-md flex-col gap-3 sm:flex-row">
+          <form onSubmit={handleSubmit} className="flex w-full max-w-md flex-col gap-0 sm:flex-row mt-4">
             <input
               type="email"
               required
               value={email}
               onChange={(event) => setEmail(event.target.value)}
-              placeholder="Enter your email"
-              className="w-full border border-brown/30 bg-ivory px-4 py-3 text-sm text-maroon placeholder:text-stone focus:border-brown focus:outline-none"
+              placeholder="ENTER YOUR EMAIL"
+              className="w-full border border-brown/20 bg-transparent px-5 py-3 text-[11px] uppercase tracking-widest text-brown placeholder:text-brown-light focus:border-brown focus:outline-none"
             />
-            <Button type="submit" variant="primary" className="w-full sm:w-auto">
+            <Button type="submit" variant="primary" className="w-full sm:w-auto shrink-0">
               Subscribe
             </Button>
           </form>

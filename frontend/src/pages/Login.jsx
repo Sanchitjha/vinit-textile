@@ -24,58 +24,60 @@ export default function Login() {
 
   return (
     <AuthShell tone="brown" label="Woman in festive saree — welcome back">
-      <p className="text-xs font-semibold uppercase tracking-[0.3em] text-olive">Welcome Back</p>
-      <h1 className="font-display mt-3 text-3xl text-maroon">Log In to Ambika</h1>
-      <p className="mt-3 text-sm leading-relaxed text-brown/80">
+      <p className="text-[10px] font-semibold uppercase tracking-[0.3em] text-brown-light">Welcome Back</p>
+      <h1 className="font-display mt-4 text-4xl text-brown">Log In to Ambika</h1>
+      <p className="mt-4 text-sm leading-relaxed text-brown-light">
         Log in to access your personalised saree collection and experience the grace of timeless
         women&apos;s fashion.
       </p>
 
-      <form onSubmit={handleSubmit} className="mt-8 space-y-5">
+      <form onSubmit={handleSubmit} className="mt-10 space-y-6">
         <label className="block">
-          <span className="text-xs font-semibold uppercase tracking-wide text-brown">Email</span>
+          <span className="text-[10px] font-semibold uppercase tracking-widest text-brown">Email</span>
           <input
             type="email"
             required
             value={form.email}
             onChange={update('email')}
             placeholder="you@example.com"
-            className="mt-2 w-full border border-brown/30 bg-transparent px-4 py-3 text-sm text-maroon placeholder:text-stone focus:border-brown focus:outline-none"
+            className="mt-3 w-full rounded-none border border-brown/20 bg-transparent px-5 py-3.5 text-[13px] text-brown placeholder:text-brown-light focus:border-brown focus:outline-none"
           />
         </label>
 
         <label className="block">
-          <span className="text-xs font-semibold uppercase tracking-wide text-brown">Password</span>
+          <span className="text-[10px] font-semibold uppercase tracking-widest text-brown">Password</span>
           <input
             type="password"
             required
             value={form.password}
             onChange={update('password')}
             placeholder="••••••••"
-            className="mt-2 w-full border border-brown/30 bg-transparent px-4 py-3 text-sm text-maroon placeholder:text-stone focus:border-brown focus:outline-none"
+            className="mt-3 w-full rounded-none border border-brown/20 bg-transparent px-5 py-3.5 text-[13px] text-brown placeholder:text-brown-light focus:border-brown focus:outline-none"
           />
         </label>
 
-        <div className="flex items-center justify-between text-xs text-brown">
-          <label className="flex items-center gap-2">
-            <input type="checkbox" className="accent-brown" />
+        <div className="flex items-center justify-between text-[11px] font-medium text-brown-light">
+          <label className="flex cursor-pointer items-center gap-3 hover:text-brown transition-colors">
+            <input type="checkbox" className="h-4 w-4 rounded-none border-brown/20 accent-brown bg-transparent" />
             Remember me
           </label>
-          <a href="#" className="hover:text-maroon hover:underline">
+          <a href="#" className="hover:text-brown transition-colors">
             Forgot password?
           </a>
         </div>
 
-        {error && <p className="text-xs font-medium text-red-700">{error}</p>}
+        {error && <p className="text-[11px] font-medium text-red-700">{error}</p>}
 
-        <Button type="submit" variant="primary" className="w-full">
-          Log In
-        </Button>
+        <div className="pt-2">
+          <Button type="submit" variant="primary" className="w-full">
+            Log In
+          </Button>
+        </div>
       </form>
 
-      <p className="mt-6 text-sm text-brown/80">
+      <p className="mt-8 text-sm text-brown-light">
         Don&apos;t have an account?{' '}
-        <Link to="/signup" className="font-semibold text-maroon hover:underline">
+        <Link to="/signup" className="font-semibold text-brown hover:underline">
           Sign up
         </Link>
       </p>

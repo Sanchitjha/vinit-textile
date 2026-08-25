@@ -8,14 +8,14 @@ const features = [
 
 export default function FeatureStrip() {
   return (
-    <section className="container-ambika py-10">
-      <div className="grid gap-6 border-y border-cream-dark py-8 sm:grid-cols-3">
+    <section className="container-ambika py-16">
+      <div className="grid gap-8 border-y border-cream-dark py-12 sm:grid-cols-3">
         {features.map(({ icon: Icon, title, desc }) => (
-          <div key={title} className="flex items-center justify-center gap-4">
+          <div key={title} className="flex items-center justify-center gap-5">
             <Icon className="shrink-0 text-brown" />
             <div>
-              <p className="text-sm font-semibold text-maroon">{title}</p>
-              <p className="text-xs text-stone">{desc}</p>
+              <p className="text-sm font-semibold uppercase tracking-widest text-brown">{title}</p>
+              <p className="mt-1 text-xs text-brown-light">{desc}</p>
             </div>
           </div>
         ))}
