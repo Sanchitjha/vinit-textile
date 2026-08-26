@@ -1,5 +1,7 @@
 import { useState, useEffect } from 'react'
 import { apiClient } from '../../api/client'
+import { uploadFileToS3 } from '../../utils/s3Upload'
+import { X, UploadCloud, Loader2 } from 'lucide-react'
 
 export default function AdminProducts() {
   const [products, setProducts] = useState([])
@@ -8,6 +10,9 @@ export default function AdminProducts() {
   const [error, setError] = useState(null)
   
   const [isFormOpen, setIsFormOpen] = useState(false)
+  const [selectedFiles, setSelectedFiles] = useState([])
+  const [previewUrls, setPreviewUrls] = useState([])
+  const [isUploading, setIsUploading] = useState(false)
   const [formData, setFormData] = useState({
     name: '',
     description: '',
@@ -16,7 +21,6 @@ export default function AdminProducts() {
     sku: '',
     fabric: '',
     color: '',
-    images: '',
   })
 
   const fetchData = async () => {
@@ -39,20 +43,51 @@ export default function AdminProducts() {
     fetchData()
   }, [])
 
+  const handleFileSelect = (e) => {
+    const files = Array.from(e.target.files)
+    if (!files.length) return
+
+    setSelectedFiles(prev => [...prev, ...files])
+    const newPreviews = files.map(f => URL.createObjectURL(f))
+    setPreviewUrls(prev => [...prev, ...newPreviews])
+  }
+
+  const removeImage = (index) => {
+    URL.revokeObjectURL(previewUrls[index])
+    setPreviewUrls(prev => prev.filter((_, i) => i !== index))
+    setSelectedFiles(prev => prev.filter((_, i) => i !== index))
+  }
+
   const handleSubmit = async (e) => {
     e.preventDefault()
+    if (selectedFiles.length === 0) {
+      alert('Please select at least one image')
+      return
+    }
+
     try {
+      setIsUploading(true)
+      
+      // Upload all files to S3
+      const uploadPromises = selectedFiles.map(file => uploadFileToS3(file))
+      const uploadedUrls = await Promise.all(uploadPromises)
+      
       const payload = {
         ...formData,
         price: Number(formData.price),
-        images: formData.images.split(',').map(url => url.trim()).filter(Boolean)
+        images: uploadedUrls
       }
+      
       await apiClient.post('/sarees', payload)
       setIsFormOpen(false)
-      setFormData({ name: '', description: '', category: '', price: 0, sku: '', fabric: '', color: '', images: '' })
+      setFormData({ name: '', description: '', category: '', price: 0, sku: '', fabric: '', color: '' })
+      setSelectedFiles([])
+      setPreviewUrls([])
       fetchData()
     } catch (err) {
       alert(err.message)
+    } finally {
+      setIsUploading(false)
     }
   }
 
@@ -114,18 +149,43 @@ export default function AdminProducts() {
           </div>
           <div>
             <label className="block text-sm font-medium mb-1">Fabric</label>
-            <input required className="w-full border p-2 rounded" value={formData.fabric} onChange={e => setFormData({...formData, fabric: e.target.value})} />
+            <input required className="w-full glass-input p-2.5 rounded-xl" value={formData.fabric} onChange={e => setFormData({...formData, fabric: e.target.value})} />
           </div>
           <div>
             <label className="block text-sm font-medium mb-1">Color</label>
-            <input required className="w-full border p-2 rounded" value={formData.color} onChange={e => setFormData({...formData, color: e.target.value})} />
+            <input required className="w-full glass-input p-2.5 rounded-xl" value={formData.color} onChange={e => setFormData({...formData, color: e.target.value})} />
           </div>
-          <div className="col-span-2">
-            <label className="block text-sm font-medium mb-1">Image URLs (comma separated)</label>
-            <input required className="w-full border p-2 rounded" value={formData.images} onChange={e => setFormData({...formData, images: e.target.value})} placeholder="https://example.com/image1.jpg, https://example.com/image2.jpg" />
+          <div className="col-span-2 mt-2">
+            <label className="block text-sm font-medium mb-2">Product Images</label>
+            <div className="glass-panel border-dashed border-2 p-8 rounded-2xl text-center cursor-pointer hover:bg-white/40 dark:hover:bg-white/5 transition-colors relative">
+              <input type="file" multiple accept="image/*" onChange={handleFileSelect} className="absolute inset-0 w-full h-full opacity-0 cursor-pointer" />
+              <UploadCloud className="mx-auto h-12 w-12 text-gray-400 mb-3" strokeWidth={1.5} />
+              <p className="text-sm font-medium text-gray-700 dark:text-gray-300">Drag & drop or click to upload</p>
+              <p className="text-xs text-gray-500 mt-1">High resolution images are recommended</p>
+            </div>
+            
+            {previewUrls.length > 0 && (
+              <div className="flex gap-4 mt-6 overflow-x-auto pb-2">
+                {previewUrls.map((url, i) => (
+                  <div key={i} className="relative shrink-0 w-28 h-28 rounded-xl overflow-hidden glass-card group">
+                    <img src={url} alt={`Preview ${i}`} className="w-full h-full object-cover" />
+                    <button 
+                      type="button" 
+                      onClick={() => removeImage(i)} 
+                      className="absolute top-2 right-2 bg-red-500/90 text-white rounded-full p-1.5 opacity-0 group-hover:opacity-100 transition-opacity hover:bg-red-600 shadow-md backdrop-blur-sm"
+                    >
+                      <X size={14} />
+                    </button>
+                  </div>
+                ))}
+              </div>
+            )}
           </div>
-          <div className="col-span-2">
-            <button type="submit" className="bg-brown text-white px-4 py-2 rounded text-sm w-full">Save Product</button>
+          <div className="col-span-2 mt-4">
+            <button type="submit" disabled={isUploading} className="bg-gray-900 dark:bg-white text-white dark:text-black px-4 py-3.5 rounded-xl text-sm w-full font-medium hover:bg-black dark:hover:bg-gray-200 transition-colors flex items-center justify-center gap-2 shadow-lg disabled:opacity-70 disabled:cursor-not-allowed">
+              {isUploading && <Loader2 size={18} className="animate-spin" />}
+              {isUploading ? 'Uploading Images & Saving...' : 'Save Product'}
+            </button>
           </div>
         </form>
       )}
