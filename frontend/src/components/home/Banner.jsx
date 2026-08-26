@@ -40,7 +40,7 @@ export default function Banner({
           <h2 className={`font-display max-w-md text-3xl sm:text-5xl leading-tight ${textColor}`}>{title}</h2>
           {subtitle && <p className={`max-w-sm text-sm ${textColor} opacity-80`}>{subtitle}</p>}
           <div className="mt-4">
-            <Button to={to} variant={variant === 'dark' ? 'primary' : 'dark'}>
+            <Button to={to} variant={variant === 'dark' ? 'gold' : 'primary'}>
               {cta}
             </Button>
           </div>
