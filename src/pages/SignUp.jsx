@@ -22,7 +22,7 @@ export default function SignUp() {
 
   return (
     <AuthShell tone="mauve" label="Bridal editorial — join the club">
-      <p className="text-xs font-semibold uppercase tracking-[0.3em] text-olive">Join The Club</p>
+      <p className="text-xs font-semibold uppercase tracking-[0.3em] text-gold">Join The Club</p>
       <h1 className="font-display mt-3 text-3xl text-maroon">Create Your Account</h1>
       <p className="mt-3 text-sm leading-relaxed text-brown/80">
         Sign up for early access to new arrivals, festive edits and members-only offers.

@@ -1,16 +1,41 @@
 export const categories = [
-  { slug: 'saree', name: 'Saree', tone: 'brown' },
+  { slug: 'saree', name: 'Saree', tone: 'maroon' },
   { slug: 'kurti', name: 'Kurti', tone: 'mauve' },
-  { slug: 'dress', name: 'Dress', tone: 'olive' },
-  { slug: 'lehenga', name: 'Lehenga', tone: 'cream' },
+  { slug: 'dress', name: 'Dress', tone: 'gold' },
+  { slug: 'lehenga', name: 'Lehenga', tone: 'teal' },
 ]
 
-const TONES = ['brown', 'mauve', 'olive', 'cream', 'ivory']
+export const occasions = [
+  { slug: 'wedding', name: 'Wedding Edit', to: '/shop/saree', tone: 'maroon' },
+  { slug: 'diwali', name: 'Diwali Collection', to: '/shop/lehenga', tone: 'gold' },
+  { slug: 'bridal', name: 'Bridal Trousseau', to: '/shop/lehenga', tone: 'teal' },
+  { slug: 'festive', name: 'Festive Everyday', to: '/shop/kurti', tone: 'mauve' },
+]
 
+const FALLBACK_TONES = ['brown', 'mauve', 'gold', 'teal', 'cream', 'ivory']
+
+// The first two entries are shot with Ambika's own product photography
+// (see Placeholder — swap those two slots for the real files first).
 export const products = [
-  { id: 'amb-saree-silk-magenta', name: 'Anti-silk Banarasi Saree with Zari Weave', category: 'saree', price: 2800, mrp: 3500 },
+  {
+    id: 'amb-saree-banarasi-teal',
+    name: 'Teal Banarasi Silk Saree with Gold Zari Weave',
+    category: 'saree',
+    price: 6800,
+    mrp: 8500,
+    tone: 'teal',
+    featured: true,
+  },
+  {
+    id: 'amb-saree-organza-maroon',
+    name: 'Maroon Organza Saree with Gota Swirl Embroidery',
+    category: 'saree',
+    price: 4200,
+    mrp: 5800,
+    tone: 'maroon',
+    featured: true,
+  },
   { id: 'amb-saree-linen-emerald', name: 'Linen Georgette Saree with Sequin Border', category: 'saree', price: 2895, mrp: 3600 },
-  { id: 'amb-saree-mulberry-gold', name: 'Mulberry Silk Saree with Golden Tissue', category: 'saree', price: 3195, mrp: 3900 },
   { id: 'amb-saree-cotton-yellow', name: 'Handloom Cotton Saree with Ikat Print', category: 'saree', price: 2299, mrp: 2800 },
   { id: 'amb-lehenga-bridal-red', name: 'Bridal Velvet Lehenga with Zardozi Work', category: 'lehenga', price: 8990, mrp: 11500 },
   { id: 'amb-lehenga-net-blush', name: 'Soft Net Lehenga with Mirror Embroidery', category: 'lehenga', price: 6490, mrp: 7900 },
@@ -35,6 +60,8 @@ export function getProductById(id) {
 }
 
 export function toneFor(id) {
-  const index = products.findIndex((product) => product.id === id)
-  return TONES[index % TONES.length]
+  const product = products.find((p) => p.id === id)
+  if (product?.tone) return product.tone
+  const index = products.findIndex((p) => p.id === id)
+  return FALLBACK_TONES[index % FALLBACK_TONES.length]
 }

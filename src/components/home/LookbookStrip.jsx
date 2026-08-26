@@ -2,7 +2,7 @@ import Placeholder from '../ui/Placeholder'
 
 const looks = [
   { label: 'Festive lookbook — pastel saree drape', tone: 'mauve' },
-  { label: 'Festive lookbook — everyday kurti styling', tone: 'olive' },
+  { label: 'Festive lookbook — everyday kurti styling', tone: 'gold' },
   { label: 'Festive lookbook — evening lehenga', tone: 'cream' },
 ]
 

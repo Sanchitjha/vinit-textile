@@ -1,6 +1,7 @@
 import Hero from '../components/home/Hero'
 import FeatureStrip from '../components/home/FeatureStrip'
 import TopCategories from '../components/home/TopCategories'
+import ShopByOccasion from '../components/home/ShopByOccasion'
 import Banner from '../components/home/Banner'
 import ProductGrid from '../components/home/ProductGrid'
 import SplitFeature from '../components/home/SplitFeature'
@@ -14,13 +15,14 @@ export default function Home() {
       <Hero />
       <FeatureStrip />
       <TopCategories />
+      <ShopByOccasion />
 
       <Banner
         eyebrow="Limited Time"
         title="New Arrivals up to 50% Off"
         cta="Buy Now"
         to="/shop/saree"
-        tone="olive"
+        tone="vermillion"
         label="New arrivals — festive couple in red & orange"
         align="left"
       />

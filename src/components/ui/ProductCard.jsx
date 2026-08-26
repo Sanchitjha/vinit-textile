@@ -19,7 +19,7 @@ export default function ProductCard({ product }) {
           <HeartIcon width={15} height={15} />
         </button>
         {discount > 0 && (
-          <span className="absolute left-3 top-3 bg-maroon px-2 py-1 text-[10px] font-semibold uppercase tracking-wide text-ivory">
+          <span className="absolute left-3 top-3 bg-vermillion px-2 py-1 text-[10px] font-semibold uppercase tracking-wide text-ivory">
             {discount}% off
           </span>
         )}

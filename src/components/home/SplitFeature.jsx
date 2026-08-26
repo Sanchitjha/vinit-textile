@@ -19,7 +19,7 @@ export default function SplitFeature({
         </div>
         <div className="w-full lg:w-1/2">
           {eyebrow && (
-            <p className="text-xs font-semibold uppercase tracking-[0.3em] text-olive">{eyebrow}</p>
+            <p className="text-xs font-semibold uppercase tracking-[0.3em] text-gold">{eyebrow}</p>
           )}
           <h2 className="font-display mt-3 text-3xl text-maroon">{title}</h2>
           <p className="mt-4 max-w-md text-sm leading-relaxed text-brown/80">{description}</p>

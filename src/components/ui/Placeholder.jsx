@@ -5,9 +5,12 @@ import { LeafOrnament } from '../icons/Icons'
 // swap the `label` spots for real images (e.g. src="/images/saree-01.jpg") when assets are ready.
 const TONES = {
   cream: 'from-[#e9dcc9] to-[#f4ebe1] text-brown/40',
-  brown: 'from-[#5d350e] to-[#3e150b] text-cream/30',
-  mauve: 'from-[#ab86a4] to-[#8a6a4a] text-ivory/40',
-  olive: 'from-[#b7ba5d] to-[#8a6a4a] text-ivory/40',
+  brown: 'from-[#6b3410] to-[#3e150b] text-cream/30',
+  maroon: 'from-[#7a1e28] to-[#3e150b] text-cream/30',
+  mauve: 'from-[#8b5a6b] to-[#5c1220] text-ivory/40',
+  gold: 'from-[#c9972e] to-[#8a6a4a] text-maroon/30',
+  vermillion: 'from-[#e15c33] to-[#7a1e28] text-ivory/40',
+  teal: 'from-[#0f5c56] to-[#123a37] text-ivory/40',
   ivory: 'from-[#fbf7f2] to-[#e9dcc9] text-brown/35',
 }
 

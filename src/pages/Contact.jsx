@@ -8,7 +8,7 @@ export default function Contact() {
   return (
     <section className="container-ambika py-10">
       <div className="text-center">
-        <p className="text-xs font-semibold uppercase tracking-[0.3em] text-olive">Get In Touch</p>
+        <p className="text-xs font-semibold uppercase tracking-[0.3em] text-gold">Get In Touch</p>
         <h1 className="font-display mt-3 text-4xl text-maroon">Contact Us</h1>
       </div>
 

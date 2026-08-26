@@ -21,7 +21,7 @@ export default function Footer() {
               <a
                 key={index}
                 href="#"
-                className="flex h-8 w-8 items-center justify-center rounded-full border border-cream/30 text-cream/80 transition-colors hover:border-olive hover:text-olive"
+                className="flex h-8 w-8 items-center justify-center rounded-full border border-cream/30 text-cream/80 transition-colors hover:border-gold hover:text-gold"
               >
                 <Icon />
               </a>
@@ -34,7 +34,7 @@ export default function Footer() {
           <ul className="mt-4 space-y-2 text-sm text-cream/70">
             {helpLinks.map((link) => (
               <li key={link}>
-                <a href="#" className="transition-colors hover:text-olive">
+                <a href="#" className="transition-colors hover:text-gold">
                   {link}
                 </a>
               </li>
@@ -47,7 +47,7 @@ export default function Footer() {
           <ul className="mt-4 space-y-2 text-sm text-cream/70">
             {companyLinks.map((link) => (
               <li key={link}>
-                <a href="#" className="transition-colors hover:text-olive">
+                <a href="#" className="transition-colors hover:text-gold">
                   {link}
                 </a>
               </li>

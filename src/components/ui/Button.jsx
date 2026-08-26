@@ -2,7 +2,7 @@ import { Link } from 'react-router-dom'
 
 const VARIANTS = {
   primary: 'bg-brown text-ivory hover:bg-maroon',
-  gold: 'bg-olive text-maroon hover:bg-brown hover:text-ivory',
+  gold: 'bg-gold text-maroon hover:bg-brown hover:text-ivory',
   dark: 'bg-maroon text-ivory hover:bg-brown',
   outline: 'border border-brown text-brown hover:bg-brown hover:text-ivory',
   ghost: 'text-brown hover:text-maroon underline underline-offset-4',

@@ -4,15 +4,19 @@
   --font-display: "Judson", ui-serif, Georgia, serif;
   --font-body: "Teachers", ui-sans-serif, system-ui, sans-serif;
 
-  /* Ambika brand palette, sampled from the Behance style guide */
+  /* Ambika brand palette — warm neutrals from the Behance style guide,
+     enriched toward festive jewel tones (deep wine, true gold, marigold,
+     jewel teal) so the site reads premium-Indian rather than muted/Western. */
   --color-ivory: #fbf7f2;
   --color-cream: #f4ebe1;
   --color-cream-dark: #e9dcc9;
-  --color-brown: #5d350e;
+  --color-brown: #6b3410;
   --color-brown-light: #8a6a4a;
-  --color-maroon: #3e150b;
-  --color-mauve: #ab86a4;
-  --color-olive: #b7ba5d;
+  --color-maroon: #5c1220;
+  --color-mauve: #8b5a6b;
+  --color-gold: #c9972e;
+  --color-vermillion: #e15c33;
+  --color-teal: #0f5c56;
   --color-stone: #9d9d9d;
 
   --shadow-card: 0 10px 30px -12px rgba(62, 21, 11, 0.25);

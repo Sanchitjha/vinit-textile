@@ -6,7 +6,7 @@ export default function About() {
       <div className="grid items-center gap-10 lg:grid-cols-2">
         <Placeholder label="Bridal editorial — Ambika brand story" tone="brown" ratio="aspect-[4/5]" />
         <div>
-          <p className="text-xs font-semibold uppercase tracking-[0.3em] text-olive">About Ambika</p>
+          <p className="text-xs font-semibold uppercase tracking-[0.3em] text-gold">About Ambika</p>
           <h1 className="font-display mt-3 text-4xl text-maroon">Timeless Indian Elegance</h1>
           <p className="mt-5 max-w-md text-sm leading-relaxed text-brown/80">
             Ambika is a celebration of timeless Indian elegance, reimagined for the modern woman.

@@ -7,20 +7,20 @@ const slides = [
   {
     eyebrow: 'Celebrate',
     title: 'Every Occasion With Ethnic Grace',
-    label: 'Festive saree edit — three women in celebration wear',
-    tone: 'brown',
+    label: 'Teal Banarasi silk saree with gold zari weave',
+    tone: 'teal',
   },
   {
     eyebrow: 'New Season',
     title: 'Handwoven Sarees, Reimagined',
     label: 'New season handloom saree collection',
-    tone: 'olive',
+    tone: 'gold',
   },
   {
     eyebrow: 'Bridal Edit',
     title: 'Timeless Looks For Your Big Day',
-    label: 'Bridal lehenga and saree edit',
-    tone: 'mauve',
+    label: 'Maroon organza saree with gota embroidery',
+    tone: 'maroon',
   },
 ]
 
@@ -41,7 +41,7 @@ export default function Hero() {
 
         <div className="absolute inset-0 flex items-center">
           <div className="max-w-lg px-6 sm:px-12">
-            <p className="text-xs font-semibold uppercase tracking-[0.3em] text-maroon/80">
+            <p className="text-xs font-semibold uppercase tracking-[0.3em] text-vermillion">
               {slide.eyebrow}
             </p>
             <h1 className="font-display mt-3 text-4xl leading-tight text-maroon sm:text-5xl">

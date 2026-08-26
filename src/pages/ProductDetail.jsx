@@ -70,14 +70,14 @@ export default function ProductDetail() {
         </div>
 
         <div>
-          <p className="text-xs font-semibold uppercase tracking-[0.3em] text-olive">
+          <p className="text-xs font-semibold uppercase tracking-[0.3em] text-gold">
             {categoryMeta?.name}
           </p>
           <h1 className="font-display mt-3 text-3xl text-maroon">{product.name}</h1>
 
           <div className="mt-3 flex items-center gap-2">
             {[...Array(5)].map((_, i) => (
-              <StarIcon key={i} className="text-olive" />
+              <StarIcon key={i} className="text-gold" />
             ))}
             <span className="text-xs text-stone">(24 reviews)</span>
           </div>
