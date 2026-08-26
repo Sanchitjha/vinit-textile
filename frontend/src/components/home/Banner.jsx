@@ -30,12 +30,8 @@ export default function Banner({
     <section className="container-ambika py-16">
       <div className="relative overflow-hidden bg-cream">
         <Placeholder label={label} tone={tone} ratio="aspect-[21/9] sm:aspect-[3/1]" />
-<<<<<<< HEAD:src/components/home/Banner.jsx
         <div className={`absolute inset-0 ${scrimClass}`} />
         <div className={`absolute inset-0 flex flex-col justify-center gap-3 px-8 sm:px-16 ${alignClass}`}>
-=======
-        <div className={`absolute inset-0 flex flex-col justify-center gap-4 px-8 sm:px-16 ${alignClass}`}>
->>>>>>> 89fd1a727f8ef9ef6bfa757a8ed5db8dfb8edd8a:frontend/src/components/home/Banner.jsx
           {eyebrow && (
             <p className={`text-[11px] font-semibold uppercase tracking-[0.3em] ${textColor} opacity-80`}>
               {eyebrow}
