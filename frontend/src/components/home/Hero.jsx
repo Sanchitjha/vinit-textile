@@ -40,13 +40,8 @@ export default function Hero() {
         <div className="absolute inset-0 bg-gradient-to-r from-ivory/90 via-ivory/50 to-transparent sm:from-ivory/80 sm:via-ivory/20" />
 
         <div className="absolute inset-0 flex items-center">
-<<<<<<< HEAD:src/components/home/Hero.jsx
-          <div className="max-w-lg px-6 sm:px-12">
-            <p className="text-xs font-semibold uppercase tracking-[0.3em] text-vermillion">
-=======
           <div className="max-w-lg px-6 sm:px-16">
             <p className="text-[11px] font-semibold uppercase tracking-[0.3em] text-brown-light">
->>>>>>> 89fd1a727f8ef9ef6bfa757a8ed5db8dfb8edd8a:frontend/src/components/home/Hero.jsx
               {slide.eyebrow}
             </p>
             <h1 className="font-display mt-4 text-4xl leading-tight text-brown sm:text-6xl">

@@ -21,11 +21,7 @@ export default function Footer() {
               <a
                 key={index}
                 href="#"
-<<<<<<< HEAD:src/components/layout/Footer.jsx
-                className="flex h-8 w-8 items-center justify-center rounded-full border border-cream/30 text-cream/80 transition-colors hover:border-gold hover:text-gold"
-=======
                 className="flex h-10 w-10 items-center justify-center rounded-none border border-ivory/20 text-ivory/60 transition-colors hover:border-ivory hover:text-ivory"
->>>>>>> 89fd1a727f8ef9ef6bfa757a8ed5db8dfb8edd8a:frontend/src/components/layout/Footer.jsx
               >
                 <Icon />
               </a>
@@ -38,11 +34,7 @@ export default function Footer() {
           <ul className="mt-4 space-y-3 text-[13px] text-ivory/60">
             {helpLinks.map((link) => (
               <li key={link}>
-<<<<<<< HEAD:src/components/layout/Footer.jsx
-                <a href="#" className="transition-colors hover:text-gold">
-=======
                 <a href="#" className="transition-colors hover:text-ivory">
->>>>>>> 89fd1a727f8ef9ef6bfa757a8ed5db8dfb8edd8a:frontend/src/components/layout/Footer.jsx
                   {link}
                 </a>
               </li>
@@ -55,11 +47,7 @@ export default function Footer() {
           <ul className="mt-4 space-y-3 text-[13px] text-ivory/60">
             {companyLinks.map((link) => (
               <li key={link}>
-<<<<<<< HEAD:src/components/layout/Footer.jsx
-                <a href="#" className="transition-colors hover:text-gold">
-=======
                 <a href="#" className="transition-colors hover:text-ivory">
->>>>>>> 89fd1a727f8ef9ef6bfa757a8ed5db8dfb8edd8a:frontend/src/components/layout/Footer.jsx
                   {link}
                 </a>
               </li>
