@@ -1,13 +1,15 @@
-import { Outlet, Link, useLocation, useNavigate } from 'react-router-dom'
-import { useEffect } from 'react'
+import { Outlet, Link, useLocation, Navigate } from 'react-router-dom'
+import { useAuth } from '../../context/AuthContext'
 
 export default function AdminLayout() {
   const location = useLocation()
-  const navigate = useNavigate()
+  const { user, loading } = useAuth()
 
-  // Later we should check if user is actually ADMIN, for now we just show the UI
-  // assuming they have logged in as admin. 
-  
+  if (loading) return <div className="flex h-screen items-center justify-center">Loading...</div>
+
+  if (!user || user.role !== 'ADMIN') {
+    return <Navigate to="/admin/login" replace />
+  }
   const navItems = [
     { name: 'Dashboard', path: '/admin' },
     { name: 'Products', path: '/admin/products' },

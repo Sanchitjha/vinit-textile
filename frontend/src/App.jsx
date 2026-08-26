@@ -16,6 +16,7 @@ import NotFound from './pages/NotFound'
 
 // Admin imports
 import AdminLayout from './components/layout/AdminLayout'
+import AdminLogin from './pages/admin/AdminLogin'
 import AdminDashboard from './pages/admin/AdminDashboard'
 import AdminCategories from './pages/admin/AdminCategories'
 import AdminProducts from './pages/admin/AdminProducts'
@@ -52,6 +53,7 @@ export default function App() {
             <Route path="/contact" element={<Contact />} />
             
             {/* Admin Routes */}
+            <Route path="/admin/login" element={<AdminLogin />} />
             <Route path="/admin" element={<AdminLayout />}>
               <Route index element={<AdminDashboard />} />
               <Route path="products" element={<AdminProducts />} />
