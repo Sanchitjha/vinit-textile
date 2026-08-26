@@ -70,9 +70,9 @@ export default function AdminProducts() {
   if (error) return <div className="text-red-500">{error}</div>
 
   return (
-    <div className="space-y-6">
+    <div className="p-8 w-full space-y-6">
       <div className="flex justify-between items-center">
-        <h2 className="text-2xl font-display text-brown">Products (Sarees)</h2>
+        <h2 className="text-2xl font-display text-brown dark:text-white">Products (Sarees)</h2>
         <button 
           onClick={() => setIsFormOpen(!isFormOpen)}
           className="bg-brown text-white px-4 py-2 rounded text-sm hover:bg-brown-light"
@@ -82,14 +82,14 @@ export default function AdminProducts() {
       </div>
 
       {isFormOpen && (
-        <form onSubmit={handleSubmit} className="bg-white p-6 rounded shadow-sm border border-gray-100 grid grid-cols-2 gap-4">
+        <form onSubmit={handleSubmit} className="glass-panel p-6 rounded-3xl grid grid-cols-2 gap-4">
           <div className="col-span-2">
             <label className="block text-sm font-medium mb-1">Name</label>
-            <input required className="w-full border p-2 rounded" value={formData.name} onChange={e => setFormData({...formData, name: e.target.value})} />
+            <input required className="w-full glass-input p-2.5 rounded-xl" value={formData.name} onChange={e => setFormData({...formData, name: e.target.value})} />
           </div>
           <div className="col-span-2">
             <label className="block text-sm font-medium mb-1">Description</label>
-            <textarea required className="w-full border p-2 rounded" value={formData.description} onChange={e => setFormData({...formData, description: e.target.value})} />
+            <textarea className="w-full glass-input p-2.5 rounded-xl" rows={3} value={formData.description} onChange={e => setFormData({...formData, description: e.target.value})} />
           </div>
           <div>
             <label className="block text-sm font-medium mb-1">Category</label>
@@ -101,12 +101,16 @@ export default function AdminProducts() {
             </select>
           </div>
           <div>
-            <label className="block text-sm font-medium mb-1">Price</label>
-            <input type="number" required className="w-full border p-2 rounded" value={formData.price} onChange={e => setFormData({...formData, price: e.target.value})} />
+            <label className="block text-sm font-medium mb-1">Stock</label>
+            <input type="number" required className="w-full glass-input p-2.5 rounded-xl" value={formData.stock} onChange={e => setFormData({...formData, stock: e.target.value})} />
           </div>
           <div>
             <label className="block text-sm font-medium mb-1">SKU</label>
-            <input required className="w-full border p-2 rounded" value={formData.sku} onChange={e => setFormData({...formData, sku: e.target.value})} />
+            <input required className="w-full glass-input p-2.5 rounded-xl" value={formData.sku} onChange={e => setFormData({...formData, sku: e.target.value})} />
+          </div>
+          <div>
+            <label className="block text-sm font-medium mb-1">Price</label>
+            <input type="number" required className="w-full glass-input p-2.5 rounded-xl" value={formData.price} onChange={e => setFormData({...formData, price: e.target.value})} />
           </div>
           <div>
             <label className="block text-sm font-medium mb-1">Fabric</label>
@@ -126,20 +130,20 @@ export default function AdminProducts() {
         </form>
       )}
 
-      <div className="bg-white rounded shadow-sm border border-gray-100 overflow-hidden">
-        <table className="w-full text-left text-sm">
-          <thead className="bg-gray-50 border-b border-gray-100">
+      <div className="glass-panel rounded-3xl overflow-hidden">
+        <table className="w-full text-left text-sm dark:text-gray-300">
+          <thead className="bg-white/30 dark:bg-black/20 backdrop-blur-md border-b border-gray-200/30 dark:border-gray-700/30">
             <tr>
-              <th className="p-4 font-medium text-gray-600">Image</th>
-              <th className="p-4 font-medium text-gray-600">Name</th>
-              <th className="p-4 font-medium text-gray-600">SKU</th>
-              <th className="p-4 font-medium text-gray-600">Price</th>
-              <th className="p-4 font-medium text-gray-600">Actions</th>
+              <th className="p-4 font-medium text-gray-600 dark:text-gray-400">Image</th>
+              <th className="p-4 font-medium text-gray-600 dark:text-gray-400">Name</th>
+              <th className="p-4 font-medium text-gray-600 dark:text-gray-400">SKU</th>
+              <th className="p-4 font-medium text-gray-600 dark:text-gray-400">Price</th>
+              <th className="p-4 font-medium text-gray-600 dark:text-gray-400">Actions</th>
             </tr>
           </thead>
-          <tbody className="divide-y divide-gray-100">
+          <tbody className="divide-y divide-gray-200/30 dark:divide-gray-700/30">
             {products.map(prod => (
-              <tr key={prod.id}>
+              <tr key={prod.id} className="hover:bg-white/40 dark:hover:bg-white/5 transition-colors">
                 <td className="p-4">
                   <img src={prod.images[0]} alt={prod.name} className="w-12 h-12 object-cover rounded" />
                 </td>

@@ -63,9 +63,9 @@ export default function AdminCoupons() {
   if (error) return <div className="text-red-500">{error}</div>
 
   return (
-    <div className="space-y-6">
+    <div className="p-8 w-full space-y-6">
       <div className="flex justify-between items-center">
-        <h2 className="text-2xl font-display text-brown">Coupons</h2>
+        <h2 className="text-2xl font-display text-brown dark:text-white">Coupons</h2>
         <button 
           onClick={() => setIsFormOpen(!isFormOpen)}
           className="bg-brown text-white px-4 py-2 rounded text-sm hover:bg-brown-light"
@@ -75,29 +75,29 @@ export default function AdminCoupons() {
       </div>
 
       {isFormOpen && (
-        <form onSubmit={handleSubmit} className="bg-white p-6 rounded shadow-sm border border-gray-100 grid grid-cols-2 gap-4">
+        <form onSubmit={handleSubmit} className="glass-panel p-6 rounded-3xl grid grid-cols-2 gap-4">
           <div>
             <label className="block text-sm font-medium mb-1">Code</label>
-            <input required className="w-full border p-2 rounded" value={formData.code} onChange={e => setFormData({...formData, code: e.target.value})} />
+            <input required className="w-full glass-input p-2.5 rounded-xl" value={formData.code} onChange={e => setFormData({...formData, code: e.target.value})} />
           </div>
           <div>
             <label className="block text-sm font-medium mb-1">Discount Type</label>
-            <select className="w-full border p-2 rounded" value={formData.discountType} onChange={e => setFormData({...formData, discountType: e.target.value})}>
+            <select className="w-full glass-input p-2.5 rounded-xl" value={formData.discountType} onChange={e => setFormData({...formData, discountType: e.target.value})}>
               <option value="percentage">Percentage (%)</option>
               <option value="flat">Flat Amount (₹)</option>
             </select>
           </div>
           <div>
             <label className="block text-sm font-medium mb-1">Discount Value</label>
-            <input type="number" required className="w-full border p-2 rounded" value={formData.discountValue} onChange={e => setFormData({...formData, discountValue: e.target.value})} />
+            <input type="number" required className="w-full glass-input p-2.5 rounded-xl" value={formData.discountValue} onChange={e => setFormData({...formData, discountValue: e.target.value})} />
           </div>
           <div>
             <label className="block text-sm font-medium mb-1">Min Order Value</label>
-            <input type="number" className="w-full border p-2 rounded" value={formData.minimumOrderValue} onChange={e => setFormData({...formData, minimumOrderValue: e.target.value})} />
+            <input type="number" className="w-full glass-input p-2.5 rounded-xl" value={formData.minimumOrderValue} onChange={e => setFormData({...formData, minimumOrderValue: e.target.value})} />
           </div>
           <div>
             <label className="block text-sm font-medium mb-1">Expires At</label>
-            <input type="date" required className="w-full border p-2 rounded" value={formData.expiresAt} onChange={e => setFormData({...formData, expiresAt: e.target.value})} />
+            <input type="date" required className="w-full glass-input p-2.5 rounded-xl" value={formData.expiresAt} onChange={e => setFormData({...formData, expiresAt: e.target.value})} />
           </div>
           <div className="flex items-center gap-2 mt-6">
             <input type="checkbox" checked={formData.isActive} onChange={e => setFormData({...formData, isActive: e.target.checked})} />
@@ -109,27 +109,27 @@ export default function AdminCoupons() {
         </form>
       )}
 
-      <div className="bg-white rounded shadow-sm border border-gray-100 overflow-hidden">
-        <table className="w-full text-left text-sm">
-          <thead className="bg-gray-50 border-b border-gray-100">
+      <div className="glass-panel rounded-3xl overflow-hidden">
+        <table className="w-full text-left text-sm dark:text-gray-300">
+          <thead className="bg-white/30 dark:bg-black/20 backdrop-blur-md border-b border-gray-200/30 dark:border-gray-700/30">
             <tr>
-              <th className="p-4 font-medium text-gray-600">Code</th>
-              <th className="p-4 font-medium text-gray-600">Discount</th>
-              <th className="p-4 font-medium text-gray-600">Min Order</th>
-              <th className="p-4 font-medium text-gray-600">Expires</th>
-              <th className="p-4 font-medium text-gray-600">Status</th>
-              <th className="p-4 font-medium text-gray-600">Actions</th>
+              <th className="p-4 font-medium text-gray-600 dark:text-gray-400">Code</th>
+              <th className="p-4 font-medium text-gray-600 dark:text-gray-400">Discount</th>
+              <th className="p-4 font-medium text-gray-600 dark:text-gray-400">Min Order</th>
+              <th className="p-4 font-medium text-gray-600 dark:text-gray-400">Expires</th>
+              <th className="p-4 font-medium text-gray-600 dark:text-gray-400">Status</th>
+              <th className="p-4 font-medium text-gray-600 dark:text-gray-400">Actions</th>
             </tr>
           </thead>
-          <tbody className="divide-y divide-gray-100">
+          <tbody className="divide-y divide-gray-200/30 dark:divide-gray-700/30">
             {coupons.map(coupon => (
-              <tr key={coupon.id}>
+              <tr key={coupon.id} className="hover:bg-white/40 dark:hover:bg-white/5 transition-colors">
                 <td className="p-4 font-medium">{coupon.code}</td>
                 <td className="p-4">
                   {coupon.discountType === 'percentage' ? `${coupon.discountValue}%` : `₹${coupon.discountValue}`}
                 </td>
                 <td className="p-4">₹{coupon.minimumOrderValue}</td>
-                <td className="p-4 text-gray-500">{new Date(coupon.expiresAt).toLocaleDateString()}</td>
+                <td className="p-4 text-gray-500 dark:text-gray-400">{new Date(coupon.expiresAt).toLocaleDateString()}</td>
                 <td className="p-4">
                   <span className={`px-2 py-1 rounded text-xs ${coupon.isActive ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}`}>
                     {coupon.isActive ? 'Active' : 'Inactive'}
@@ -141,7 +141,7 @@ export default function AdminCoupons() {
               </tr>
             ))}
             {coupons.length === 0 && (
-              <tr><td colSpan="6" className="p-4 text-center text-gray-500">No coupons found.</td></tr>
+              <tr><td colSpan="6" className="p-4 text-center text-gray-500 dark:text-gray-400">No coupons found.</td></tr>
             )}
           </tbody>
         </table>

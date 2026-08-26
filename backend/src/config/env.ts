@@ -22,6 +22,11 @@ const envSchema = z.object({
   LOW_STOCK_THRESHOLD: z.coerce.number().int().nonnegative().default(5),
   FREE_SHIPPING_THRESHOLD: z.coerce.number().nonnegative().default(2000),
   STANDARD_SHIPPING_FEE: z.coerce.number().nonnegative().default(99),
+
+  AWS_REGION: z.string().optional().default(''),
+  AWS_ACCESS_KEY_ID: z.string().optional().default(''),
+  AWS_SECRET_ACCESS_KEY: z.string().optional().default(''),
+  AWS_S3_BUCKET_NAME: z.string().optional().default(''),
 });
 
 function loadEnv() {
@@ -65,5 +70,13 @@ export const env = {
     lowStockThreshold: parsedEnv.LOW_STOCK_THRESHOLD,
     freeShippingThreshold: parsedEnv.FREE_SHIPPING_THRESHOLD,
     standardShippingFee: parsedEnv.STANDARD_SHIPPING_FEE,
+  },
+
+  aws: {
+    region: parsedEnv.AWS_REGION,
+    accessKeyId: parsedEnv.AWS_ACCESS_KEY_ID,
+    secretAccessKey: parsedEnv.AWS_SECRET_ACCESS_KEY,
+    s3BucketName: parsedEnv.AWS_S3_BUCKET_NAME,
+    isConfigured: Boolean(parsedEnv.AWS_REGION && parsedEnv.AWS_ACCESS_KEY_ID && parsedEnv.AWS_SECRET_ACCESS_KEY && parsedEnv.AWS_S3_BUCKET_NAME),
   },
 } as const;
