@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { Link, NavLink } from 'react-router-dom'
 import { BagIcon, CloseIcon, HeartIcon, SearchIcon, UserIcon } from '../icons/Icons'
 import { useCart } from '../../context/CartContext'
+import { useAuth } from '../../context/AuthContext'
 
 const primaryLinks = [
   { label: 'About', to: '/about' },
@@ -20,6 +21,11 @@ const categoryLinks = [
 export default function Header() {
   const [menuOpen, setMenuOpen] = useState(false)
   const { count } = useCart()
+  const { user } = useAuth()
+
+  const initials = user?.name 
+    ? user.name.split(' ').map((n) => n[0]).join('').substring(0, 2).toUpperCase()
+    : 'U'
 
   return (
     <header className="sticky top-0 z-40 border-b border-cream-dark bg-ivory/95 backdrop-blur">
@@ -60,9 +66,19 @@ export default function Header() {
           <button type="button" aria-label="Search" className="hidden hover:text-maroon sm:block">
             <SearchIcon />
           </button>
-          <Link to="/login" aria-label="Account" className="hover:text-maroon">
-            <UserIcon />
-          </Link>
+          
+          {user ? (
+            <Link to="/account" aria-label="Account" className="hover:opacity-80 transition-opacity">
+              <div className="flex h-7 w-7 items-center justify-center rounded-full bg-brown text-[11px] font-semibold text-ivory tracking-tight">
+                {initials}
+              </div>
+            </Link>
+          ) : (
+            <Link to="/login" aria-label="Account" className="hover:text-maroon">
+              <UserIcon />
+            </Link>
+          )}
+
           <Link to="/account" aria-label="Wishlist" className="hidden hover:text-maroon sm:block">
             <HeartIcon />
           </Link>
