@@ -7,7 +7,7 @@ import { useAuth } from '../context/AuthContext'
 export default function SignUp() {
   const navigate = useNavigate()
   const { register } = useAuth()
-  const [form, setForm] = useState({ name: '', email: '', password: '', confirm: '' })
+  const [form, setForm] = useState({ name: '', email: '', phone: '', password: '', confirm: '' })
   const [error, setError] = useState('')
 
   const update = (field) => (event) => setForm((prev) => ({ ...prev, [field]: event.target.value }))
@@ -20,7 +20,7 @@ export default function SignUp() {
     }
     setError('')
     try {
-      await register({ name: form.name, email: form.email, password: form.password })
+      await register({ name: form.name, email: form.email, phone: form.phone, password: form.password })
       navigate('/account')
     } catch (err) {
       setError(err.message || 'Signup failed')
@@ -56,6 +56,20 @@ export default function SignUp() {
             value={form.email}
             onChange={update('email')}
             placeholder="you@example.com"
+            className="mt-3 w-full rounded-none border border-brown/20 bg-transparent px-5 py-3.5 text-[13px] text-brown placeholder:text-brown-light focus:border-brown focus:outline-none"
+          />
+        </label>
+
+        <label className="block">
+          <span className="text-[10px] font-semibold uppercase tracking-widest text-brown">Phone</span>
+          <input
+            type="tel"
+            required
+            minLength={7}
+            maxLength={15}
+            value={form.phone}
+            onChange={update('phone')}
+            placeholder="+91 9876543210"
             className="mt-3 w-full rounded-none border border-brown/20 bg-transparent px-5 py-3.5 text-[13px] text-brown placeholder:text-brown-light focus:border-brown focus:outline-none"
           />
         </label>

@@ -11,6 +11,7 @@ import { adminReviewRouter } from '../modules/review/review.admin.routes';
 import { sareeRouter } from '../modules/saree/saree.routes';
 import { userRouter } from '../modules/user/user.routes';
 import { wishlistRouter } from '../modules/wishlist/wishlist.routes';
+import { uploadRouter } from '../modules/upload/upload.routes';
 
 export const router = Router();
 
@@ -30,3 +31,4 @@ router.use('/payments', paymentRouter);
 router.use('/coupons', couponRouter);
 router.use('/admin/reviews', adminReviewRouter);
 router.use('/admin', adminRouter);
+router.use('/upload', uploadRouter);
