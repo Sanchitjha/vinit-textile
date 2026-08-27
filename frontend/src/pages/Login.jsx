@@ -25,7 +25,7 @@ export default function Login() {
   return (
     <AuthShell tone="brown" label="Woman in festive saree — welcome back">
       <p className="text-[10px] font-semibold uppercase tracking-[0.3em] text-brown-light">Welcome Back</p>
-      <h1 className="font-display mt-4 text-4xl text-brown">Log In to Ambika</h1>
+      <h1 className="font-display mt-4 text-4xl text-brown">Log In to Vinit Textiles</h1>
       <p className="mt-4 text-sm leading-relaxed text-brown-light">
         Log in to access your personalised saree collection and experience the grace of timeless
         women&apos;s fashion.

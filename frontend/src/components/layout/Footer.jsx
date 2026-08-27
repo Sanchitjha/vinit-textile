@@ -6,26 +6,28 @@ const companyLinks = ['About Us', 'Careers', 'Contact Us', 'Store Locator']
 
 export default function Footer() {
   return (
-    <footer className="bg-brown text-ivory">
+    <footer className="bg-maroon text-ivory">
       <div className="container-ambika grid gap-10 py-16 sm:grid-cols-2 lg:grid-cols-4">
         <div>
-          <Link to="/" className="font-display text-2xl tracking-[0.2em] text-ivory">
-            AMBIKA
+          <Link to="/" className="font-display text-xl tracking-[0.15em] text-ivory">
+            VINIT TEXTILES
           </Link>
           <p className="mt-4 max-w-xs text-sm leading-relaxed text-ivory/60">
-            Discover timeless elegance and craftsmanship, styled with tradition for the modern
-            woman.
+            Sarees that celebrate Indian Naree — premium quality, soft &amp; comfortable, crafted
+            with exclusive designs.
           </p>
           <div className="mt-6 flex gap-4">
-            {[FacebookIcon, InstagramIcon, PinterestIcon].map((Icon, index) => (
+            {[
+              { Icon: FacebookIcon, href: '#' },
+              { Icon: InstagramIcon, href: 'https://instagram.com/vinit.textiles' },
+              { Icon: PinterestIcon, href: '#' },
+            ].map(({ Icon, href }, index) => (
               <a
                 key={index}
-                href="#"
-<<<<<<< HEAD:src/components/layout/Footer.jsx
+                href={href}
+                target={href.startsWith('http') ? '_blank' : undefined}
+                rel={href.startsWith('http') ? 'noreferrer' : undefined}
                 className="flex h-8 w-8 items-center justify-center rounded-full border border-cream/30 text-cream/80 transition-colors hover:border-gold hover:text-gold"
-=======
-                className="flex h-10 w-10 items-center justify-center rounded-none border border-ivory/20 text-ivory/60 transition-colors hover:border-ivory hover:text-ivory"
->>>>>>> 89fd1a727f8ef9ef6bfa757a8ed5db8dfb8edd8a:frontend/src/components/layout/Footer.jsx
               >
                 <Icon />
               </a>
@@ -38,11 +40,7 @@ export default function Footer() {
           <ul className="mt-4 space-y-3 text-[13px] text-ivory/60">
             {helpLinks.map((link) => (
               <li key={link}>
-<<<<<<< HEAD:src/components/layout/Footer.jsx
                 <a href="#" className="transition-colors hover:text-gold">
-=======
-                <a href="#" className="transition-colors hover:text-ivory">
->>>>>>> 89fd1a727f8ef9ef6bfa757a8ed5db8dfb8edd8a:frontend/src/components/layout/Footer.jsx
                   {link}
                 </a>
               </li>
@@ -55,11 +53,7 @@ export default function Footer() {
           <ul className="mt-4 space-y-3 text-[13px] text-ivory/60">
             {companyLinks.map((link) => (
               <li key={link}>
-<<<<<<< HEAD:src/components/layout/Footer.jsx
                 <a href="#" className="transition-colors hover:text-gold">
-=======
-                <a href="#" className="transition-colors hover:text-ivory">
->>>>>>> 89fd1a727f8ef9ef6bfa757a8ed5db8dfb8edd8a:frontend/src/components/layout/Footer.jsx
                   {link}
                 </a>
               </li>
@@ -70,10 +64,14 @@ export default function Footer() {
         <div>
           <h4 className="font-display text-lg text-ivory">Contact</h4>
           <ul className="mt-4 space-y-3 text-[13px] text-ivory/60">
-            <li>123 Heritage Lane, Ahmedabad, Gujarat</li>
-            <li>+91 98765 43210</li>
+            <li>
+              8001-8004, The Rajhans Fabrizo Market, BRTS Road,
+              <br />
+              Near Polaris Textile City, Magob, Surat, Gujarat 395012
+            </li>
+            <li>WhatsApp: +91 97126 39342</li>
             <li className="flex items-center gap-2">
-              <MailIcon width={14} height={14} /> hello@ambika.com
+              <MailIcon width={14} height={14} /> vinittextiles21@gmail.com
             </li>
           </ul>
         </div>
@@ -81,7 +79,10 @@ export default function Footer() {
 
       <div className="border-t border-ivory/10">
         <div className="container-ambika flex flex-col items-center justify-between gap-4 py-8 text-xs text-ivory/40 sm:flex-row">
-          <p>© {new Date().getFullYear()} Ambika. All rights reserved.</p>
+          <p>
+            © {new Date().getFullYear()} Vinit Textiles. All rights reserved. · GSTIN:
+            24FDFPP3368P1ZU
+          </p>
           <div className="flex items-center gap-4">
             {['Visa', 'Mastercard', 'UPI'].map((method) => (
               <span

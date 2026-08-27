@@ -14,7 +14,7 @@ export const occasions = [
 
 const FALLBACK_TONES = ['brown', 'mauve', 'gold', 'teal', 'cream', 'ivory']
 
-// The first two entries are shot with Ambika's own product photography
+// The first two entries are shot with Vinit Textiles' own product photography
 // (see Placeholder — swap those two slots for the real files first).
 export const products = [
   {

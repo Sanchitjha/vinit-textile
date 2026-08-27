@@ -15,10 +15,13 @@ export default function Contact() {
       <div className="mx-auto mt-10 grid max-w-3xl gap-10 sm:grid-cols-2">
         <div className="space-y-4 text-sm text-brown/80">
           <p className="flex items-center gap-2">
-            <MailIcon width={16} height={16} /> hello@ambika.com
+            <MailIcon width={16} height={16} /> vinittextiles21@gmail.com
           </p>
-          <p>+91 98765 43210</p>
-          <p>123 Heritage Lane, Ahmedabad, Gujarat, India</p>
+          <p>WhatsApp: +91 97126 39342</p>
+          <p>
+            8001-8004, The Rajhans Fabrizo Market, BRTS Road, Near Polaris Textile City, Magob,
+            Surat, Gujarat 395012
+          </p>
         </div>
 
         {sent ? (

@@ -51,9 +51,9 @@ export default function Header() {
 
         <Link
           to="/"
-          className="font-display absolute left-1/2 -translate-x-1/2 text-2xl tracking-[0.2em] text-brown lg:static lg:translate-x-0"
+          className="font-display absolute left-1/2 -translate-x-1/2 text-xl tracking-[0.15em] text-brown sm:text-2xl lg:static lg:translate-x-0"
         >
-          AMBIKA
+          VINIT TEXTILES
         </Link>
 
         <div className="flex items-center gap-4 text-brown">
