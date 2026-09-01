@@ -24,8 +24,10 @@ const UserSchema = new Schema<IUserDocument>(
   {
     name: { type: String, required: true, trim: true },
     email: { type: String, required: true, unique: true, lowercase: true, trim: true },
-    phone: { type: String, required: true, unique: true, trim: true },
-    password: { type: String, required: true, select: false },
+    // Optional: users created via email-OTP verification may never set these —
+    // `sparse` lets multiple such users coexist without tripping the unique index.
+    phone: { type: String, unique: true, sparse: true, trim: true },
+    password: { type: String, select: false },
     role: { type: String, enum: Object.values(Role), default: Role.CUSTOMER },
     avatar: { type: String, default: null },
     addresses: { type: [AddressSchema], default: [] },
@@ -46,7 +48,7 @@ const UserSchema = new Schema<IUserDocument>(
 );
 
 UserSchema.pre('save', async function preSave(next) {
-  if (!this.isModified('password')) {
+  if (!this.isModified('password') || !this.password) {
     next();
     return;
   }
@@ -55,6 +57,9 @@ UserSchema.pre('save', async function preSave(next) {
 });
 
 UserSchema.methods.comparePassword = function comparePassword(candidate: string): Promise<boolean> {
+  // Users created via email-OTP may have no password set — email/password
+  // login should just fail closed for them rather than throw.
+  if (!this.password) return Promise.resolve(false);
   return bcrypt.compare(candidate, this.password);
 };
 

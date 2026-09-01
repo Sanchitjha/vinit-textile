@@ -21,7 +21,7 @@ const categoryLinks = [
 export default function Header() {
   const [menuOpen, setMenuOpen] = useState(false)
   const { count } = useCart()
-  const { user } = useAuth()
+  const { user, openAuthModal } = useAuth()
 
   const initials = user?.name 
     ? user.name.split(' ').map((n) => n[0]).join('').substring(0, 2).toUpperCase()
@@ -74,9 +74,14 @@ export default function Header() {
               </div>
             </Link>
           ) : (
-            <Link to="/login" aria-label="Account" className="hover:text-maroon">
+            <button
+              type="button"
+              aria-label="Account"
+              onClick={() => openAuthModal('login')}
+              className="hover:text-maroon"
+            >
               <UserIcon />
-            </Link>
+            </button>
           )}
 
           <Link to="/account" aria-label="Wishlist" className="hidden hover:text-maroon sm:block">

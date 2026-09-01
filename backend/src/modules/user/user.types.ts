@@ -17,8 +17,9 @@ export interface IAddress {
 export interface IUser {
   name: string;
   email: string;
-  phone: string;
-  password: string;
+  // Optional — users created via email-OTP verification may never set these.
+  phone?: string;
+  password?: string;
   role: Role;
   avatar: string | null;
   addresses: IAddress[];

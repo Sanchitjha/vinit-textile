@@ -27,6 +27,9 @@ const envSchema = z.object({
   AWS_ACCESS_KEY_ID: z.string().optional().default(''),
   AWS_SECRET_ACCESS_KEY: z.string().optional().default(''),
   AWS_S3_BUCKET_NAME: z.string().optional().default(''),
+
+  RESEND_API_KEY: z.string().optional().default(''),
+  RESEND_FROM_EMAIL: z.string().optional().default('Vinit Textiles <onboarding@resend.dev>'),
 });
 
 function loadEnv() {
@@ -78,5 +81,13 @@ export const env = {
     secretAccessKey: parsedEnv.AWS_SECRET_ACCESS_KEY,
     s3BucketName: parsedEnv.AWS_S3_BUCKET_NAME,
     isConfigured: Boolean(parsedEnv.AWS_REGION && parsedEnv.AWS_ACCESS_KEY_ID && parsedEnv.AWS_SECRET_ACCESS_KEY && parsedEnv.AWS_S3_BUCKET_NAME),
+  },
+
+  resend: {
+    apiKey: parsedEnv.RESEND_API_KEY,
+    fromEmail: parsedEnv.RESEND_FROM_EMAIL,
+    // Without a key we fall back to logging the OTP server-side (see mailer.service.ts)
+    // so email-OTP login still works end-to-end in development.
+    isConfigured: Boolean(parsedEnv.RESEND_API_KEY),
   },
 } as const;

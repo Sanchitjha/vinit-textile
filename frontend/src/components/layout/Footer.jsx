@@ -1,14 +1,55 @@
 import { Link } from 'react-router-dom'
 import { FacebookIcon, InstagramIcon, MailIcon, PinterestIcon } from '../icons/Icons'
 
-const helpLinks = ['Privacy Policy', 'Shipping Info', 'Returns & Exchanges', 'Terms & Conditions']
-const companyLinks = ['About Us', 'Careers', 'Contact Us', 'Store Locator']
+const customerServiceLinks = [
+  'Size Chart',
+  'Shipping & Delivery',
+  'Track Your Order',
+  'Customer Reviews',
+  'Returns',
+  'Contact Us',
+  "FAQ's",
+]
+
+const aboutLinks = [
+  'About Us',
+  'Our Store',
+  'Contact Us',
+  'Wholesale Enquiry',
+  'Returns Policy',
+  'Privacy Policy',
+  'Terms & Conditions',
+]
+
+const popularSearches = [
+  'Bridal Sarees',
+  'Silk Sarees',
+  'Banarasi Sarees',
+  'Organza Sarees',
+  'Wedding Sarees',
+  'Party Wear Sarees',
+  'Zari Work Sarees',
+  'Wine Colour Sarees',
+  'Handloom Sarees',
+  'Saree Blouse Designs',
+]
+
+const trendingArticles = [
+  'How To Drape A Saree?',
+  'Blouse Designs',
+  'Saree Fabric Guide',
+  'Types Of Sarees',
+  'How To Style A Saree',
+  'Banarasi Saree Guide',
+]
+
+const paymentMethods = ['Visa', 'Mastercard', 'RuPay', 'UPI', 'Net Banking', 'COD']
 
 export default function Footer() {
   return (
     <footer className="bg-maroon text-ivory">
-      <div className="container-ambika grid gap-10 py-16 sm:grid-cols-2 lg:grid-cols-4">
-        <div>
+      <div className="container-ambika grid gap-10 py-16 sm:grid-cols-2 lg:grid-cols-5">
+        <div className="lg:col-span-2">
           <Link to="/" className="font-display text-xl tracking-[0.15em] text-ivory">
             VINIT TEXTILES
           </Link>
@@ -33,47 +74,76 @@ export default function Footer() {
               </a>
             ))}
           </div>
-        </div>
 
-        <div>
-          <h4 className="font-display text-lg text-ivory">Help</h4>
-          <ul className="mt-4 space-y-3 text-[13px] text-ivory/60">
-            {helpLinks.map((link) => (
-              <li key={link}>
-                <a href="#" className="transition-colors hover:text-gold">
-                  {link}
-                </a>
-              </li>
-            ))}
-          </ul>
-        </div>
-
-        <div>
-          <h4 className="font-display text-lg text-ivory">Company</h4>
-          <ul className="mt-4 space-y-3 text-[13px] text-ivory/60">
-            {companyLinks.map((link) => (
-              <li key={link}>
-                <a href="#" className="transition-colors hover:text-gold">
-                  {link}
-                </a>
-              </li>
-            ))}
-          </ul>
-        </div>
-
-        <div>
-          <h4 className="font-display text-lg text-ivory">Contact</h4>
-          <ul className="mt-4 space-y-3 text-[13px] text-ivory/60">
-            <li>
+          <div className="mt-6 space-y-2 text-[13px] text-ivory/60">
+            <p>
               8001-8004, The Rajhans Fabrizo Market, BRTS Road,
               <br />
               Near Polaris Textile City, Magob, Surat, Gujarat 395012
-            </li>
-            <li>WhatsApp: +91 97126 39342</li>
-            <li className="flex items-center gap-2">
+            </p>
+            <p>WhatsApp: +91 97126 39342</p>
+            <p className="flex items-center gap-2">
               <MailIcon width={14} height={14} /> vinittextiles21@gmail.com
-            </li>
+            </p>
+          </div>
+        </div>
+
+        <div>
+          <h4 className="font-display text-lg text-ivory">Customer Service</h4>
+          <ul className="mt-4 space-y-3 text-[13px] text-ivory/60">
+            {customerServiceLinks.map((link) => (
+              <li key={link}>
+                <a href="#" className="transition-colors hover:text-gold">
+                  {link}
+                </a>
+              </li>
+            ))}
           </ul>
+        </div>
+
+        <div>
+          <h4 className="font-display text-lg text-ivory">About Vinit Textiles</h4>
+          <ul className="mt-4 space-y-3 text-[13px] text-ivory/60">
+            {aboutLinks.map((link) => (
+              <li key={link}>
+                <a href="#" className="transition-colors hover:text-gold">
+                  {link}
+                </a>
+              </li>
+            ))}
+          </ul>
+        </div>
+      </div>
+
+      <div className="border-t border-ivory/10">
+        <div className="container-ambika space-y-4 py-8 text-[13px] text-ivory/60">
+          <p>
+            <span className="font-display mr-2 text-ivory">Popular Searches:</span>
+            {popularSearches.map((term, index) => (
+              <span key={term}>
+                <a href="#" className="transition-colors hover:text-gold">
+                  {term}
+                </a>
+                {index < popularSearches.length - 1 && <span className="mx-2 text-ivory/30">|</span>}
+              </span>
+            ))}
+          </p>
+        </div>
+      </div>
+
+      <div className="border-t border-ivory/10">
+        <div className="container-ambika space-y-4 py-8 text-[13px] text-ivory/60">
+          <p>
+            <span className="font-display mr-2 text-ivory">Explore Trending Articles:</span>
+            {trendingArticles.map((term, index) => (
+              <span key={term}>
+                <a href="#" className="transition-colors hover:text-gold">
+                  {term}
+                </a>
+                {index < trendingArticles.length - 1 && <span className="mx-2 text-ivory/30">|</span>}
+              </span>
+            ))}
+          </p>
         </div>
       </div>
 
@@ -83,8 +153,8 @@ export default function Footer() {
             © {new Date().getFullYear()} Vinit Textiles. All rights reserved. · GSTIN:
             24FDFPP3368P1ZU
           </p>
-          <div className="flex items-center gap-4">
-            {['Visa', 'Mastercard', 'UPI'].map((method) => (
+          <div className="flex flex-wrap items-center justify-center gap-3">
+            {paymentMethods.map((method) => (
               <span
                 key={method}
                 className="rounded-none border border-ivory/20 px-3 py-1.5 text-[10px] uppercase tracking-widest"

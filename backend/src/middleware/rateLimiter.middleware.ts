@@ -23,3 +23,17 @@ export const authLimiter = rateLimit({
     error: { code: 'RATE_LIMITED' },
   },
 });
+
+// Tighter than authLimiter — each request sends a real email (cost + abuse
+// surface), so OTP requests get their own stricter window.
+export const otpLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  limit: 5,
+  standardHeaders: true,
+  legacyHeaders: false,
+  message: {
+    success: false,
+    message: 'Too many code requests, please try again later',
+    error: { code: 'RATE_LIMITED' },
+  },
+});

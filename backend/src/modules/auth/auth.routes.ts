@@ -1,10 +1,10 @@
 import { Router } from 'express';
 import { authenticate } from '../../middleware/auth.middleware';
-import { authLimiter } from '../../middleware/rateLimiter.middleware';
+import { authLimiter, otpLimiter } from '../../middleware/rateLimiter.middleware';
 import { validate } from '../../middleware/validate.middleware';
 import { asyncHandler } from '../../shared/utils/asyncHandler.util';
 import { AuthController } from './auth.controller';
-import { LoginDto, RegisterDto } from './auth.dto';
+import { LoginDto, RegisterDto, SendOtpDto, VerifyOtpDto } from './auth.dto';
 
 const router = Router();
 const controller = new AuthController();
@@ -143,5 +143,77 @@ router.get('/me', authenticate, asyncHandler(controller.me));
  *               $ref: '#/components/schemas/ApiSuccess'
  */
 router.post('/logout', authenticate, asyncHandler(controller.logout));
+
+/**
+ * @swagger
+ * /auth/otp/send:
+ *   post:
+ *     tags: [Auth]
+ *     summary: Email a one-time verification code (via Resend) to log in or sign up
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required: [email]
+ *             properties:
+ *               email:
+ *                 type: string
+ *                 format: email
+ *     responses:
+ *       200:
+ *         description: Code sent (always returns success even for unknown emails, to avoid leaking account existence)
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/ApiSuccess'
+ */
+router.post('/otp/send', otpLimiter, validate(SendOtpDto), asyncHandler(controller.sendOtp));
+
+/**
+ * @swagger
+ * /auth/otp/verify:
+ *   post:
+ *     tags: [Auth]
+ *     summary: Verify an emailed code — logs in, or creates the account on first use
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required: [email, code]
+ *             properties:
+ *               email:
+ *                 type: string
+ *                 format: email
+ *               code:
+ *                 type: string
+ *                 minLength: 6
+ *                 maxLength: 6
+ *               name:
+ *                 type: string
+ *                 description: Used only when this email has no existing account
+ *     responses:
+ *       200:
+ *         description: Logged in successfully — sets a refreshToken httpOnly cookie
+ *         content:
+ *           application/json:
+ *             schema:
+ *               allOf:
+ *                 - $ref: '#/components/schemas/ApiSuccess'
+ *                 - type: object
+ *                   properties:
+ *                     data:
+ *                       $ref: '#/components/schemas/AuthResult'
+ *       401:
+ *         description: Code missing, expired, already used, or incorrect
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/ApiError'
+ */
+router.post('/otp/verify', otpLimiter, validate(VerifyOtpDto), asyncHandler(controller.verifyOtp));
 
 export { router as authRouter };

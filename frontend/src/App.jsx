@@ -2,6 +2,7 @@ import { Route, Routes, useLocation } from 'react-router-dom'
 import { useEffect } from 'react'
 import Header from './components/layout/Header'
 import Footer from './components/layout/Footer'
+import AuthModal from './components/layout/AuthModal'
 import { CartProvider } from './context/CartContext'
 import Home from './pages/Home'
 import Login from './pages/Login'
@@ -67,6 +68,7 @@ export default function App() {
         </main>
         {!isAdminRoute && <Footer />}
       </div>
+      {!isAdminRoute && <AuthModal />}
     </CartProvider>
   )
 }

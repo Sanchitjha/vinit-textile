@@ -5,6 +5,7 @@ import ProductCard from '../components/ui/ProductCard'
 import Button from '../components/ui/Button'
 import { HeartIcon, MinusIcon, PlusIcon, StarIcon } from '../components/icons/Icons'
 import { useCart } from '../context/CartContext'
+import { useAuth } from '../context/AuthContext'
 import { apiClient } from '../api/client'
 import { toneFor } from '../data/products'
 
@@ -14,6 +15,7 @@ export default function ProductDetail() {
   const { id } = useParams() // id could be slug or actual id
   const navigate = useNavigate()
   const { addToCart } = useCart()
+  const { user, openAuthModal } = useAuth()
   const [product, setProduct] = useState(null)
   const [loading, setLoading] = useState(true)
   const [related, setRelated] = useState([])
@@ -176,6 +178,20 @@ export default function ProductDetail() {
 
           <div className="mt-10 flex flex-col gap-4 sm:flex-row">
             <Button
+              variant="dark"
+              className="sm:flex-1"
+              onClick={() => {
+                addToCart(product, size, qty)
+                if (user) {
+                  navigate('/cart')
+                } else {
+                  openAuthModal('login')
+                }
+              }}
+            >
+              BUY NOW
+            </Button>
+            <Button
               variant="primary"
               className="sm:flex-1"
               onClick={() => {
@@ -185,9 +201,15 @@ export default function ProductDetail() {
             >
               ADD TO CART
             </Button>
-            <Button variant="outline" className="sm:flex-1">
-              <HeartIcon width={16} height={16} /> WISHLIST
-            </Button>
+          </div>
+
+          <Button variant="outline" className="mt-4 w-full">
+            <HeartIcon width={16} height={16} /> WISHLIST
+          </Button>
+
+          <div className="mt-4 space-y-1 text-[11px] uppercase tracking-widest text-brown-light">
+            <p>Cash on delivery available</p>
+            <p>Free shipping on orders above ₹1,999</p>
           </div>
 
           {added && (

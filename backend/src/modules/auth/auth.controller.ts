@@ -4,7 +4,7 @@ import { ApiResponse } from '../../shared/responses/ApiResponse';
 import { UnauthorizedError } from '../../shared/errors';
 import { UserRepository } from '../user/user.repository';
 import { AuthService } from './auth.service';
-import { LoginDtoType, RegisterDtoType } from './auth.dto';
+import { LoginDtoType, RegisterDtoType, SendOtpDtoType, VerifyOtpDtoType } from './auth.dto';
 
 const REFRESH_COOKIE_NAME = 'refreshToken';
 const REFRESH_COOKIE_MAX_AGE_MS = 7 * 24 * 60 * 60 * 1000;
@@ -58,5 +58,18 @@ export class AuthController {
     }
     res.clearCookie(REFRESH_COOKIE_NAME, { ...refreshCookieOptions, maxAge: undefined });
     ApiResponse.success(res, 'Logged out successfully');
+  };
+
+  sendOtp = async (req: Request, res: Response): Promise<void> => {
+    const { email } = req.body as SendOtpDtoType;
+    await this.authService.sendOtp(email);
+    ApiResponse.success(res, 'Verification code sent');
+  };
+
+  verifyOtp = async (req: Request, res: Response): Promise<void> => {
+    const dto = req.body as VerifyOtpDtoType;
+    const { user, tokens } = await this.authService.verifyOtp(dto);
+    res.cookie(REFRESH_COOKIE_NAME, tokens.refreshToken, refreshCookieOptions);
+    ApiResponse.success(res, 'Logged in successfully', { user, accessToken: tokens.accessToken });
   };
 }
