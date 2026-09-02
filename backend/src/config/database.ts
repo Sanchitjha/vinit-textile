@@ -27,7 +27,9 @@ class Database {
       logger.warn('MongoDB disconnected');
     });
 
-    await mongoose.connect(env.mongoUri);
+    // Fail fast on an unreachable/misconfigured host rather than hanging —
+    // matters most in serverless, where a stuck connection burns function time.
+    await mongoose.connect(env.mongoUri, { serverSelectionTimeoutMS: 8000 });
   }
 
   async disconnect(): Promise<void> {
