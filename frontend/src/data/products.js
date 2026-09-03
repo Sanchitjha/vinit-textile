@@ -5,6 +5,19 @@ export const categories = [
   { slug: 'lehenga', name: 'Lehenga', tone: 'teal' },
 ]
 
+// Sub-facets shown in the "Sarees — Timeless Elegance, Just For You" strip
+// right under the hero. All route to the saree listing for now since there's
+// no occasion-tag filtering on the backend yet — swap `to` for a filtered
+// URL (e.g. /shop/saree?occasion=bridal) once that exists.
+export const sareeOccasions = [
+  { slug: 'bestsellers', name: 'Bestsellers / New Arrivals', to: '/shop/saree', tone: 'vermillion' },
+  { slug: 'partywear', name: 'Partywear Collection', to: '/shop/saree', tone: 'maroon' },
+  { slug: 'wedding', name: 'Wedding Edit', to: '/shop/saree', tone: 'gold' },
+  { slug: 'office', name: 'Everyday Elegance / Office Wear', to: '/shop/saree', tone: 'mauve' },
+  { slug: 'pooja', name: 'Pooja & Traditional', to: '/shop/saree', tone: 'brown' },
+  { slug: 'bridal', name: 'Bridal Edit', to: '/shop/saree', tone: 'teal' },
+]
+
 export const occasions = [
   { slug: 'wedding', name: 'Wedding Edit', to: '/shop/saree', tone: 'maroon' },
   { slug: 'diwali', name: 'Diwali Collection', to: '/shop/lehenga', tone: 'gold' },
