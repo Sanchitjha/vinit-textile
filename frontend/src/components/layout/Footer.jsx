@@ -50,8 +50,8 @@ export default function Footer() {
     <footer className="bg-maroon text-ivory">
       <div className="container-ambika grid gap-10 py-16 sm:grid-cols-2 lg:grid-cols-5">
         <div className="lg:col-span-2">
-          <Link to="/" className="font-display text-xl tracking-[0.15em] text-ivory">
-            VINIT TEXTILES
+          <Link to="/" className="inline-block">
+            <img src="/images/logo.webp" alt="Vinit Textiles" className="h-20 w-auto" />
           </Link>
           <p className="mt-4 max-w-xs text-sm leading-relaxed text-ivory/60">
             Sarees that celebrate Indian Naree — premium quality, soft &amp; comfortable, crafted

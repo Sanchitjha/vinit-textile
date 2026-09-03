@@ -57,9 +57,9 @@ export default function Header() {
 
         <Link
           to="/"
-          className="font-display absolute left-1/2 -translate-x-1/2 text-xl tracking-[0.15em] text-brown sm:text-2xl lg:static lg:translate-x-0"
+          className="absolute left-1/2 -translate-x-1/2 lg:static lg:translate-x-0"
         >
-          VINIT TEXTILES
+          <img src="/images/logo.webp" alt="Vinit Textiles" className="h-16 w-auto sm:h-20" />
         </Link>
 
         <div className="flex items-center gap-4 text-brown">
