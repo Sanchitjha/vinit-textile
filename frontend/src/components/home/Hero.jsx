@@ -5,22 +5,36 @@ import { ChevronLeftIcon, ChevronRightIcon } from '../icons/Icons'
 
 const slides = [
   {
-    eyebrow: 'Celebrate',
-    title: 'Every Occasion With Ethnic Grace',
-    label: 'Teal Banarasi silk saree with gold zari weave',
-    tone: 'teal',
+    eyebrow: 'New Arrivals',
+    title: 'Pre Festive Drop',
+    subtitle: 'Fresh Festive Arrivals',
+    to: '/shop/saree',
+    label: 'Three women in purple saree, mint sharara and red lehenga at a festive courtyard',
+    tone: 'maroon',
   },
   {
-    eyebrow: 'New Season',
-    title: 'Handwoven Sarees, Reimagined',
-    label: 'New season handloom saree collection',
+    eyebrow: 'Bestsellers',
+    title: 'Festive Season Popular Picks',
+    subtitle: 'Flat 30% – 50% Off · Pure Silk Sarees · Lehengas',
+    to: '/shop/saree',
+    label: 'Two women in yellow kurta and teal silk saree at a festive setting',
     tone: 'gold',
   },
   {
-    eyebrow: 'Bridal Edit',
-    title: 'Timeless Looks For Your Big Day',
-    label: 'Maroon organza saree with gota embroidery',
-    tone: 'maroon',
+    eyebrow: 'The Festive Fashion Sale',
+    title: 'Flat 30% – 50% Off',
+    subtitle: 'Pure Silk Sarees · Lehengas',
+    to: '/shop/saree',
+    label: 'Two women in cream floral and maroon sarees in a mirrored hall',
+    tone: 'brown',
+  },
+  {
+    eyebrow: 'The Festive Fashion Sale',
+    title: 'Flat 30% – 50% Off',
+    subtitle: 'Sarees · Lehengas · Pure Silk Sarees',
+    to: '/shop/saree',
+    label: 'Three women getting ready in mustard, silver and cream sarees',
+    tone: 'teal',
   },
 ]
 
@@ -47,8 +61,13 @@ export default function Hero() {
             <h1 className="font-display mt-4 text-4xl leading-tight text-maroon sm:text-6xl">
               {slide.title}
             </h1>
+            {slide.subtitle && (
+              <p className="mt-3 text-sm font-medium tracking-wide text-brown sm:text-base">
+                {slide.subtitle}
+              </p>
+            )}
             <div className="mt-8">
-              <Button to="/shop/saree" variant="gold">
+              <Button to={slide.to || '/shop/saree'} variant="gold">
                 Shop Now
               </Button>
             </div>
@@ -75,7 +94,7 @@ export default function Hero() {
         <div className="absolute bottom-5 left-1/2 flex -translate-x-1/2 gap-2">
           {slides.map((item, index) => (
             <button
-              key={item.title}
+              key={`${item.title}-${index}`}
               type="button"
               aria-label={`Go to slide ${index + 1}`}
               onClick={() => setActive(index)}
