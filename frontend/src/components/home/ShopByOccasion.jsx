@@ -20,11 +20,19 @@ export default function ShopByOccasion() {
           {occasions.map((occasion) => (
             <Link key={occasion.slug} to={occasion.to} className="group text-center">
               <ArchFrame>
-                <Placeholder
-                  tone={occasion.tone}
-                  ratio="aspect-[3/4]"
-                  className="transition-transform duration-300 group-hover:scale-105"
-                />
+                {occasion.image ? (
+                  <img
+                    src={occasion.image}
+                    alt={occasion.name}
+                    className="aspect-[3/4] w-full object-cover transition-transform duration-300 group-hover:scale-105"
+                  />
+                ) : (
+                  <Placeholder
+                    tone={occasion.tone}
+                    ratio="aspect-[3/4]"
+                    className="transition-transform duration-300 group-hover:scale-105"
+                  />
+                )}
               </ArchFrame>
               <p className="mt-3 font-display text-base text-ivory">{occasion.name}</p>
             </Link>

@@ -19,10 +19,10 @@ export const sareeOccasions = [
 ]
 
 export const occasions = [
-  { slug: 'wedding', name: 'Wedding Edit', to: '/shop/saree', tone: 'maroon' },
-  { slug: 'diwali', name: 'Diwali Collection', to: '/shop/lehenga', tone: 'gold' },
-  { slug: 'bridal', name: 'Bridal Trousseau', to: '/shop/lehenga', tone: 'teal' },
-  { slug: 'festive', name: 'Festive Everyday', to: '/shop/kurti', tone: 'mauve' },
+  { slug: 'wedding', name: 'Wedding Edit', to: '/shop/saree', image: '/images/occasion-wedding.webp' },
+  { slug: 'diwali', name: 'Diwali Collection', to: '/shop/lehenga', image: '/images/occasion-diwali.webp' },
+  { slug: 'bridal', name: 'Bridal Trousseau', to: '/shop/lehenga', image: '/images/occasion-bridal.webp' },
+  { slug: 'festive', name: 'Festive Everyday', to: '/shop/kurti', image: '/images/occasion-festive-everyday.webp' },
 ]
 
 const FALLBACK_TONES = ['brown', 'mauve', 'gold', 'teal', 'cream', 'ivory']
