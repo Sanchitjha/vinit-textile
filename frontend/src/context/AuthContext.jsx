@@ -16,7 +16,7 @@ export function AuthProvider({ children }) {
       const token = localStorage.getItem('accessToken');
       if (token) {
         try {
-          const res = await apiClient.get('/users/me');
+          const res = await apiClient.get('/auth/me');
           setUser(res.data);
         } catch (error) {
           console.error('Failed to load user', error);
