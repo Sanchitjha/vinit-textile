@@ -59,7 +59,7 @@ function AdminLayout() {
             <div className="bg-black text-white dark:bg-white dark:text-black p-1.5 rounded-lg">
               <Hexagon size={24} className="fill-current" />
             </div>
-            <span className="text-xl font-bold tracking-tight">Ambika</span>
+            <span className="text-base font-bold tracking-tight whitespace-nowrap">Vinit Textiles</span>
           </div>
           <button onClick={toggleDarkMode} className="text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors">
             {isDarkMode ? <Sun size={18} /> : <Moon size={18} />}
