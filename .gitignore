@@ -1,0 +1,7 @@
+# Root-level ignores. frontend/ and backend/ each have their own .gitignore too.
+
+# Product photos are large binaries that land here as a staging area — they
+# get uploaded to S3 via the admin panel, not committed to the repo (same
+# reasoning as not committing node_modules).
+product-images/*
+!product-images/README.md
