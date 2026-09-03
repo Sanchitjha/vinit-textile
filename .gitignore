@@ -5,3 +5,7 @@
 # reasoning as not committing node_modules).
 product-images/*
 !product-images/README.md
+
+# Hero/marketing banner images (not per-SKU product shots) — same reasoning.
+banners/*
+!banners/README.md
