@@ -10,12 +10,22 @@ export default function SplitFeature({
   tone = 'cream',
   label,
   reverse = false,
+  image,
+  imageAlt,
 }) {
   return (
     <section className="container-ambika py-20">
       <div className={`flex flex-col items-center gap-16 lg:flex-row ${reverse ? 'lg:flex-row-reverse' : ''}`}>
         <div className="w-full lg:w-1/2 overflow-hidden bg-cream">
-          <Placeholder label={label} tone={tone} ratio="aspect-[4/5] sm:aspect-[4/5] w-full" className="transition-transform duration-1000 hover:scale-105" />
+          {image ? (
+            <img
+              src={image}
+              alt={imageAlt || title}
+              className="aspect-[4/5] w-full object-cover transition-transform duration-1000 hover:scale-105"
+            />
+          ) : (
+            <Placeholder label={label} tone={tone} ratio="aspect-[4/5] sm:aspect-[4/5] w-full" className="transition-transform duration-1000 hover:scale-105" />
+          )}
         </div>
         <div className="w-full lg:w-1/2 lg:px-8">
           {eyebrow && (

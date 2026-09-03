@@ -33,13 +33,10 @@ export default function Home() {
       <ShopByOccasion />
 
       <Banner
-        eyebrow="Limited Time"
         title="New Arrivals up to 50% Off"
-        cta="Buy Now"
         to="/shop/saree"
-        tone="vermillion"
-        label="New arrivals — festive couple in red & orange"
-        align="left"
+        image="/images/banner-new-arrivals.webp"
+        imageAlt="New Arrivals up to 50% off — festive maroon saree"
       />
 
       <ProductGrid
@@ -62,8 +59,8 @@ export default function Home() {
         description="Browse and shop your favourite drape within a minute — pre-stitched, pre-pleated and ready to slip into for any occasion."
         cta="Buy Now"
         to="/shop/saree"
-        tone="brown"
-        label="Ready-to-wear saree product shots"
+        image="/images/split-ready-to-wear.webp"
+        imageAlt="Ready-to-wear red saree with gold embroidery"
       />
 
       <SplitFeature
@@ -72,20 +69,16 @@ export default function Home() {
         description="Just because a piece is made for special occasions doesn't mean it can't be comfortable. Discover fabrics that feel as good as they look, hand-picked for every season."
         cta="Show More"
         to="/shop/kurti"
-        tone="mauve"
-        label="Woman in soft lavender ethnic wear"
+        image="/images/split-fabric-feel.webp"
+        imageAlt="Ivory saree in soft, comfortable fabric"
         reverse
       />
 
       <Banner
-        eyebrow="Bridal Edit"
         title="Bridal Beauty"
-        subtitle="Discover more with full self confidence."
-        cta="Explore Now"
         to="/shop/lehenga"
-        tone="brown"
-        label="Bridal couple in festive attire"
-        variant="dark"
+        image="/images/banner-bridal-beauty.webp"
+        imageAlt="Bridal Beauty — discover more with full self confidence"
       />
 
       <LookbookStrip />
