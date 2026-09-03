@@ -1,41 +1,16 @@
 import { useState } from 'react'
-import Button from '../ui/Button'
-import Placeholder from '../ui/Placeholder'
+import { Link } from 'react-router-dom'
 import { ChevronLeftIcon, ChevronRightIcon } from '../icons/Icons'
 
+// Each slide is a complete, pre-designed banner (title, discount, CTA all
+// baked into the image itself) — so we just show the image full-bleed and
+// make the whole thing a link, rather than layering our own text on top of
+// text that's already there.
 const slides = [
-  {
-    eyebrow: 'New Arrivals',
-    title: 'Pre Festive Drop',
-    subtitle: 'Fresh Festive Arrivals',
-    to: '/shop/saree',
-    label: 'Three women in purple saree, mint sharara and red lehenga at a festive courtyard',
-    tone: 'maroon',
-  },
-  {
-    eyebrow: 'Bestsellers',
-    title: 'Festive Season Popular Picks',
-    subtitle: 'Flat 30% – 50% Off · Pure Silk Sarees · Lehengas',
-    to: '/shop/saree',
-    label: 'Two women in yellow kurta and teal silk saree at a festive setting',
-    tone: 'gold',
-  },
-  {
-    eyebrow: 'The Festive Fashion Sale',
-    title: 'Flat 30% – 50% Off',
-    subtitle: 'Pure Silk Sarees · Lehengas',
-    to: '/shop/saree',
-    label: 'Two women in cream floral and maroon sarees in a mirrored hall',
-    tone: 'brown',
-  },
-  {
-    eyebrow: 'The Festive Fashion Sale',
-    title: 'Flat 30% – 50% Off',
-    subtitle: 'Sarees · Lehengas · Pure Silk Sarees',
-    to: '/shop/saree',
-    label: 'Three women getting ready in mustard, silver and cream sarees',
-    tone: 'teal',
-  },
+  { image: '/images/hero-1.webp', alt: 'The Festive Fashion Sale — flat 30-50% off sarees, lehengas and pure silk sarees', to: '/shop/saree' },
+  { image: '/images/hero-2.webp', alt: 'The Festive Fashion Sale — flat 30-50% off pure silk sarees and lehengas', to: '/shop/saree' },
+  { image: '/images/hero-3.webp', alt: 'Bestsellers — festive season popular picks, flat 30-50% off', to: '/shop/saree' },
+  { image: '/images/hero-4.webp', alt: 'Pre Festive Drop — fresh festive arrivals', to: '/shop/saree' },
 ]
 
 export default function Hero() {
@@ -49,30 +24,13 @@ export default function Hero() {
   return (
     <section className="container-ambika pt-4 pb-12">
       <div className="relative overflow-hidden bg-cream">
-        <Placeholder label={slide.label} tone={slide.tone} ratio="aspect-[16/9] sm:aspect-[21/9]" />
-
-        <div className="absolute inset-0 bg-gradient-to-r from-ivory/90 via-ivory/50 to-transparent sm:from-ivory/80 sm:via-ivory/20" />
-
-        <div className="absolute inset-0 flex items-center">
-          <div className="max-w-lg px-6 sm:px-16">
-            <p className="text-[11px] font-semibold uppercase tracking-[0.3em] text-vermillion">
-              {slide.eyebrow}
-            </p>
-            <h1 className="font-display mt-4 text-4xl leading-tight text-maroon sm:text-6xl">
-              {slide.title}
-            </h1>
-            {slide.subtitle && (
-              <p className="mt-3 text-sm font-medium tracking-wide text-brown sm:text-base">
-                {slide.subtitle}
-              </p>
-            )}
-            <div className="mt-8">
-              <Button to={slide.to || '/shop/saree'} variant="gold">
-                Shop Now
-              </Button>
-            </div>
-          </div>
-        </div>
+        <Link to={slide.to} className="block">
+          <img
+            src={slide.image}
+            alt={slide.alt}
+            className="aspect-[16/9] w-full object-cover sm:aspect-[21/9]"
+          />
+        </Link>
 
         <button
           type="button"
@@ -94,12 +52,12 @@ export default function Hero() {
         <div className="absolute bottom-5 left-1/2 flex -translate-x-1/2 gap-2">
           {slides.map((item, index) => (
             <button
-              key={`${item.title}-${index}`}
+              key={item.image}
               type="button"
               aria-label={`Go to slide ${index + 1}`}
               onClick={() => setActive(index)}
               className={`h-1.5 rounded-full transition-all ${
-                index === active ? 'w-6 bg-brown' : 'w-1.5 bg-brown/40'
+                index === active ? 'w-6 bg-ivory' : 'w-1.5 bg-ivory/50'
               }`}
             />
           ))}
