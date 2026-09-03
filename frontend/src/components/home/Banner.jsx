@@ -1,3 +1,4 @@
+import { Link } from 'react-router-dom'
 import Button from '../ui/Button'
 import Placeholder from '../ui/Placeholder'
 
@@ -12,7 +13,23 @@ export default function Banner({
   label,
   variant = 'light',
   align = 'center',
+  // When set, the real (pre-designed, text-already-baked-in) banner image is
+  // shown full-bleed instead of the placeholder + HTML text/CTA overlay —
+  // the two are mutually exclusive so text never doubles up on top of image text.
+  image,
+  imageAlt,
 }) {
+  if (image) {
+    return (
+      <section className="container-ambika py-16">
+        <Link to={to} className="block overflow-hidden bg-cream">
+          <img src={image} alt={imageAlt || title} className="w-full object-cover" />
+        </Link>
+      </section>
+    )
+  }
+
+
   const isDark = variant === 'dark'
   const textColor = isDark ? 'text-ivory' : 'text-maroon'
   const alignClass =

@@ -51,13 +51,9 @@ export default function Home() {
 
       <Banner
         title="Timeless Elegance"
-        accent="Just For You"
-        subtitle="Explore Our Exclusive Saree Collection"
-        cta="Explore Now"
         to="/shop/saree"
-        tone="gold"
-        label="Women in festive sarees against a palace backdrop"
-        align="right"
+        image="/images/banner-timeless-elegance.webp"
+        imageAlt="Timeless Elegance, Just For You — explore our exclusive saree collection"
       />
 
       <SplitFeature
