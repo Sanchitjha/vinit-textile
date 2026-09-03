@@ -22,7 +22,7 @@ export default function Hero() {
   }
 
   return (
-    <section className="container-ambika pt-4 pb-12">
+    <section className="pb-12">
       <div className="relative overflow-hidden bg-cream">
         <Link to={slide.to} className="block">
           <img
