@@ -2,7 +2,7 @@ import { Link } from 'react-router-dom'
 
 export default function TopCategories() {
   return (
-    <section className="container-ambika py-6">
+    <section className="container-ambika py-2">
       <Link to="/shop/saree" className="block overflow-hidden">
         <img
           src="/images/banner-sarees-collection.webp"

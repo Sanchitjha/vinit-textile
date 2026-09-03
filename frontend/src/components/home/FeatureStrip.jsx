@@ -8,8 +8,8 @@ const features = [
 
 export default function FeatureStrip() {
   return (
-    <section className="container-ambika py-8">
-      <div className="grid gap-8 border-y border-cream-dark py-8 sm:grid-cols-3">
+    <section className="container-ambika py-4">
+      <div className="grid gap-8 border-y border-cream-dark py-6 sm:grid-cols-3">
         {features.map(({ icon: Icon, title, desc }) => (
           <div key={title} className="flex items-center justify-center gap-5">
             <Icon className="shrink-0 text-brown" />
