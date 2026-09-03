@@ -4,6 +4,7 @@ import Placeholder from '../ui/Placeholder'
 export default function Banner({
   eyebrow,
   title,
+  accent,
   subtitle,
   cta = 'Shop Now',
   to = '/shop/saree',
@@ -14,7 +15,12 @@ export default function Banner({
 }) {
   const isDark = variant === 'dark'
   const textColor = isDark ? 'text-ivory' : 'text-maroon'
-  const alignClass = align === 'left' ? 'items-start text-left' : 'items-center text-center'
+  const alignClass =
+    align === 'left'
+      ? 'items-start text-left'
+      : align === 'right'
+        ? 'items-end text-right'
+        : 'items-center text-center'
   // A scrim behind the text guarantees contrast regardless of which placeholder
   // tone is passed in — text can't safely assume the underlying gradient is light/dark.
   const scrimClass =
@@ -22,9 +28,13 @@ export default function Banner({
       ? isDark
         ? 'bg-gradient-to-r from-maroon/85 via-maroon/45 to-transparent'
         : 'bg-gradient-to-r from-ivory/90 via-ivory/55 to-transparent'
-      : isDark
-        ? 'bg-maroon/55'
-        : 'bg-ivory/75'
+      : align === 'right'
+        ? isDark
+          ? 'bg-gradient-to-l from-maroon/85 via-maroon/45 to-transparent'
+          : 'bg-gradient-to-l from-ivory/90 via-ivory/55 to-transparent'
+        : isDark
+          ? 'bg-maroon/55'
+          : 'bg-ivory/75'
 
   return (
     <section className="container-ambika py-16">
@@ -38,7 +48,14 @@ export default function Banner({
             </p>
           )}
           <h2 className={`font-display max-w-md text-3xl sm:text-5xl leading-tight ${textColor}`}>{title}</h2>
-          {subtitle && <p className={`max-w-sm text-sm ${textColor} opacity-80`}>{subtitle}</p>}
+          {accent && (
+            <p className="font-display max-w-md text-2xl italic text-gold sm:text-3xl">{accent}</p>
+          )}
+          {subtitle && (
+            <p className={`max-w-sm text-xs font-semibold uppercase tracking-[0.2em] ${textColor} opacity-80`}>
+              {subtitle}
+            </p>
+          )}
           <div className="mt-4">
             <Button to={to} variant={variant === 'dark' ? 'gold' : 'primary'}>
               {cta}
