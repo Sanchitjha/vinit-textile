@@ -51,7 +51,7 @@ export default function Header() {
   return (
     <header
       className={`z-40 w-full transition-colors duration-300 ${isHome ? 'fixed top-0 left-0' : 'sticky top-0'} ${
-        overlay ? 'bg-transparent' : 'bg-maroon'
+        overlay ? 'bg-transparent [text-shadow:_0_1px_4px_rgb(0_0_0_/_40%)]' : 'bg-maroon'
       }`}
     >
       {/* Row 1: search / logo / account icons */}
