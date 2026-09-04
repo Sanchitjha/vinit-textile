@@ -4,15 +4,19 @@ import { HeartIcon } from '../icons/Icons'
 import { toneFor } from '../../data/products'
 
 export default function ProductCard({ product }) {
-  const discount = Math.round(100 - (product.price / product.mrp) * 100)
+  // Local sample data uses `id`/`mrp`; the real API returns Mongo's `_id` and
+  // `compareAtPrice` — support both so cards work with either source.
+  const id = product.id || product._id
+  const mrp = product.mrp ?? product.compareAtPrice
+  const discount = mrp > product.price ? Math.round(100 - (product.price / mrp) * 100) : 0
 
   return (
-    <Link to={`/product/${product.id}`} className="group block">
+    <Link to={`/product/${id}`} className="group block">
       <div className="relative overflow-hidden bg-cream">
-        <Placeholder 
-          label={product.name} 
-          tone={toneFor(product.id)} 
-          className="transition-transform duration-700 ease-in-out group-hover:scale-105" 
+        <Placeholder
+          label={product.name}
+          tone={toneFor(id)}
+          className="transition-transform duration-700 ease-in-out group-hover:scale-105"
         />
         <button
           type="button"
@@ -35,7 +39,9 @@ export default function ProductCard({ product }) {
         </h3>
         <p className="text-sm pt-1">
           <span className="font-medium text-brown">₹{product.price.toLocaleString('en-IN')}</span>{' '}
-          <span className="text-stone line-through">₹{product.mrp.toLocaleString('en-IN')}</span>
+          {discount > 0 && (
+            <span className="text-stone line-through">₹{mrp.toLocaleString('en-IN')}</span>
+          )}
         </p>
       </div>
     </Link>
