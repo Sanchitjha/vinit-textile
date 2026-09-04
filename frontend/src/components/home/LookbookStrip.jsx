@@ -9,11 +9,11 @@ export default function LookbookStrip() {
     <section className="container-ambika py-16">
       <div className="grid grid-cols-1 gap-8 sm:grid-cols-3">
         {looks.map((look) => (
-          <div key={look.image} className="overflow-hidden bg-cream">
+          <div key={look.image} className="aspect-[3/4] w-full overflow-hidden bg-cream flex items-center justify-center">
             <img
               src={look.image}
               alt={look.alt}
-              className="aspect-[3/4] w-full object-cover transition-transform duration-1000 hover:scale-105"
+              className="h-full w-full object-contain transition-transform duration-1000 hover:scale-105"
             />
           </div>
         ))}
