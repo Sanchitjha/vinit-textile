@@ -2,8 +2,9 @@ import { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import { ChevronLeftIcon, ChevronRightIcon } from '../icons/Icons'
 
-// How long each slide stays before auto-advancing (ms).
-const AUTOPLAY_MS = 1000
+// How long each slide stays before auto-advancing (ms) — ~4s so shoppers can
+// read the offer/text on each banner before it moves on.
+const AUTOPLAY_MS = 4000
 
 // Each slide is a complete, pre-designed banner (title, discount, CTA all
 // baked into the image itself) — so we just show the image full-bleed and
