@@ -9,10 +9,12 @@ const AUTOPLAY_MS = 1000
 // baked into the image itself) — so we just show the image full-bleed and
 // make the whole thing a link, rather than layering our own text on top of
 // text that's already there.
+// hero-3 (the "Bestsellers" shot) is a near-square 3:2 image, much taller than
+// the others; it can't be shortened to match without cropping into the models'
+// faces, so it's left out of the rotation until a wide version is available.
 const slides = [
   { image: '/images/hero-1.webp', alt: 'The Festive Fashion Sale — flat 30-50% off sarees, lehengas and pure silk sarees', to: '/shop/saree' },
   { image: '/images/hero-2.webp', alt: 'The Festive Fashion Sale — flat 30-50% off pure silk sarees and lehengas', to: '/shop/saree' },
-  { image: '/images/hero-3.webp', alt: 'Bestsellers — festive season popular picks, flat 30-50% off', to: '/shop/saree' },
   { image: '/images/hero-4.webp', alt: 'Pre Festive Drop — fresh festive arrivals', to: '/shop/saree' },
 ]
 
@@ -47,14 +49,15 @@ export default function Hero() {
     <section id="home-hero" className="pb-12">
       <div className="relative overflow-hidden bg-cream">
         <Link to={slide.to} className="block">
-          {/* Each slide is a complete pre-designed banner (headline, discount and
-              SHOP NOW button all baked in). We show it full-bleed at its natural
-              aspect ratio — full screen width, whole image, nothing cropped —
-              so the SHOP NOW button always shows and there are no side gaps. */}
+          {/* Full-bleed (full screen width, no side gaps). Capped at 86vh so the
+              hero stays compact and the next section peeks below. When an image
+              is taller than the cap it's trimmed only from the TOP (object-bottom)
+              — that's the empty ceiling/headroom — so the models and the SHOP NOW
+              button (which sit lower) always stay in view. */}
           <img
             src={slide.image}
             alt={slide.alt}
-            className="block h-auto w-full"
+            className="block h-auto max-h-[90vh] w-full object-cover object-bottom"
           />
         </Link>
 
