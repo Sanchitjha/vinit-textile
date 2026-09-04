@@ -3,6 +3,7 @@ import { Link, NavLink, useLocation } from 'react-router-dom'
 import { BagIcon, CloseIcon, HeartIcon, SearchIcon, UserIcon } from '../icons/Icons'
 import { useCart } from '../../context/CartContext'
 import { useAuth } from '../../context/AuthContext'
+import SearchBar from './SearchBar'
 
 const menuLinks = [
   { label: 'Best Seller', to: '/shop/saree' },
@@ -17,6 +18,7 @@ const menuLinks = [
 
 export default function Header() {
   const [menuOpen, setMenuOpen] = useState(false)
+  const [searchOpen, setSearchOpen] = useState(false)
   const { count } = useCart()
   const { user, openAuthModal } = useAuth()
   const location = useLocation()
@@ -55,9 +57,19 @@ export default function Header() {
   }, [isHome])
 
   // Transparent while floating on the hero, but goes solid maroon the moment the
-  // MENU dropdown opens — so the dropdown reads as a proper dark panel with bold
-  // white links instead of faint text lost on a bright banner.
-  const transparent = overHero && !menuOpen
+  // MENU or search row opens — so the row reads as a proper dark panel with
+  // bold white text instead of faint text lost on a bright banner.
+  const transparent = overHero && !menuOpen && !searchOpen
+
+  // MENU and search are mutually exclusive — opening one closes the other.
+  const toggleMenu = () => {
+    setMenuOpen((open) => !open)
+    setSearchOpen(false)
+  }
+  const toggleSearch = () => {
+    setSearchOpen((open) => !open)
+    setMenuOpen(false)
+  }
 
   const initials = user?.name
     ? user.name.split(' ').map((n) => n[0]).join('').substring(0, 2).toUpperCase()
