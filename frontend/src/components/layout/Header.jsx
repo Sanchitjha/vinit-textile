@@ -54,9 +54,9 @@ export default function Header() {
     }
   }, [isHome])
 
-  // Stay transparent only while floating on the hero AND the menu is closed —
-  // once the dropdown opens we go solid so the row and the menu panel match.
-  const transparent = overHero && !menuOpen
+  // Transparent while floating on the hero — stays transparent even when the
+  // MENU dropdown is open, so the whole header keeps floating over the banner.
+  const transparent = overHero
 
   const initials = user?.name
     ? user.name.split(' ').map((n) => n[0]).join('').substring(0, 2).toUpperCase()
@@ -138,9 +138,11 @@ export default function Header() {
         </div>
       </div>
 
-      {/* Category menu dropdown — opens on MENU click, desktop and mobile alike */}
+      {/* Category menu dropdown — opens on MENU click, desktop and mobile alike.
+          Stays transparent over the hero (links float on the image); goes solid
+          maroon once scrolled past the hero or on other pages, for readability. */}
       {menuOpen && (
-        <div className="border-t border-gold/30 bg-maroon">
+        <div className={`border-t ${transparent ? 'border-ivory/25' : 'border-gold/30 bg-maroon'}`}>
           <div className="container-ambika flex flex-col items-center gap-4 py-6 text-[11px] font-medium uppercase tracking-[0.2em] text-ivory sm:flex-row sm:flex-wrap sm:justify-center sm:gap-x-8 sm:gap-y-4">
             {menuLinks.map((link) => (
               <NavLink

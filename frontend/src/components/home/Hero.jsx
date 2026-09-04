@@ -20,7 +20,9 @@ const slides = [
 
 export default function Hero() {
   const [active, setActive] = useState(0)
-  const slide = slides[active]
+  // Guard against `active` ever pointing past the array (e.g. if the slide count
+  // changes) so we never read `.to`/`.image` off undefined.
+  const slide = slides[active] || slides[0]
 
   const go = (direction) => {
     setActive((current) => (current + direction + slides.length) % slides.length)
