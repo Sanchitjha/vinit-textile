@@ -4,7 +4,7 @@ import { BagIcon, CloseIcon, HeartIcon, SearchIcon, UserIcon } from '../icons/Ic
 import { useCart } from '../../context/CartContext'
 import { useAuth } from '../../context/AuthContext'
 
-const navLinks = [
+const menuLinks = [
   { label: 'Best Seller', to: '/shop/saree' },
   { label: 'Saree', to: '/shop/saree' },
   { label: 'Salwar Suits', to: '/shop/kurti' },
@@ -25,24 +25,28 @@ export default function Header() {
   // On the homepage the header floats transparent directly on the hero banner
   // (no separate bar) and turns into a solid maroon bar once the hero has
   // scrolled out of view. Other pages keep the plain solid bar throughout.
-  const [overlay, setOverlay] = useState(isHome)
+  const [overHero, setOverHero] = useState(isHome)
 
   useEffect(() => {
     if (!isHome) {
-      setOverlay(false)
+      setOverHero(false)
       return undefined
     }
     const hero = document.getElementById('home-hero')
     if (!hero) {
-      setOverlay(false)
+      setOverHero(false)
       return undefined
     }
-    const observer = new IntersectionObserver(([entry]) => setOverlay(entry.isIntersecting), {
+    const observer = new IntersectionObserver(([entry]) => setOverHero(entry.isIntersecting), {
       rootMargin: '-80px 0px 0px 0px',
     })
     observer.observe(hero)
     return () => observer.disconnect()
   }, [isHome])
+
+  // Stay transparent only while floating on the hero AND the menu is closed —
+  // once the dropdown opens we go solid so the row and the menu panel match.
+  const transparent = overHero && !menuOpen
 
   const initials = user?.name
     ? user.name.split(' ').map((n) => n[0]).join('').substring(0, 2).toUpperCase()
@@ -51,18 +55,17 @@ export default function Header() {
   return (
     <header
       className={`z-40 w-full transition-colors duration-300 ${isHome ? 'fixed top-0 left-0' : 'sticky top-0'} ${
-        overlay ? 'bg-transparent [text-shadow:_0_1px_4px_rgb(0_0_0_/_40%)]' : 'bg-maroon'
+        transparent ? 'bg-transparent [text-shadow:_0_1px_4px_rgb(0_0_0_/_40%)]' : 'bg-maroon'
       }`}
     >
-      {/* Row 1: search / logo / account icons */}
       <div className="container-ambika flex items-center justify-between gap-4 py-3.5">
-        {/* Left: mobile menu toggle + search */}
+        {/* Left: Menu + Search (labels show on desktop, icons only on mobile) */}
         <div className="flex items-center gap-5 text-ivory sm:gap-7">
           <button
             type="button"
             aria-label="Toggle menu"
             onClick={() => setMenuOpen((open) => !open)}
-            className="flex items-center transition-colors hover:text-gold lg:hidden"
+            className="flex items-center gap-2 text-[11px] font-medium uppercase tracking-[0.2em] transition-colors hover:text-gold"
           >
             {menuOpen ? (
               <CloseIcon />
@@ -73,6 +76,7 @@ export default function Header() {
                 <span className="block h-0.5 w-5 bg-current" />
               </span>
             )}
+            <span className="hidden sm:inline">Menu</span>
           </button>
           <button
             type="button"
@@ -124,26 +128,11 @@ export default function Header() {
         </div>
       </div>
 
-      {/* Row 2: full category nav, always visible on desktop (transparent over hero) */}
-      <nav className="hidden border-t border-ivory/15 lg:block">
-        <div className="container-ambika flex items-center justify-center gap-x-8 py-2.5 text-[11px] font-medium uppercase tracking-[0.2em] text-ivory">
-          {navLinks.map((link) => (
-            <NavLink
-              key={`${link.to}-${link.label}`}
-              to={link.to}
-              className="transition-colors hover:text-gold"
-            >
-              {link.label}
-            </NavLink>
-          ))}
-        </div>
-      </nav>
-
-      {/* Mobile dropdown */}
+      {/* Category menu dropdown — opens on MENU click, desktop and mobile alike */}
       {menuOpen && (
-        <div className="border-t border-ivory/15 bg-maroon lg:hidden">
-          <div className="container-ambika flex flex-col items-center gap-4 py-6 text-[11px] font-medium uppercase tracking-[0.2em] text-ivory">
-            {navLinks.map((link) => (
+        <div className="border-t border-gold/30 bg-maroon">
+          <div className="container-ambika flex flex-col items-center gap-4 py-6 text-[11px] font-medium uppercase tracking-[0.2em] text-ivory sm:flex-row sm:flex-wrap sm:justify-center sm:gap-x-8 sm:gap-y-4">
+            {menuLinks.map((link) => (
               <NavLink
                 key={`${link.to}-${link.label}`}
                 to={link.to}
