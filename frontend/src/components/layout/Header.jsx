@@ -65,7 +65,7 @@ export default function Header() {
   return (
     <header
       className={`z-40 w-full transition-colors duration-300 ${isHome ? 'fixed top-0 left-0' : 'sticky top-0'} ${
-        transparent ? 'bg-transparent [text-shadow:_0_1px_4px_rgb(0_0_0_/_40%)]' : 'bg-maroon'
+        transparent ? 'bg-transparent [text-shadow:_0_1px_8px_rgb(0_0_0_/_70%)]' : 'bg-maroon'
       }`}
     >
       <div className="container-ambika flex items-center justify-between gap-4 py-3.5">
@@ -75,7 +75,7 @@ export default function Header() {
             type="button"
             aria-label="Toggle menu"
             onClick={() => setMenuOpen((open) => !open)}
-            className="flex items-center gap-2 text-[11px] font-medium uppercase tracking-[0.2em] transition-colors hover:text-gold"
+            className="flex items-center gap-2 text-[11px] font-bold uppercase tracking-[0.2em] transition-colors hover:text-gold"
           >
             {menuOpen ? (
               <CloseIcon />
@@ -91,7 +91,7 @@ export default function Header() {
           <button
             type="button"
             aria-label="Search"
-            className="flex items-center gap-2 text-[11px] font-medium uppercase tracking-[0.2em] transition-colors hover:text-gold"
+            className="flex items-center gap-2 text-[11px] font-bold uppercase tracking-[0.2em] transition-colors hover:text-gold"
           >
             <SearchIcon />
             <span className="hidden sm:inline">Search</span>
@@ -139,11 +139,11 @@ export default function Header() {
       </div>
 
       {/* Category menu dropdown — opens on MENU click, desktop and mobile alike.
-          Stays transparent over the hero (links float on the image); goes solid
-          maroon once scrolled past the hero or on other pages, for readability. */}
+          Always a solid maroon panel so the links stay clearly readable over
+          any hero image (bright or dark), rather than transparent text. */}
       {menuOpen && (
-        <div className={`border-t ${transparent ? 'border-ivory/25' : 'border-gold/30 bg-maroon'}`}>
-          <div className="container-ambika flex flex-col items-center gap-4 py-6 text-[11px] font-medium uppercase tracking-[0.2em] text-ivory sm:flex-row sm:flex-wrap sm:justify-center sm:gap-x-8 sm:gap-y-4">
+        <div className="border-t border-gold/30 bg-maroon/95 shadow-xl backdrop-blur-md">
+          <div className="container-ambika flex flex-col items-center gap-4 py-6 text-[11px] font-bold uppercase tracking-[0.2em] text-ivory sm:flex-row sm:flex-wrap sm:justify-center sm:gap-x-8 sm:gap-y-4">
             {menuLinks.map((link) => (
               <NavLink
                 key={`${link.to}-${link.label}`}
