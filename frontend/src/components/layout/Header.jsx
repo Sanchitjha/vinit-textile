@@ -4,18 +4,15 @@ import { BagIcon, CloseIcon, HeartIcon, SearchIcon, UserIcon } from '../icons/Ic
 import { useCart } from '../../context/CartContext'
 import { useAuth } from '../../context/AuthContext'
 
-const primaryLinks = [
-  { label: 'About', to: '/about' },
-  { label: 'Contact', to: '/contact' },
-]
-
-const categoryLinks = [
+const menuLinks = [
   { label: 'Best Seller', to: '/shop/saree' },
   { label: 'Saree', to: '/shop/saree' },
   { label: 'Salwar Suits', to: '/shop/kurti' },
   { label: 'Lehenga', to: '/shop/lehenga' },
   { label: 'New Arrivals', to: '/shop/dress' },
   { label: 'Bridal', to: '/shop/lehenga' },
+  { label: 'About', to: '/about' },
+  { label: 'Contact', to: '/contact' },
 ]
 
 export default function Header() {
@@ -23,53 +20,66 @@ export default function Header() {
   const { count } = useCart()
   const { user, openAuthModal } = useAuth()
 
-  const initials = user?.name 
+  const initials = user?.name
     ? user.name.split(' ').map((n) => n[0]).join('').substring(0, 2).toUpperCase()
     : 'U'
 
   return (
-    <header className="sticky top-0 z-40 border-b border-cream-dark bg-ivory/95 backdrop-blur">
-      <div className="container-ambika flex items-center justify-between py-2.5">
-        <button
-          type="button"
-          className="flex flex-col gap-1.5 lg:hidden"
-          aria-label="Toggle menu"
-          onClick={() => setMenuOpen((open) => !open)}
-        >
-          {menuOpen ? (
-            <CloseIcon />
-          ) : (
-            <>
-              <span className="block h-0.5 w-6 bg-maroon" />
-              <span className="block h-0.5 w-6 bg-maroon" />
-              <span className="block h-0.5 w-4 bg-maroon" />
-            </>
-          )}
-        </button>
+    <header className="sticky top-0 z-40 bg-maroon">
+      <div className="container-ambika flex items-center justify-between gap-4 py-3.5">
+        {/* Left: Menu + Search */}
+        <div className="flex items-center gap-5 text-ivory sm:gap-7">
+          <button
+            type="button"
+            aria-label="Toggle menu"
+            onClick={() => setMenuOpen((open) => !open)}
+            className="flex items-center gap-2 text-[11px] font-medium uppercase tracking-[0.2em] transition-colors hover:text-gold"
+          >
+            {menuOpen ? (
+              <CloseIcon />
+            ) : (
+              <span className="flex flex-col gap-[3px]">
+                <span className="block h-0.5 w-4 bg-current" />
+                <span className="block h-0.5 w-4 bg-current" />
+                <span className="block h-0.5 w-4 bg-current" />
+              </span>
+            )}
+            <span className="hidden sm:inline">Menu</span>
+          </button>
+          <button
+            type="button"
+            aria-label="Search"
+            className="flex items-center gap-2 text-[11px] font-medium uppercase tracking-[0.2em] transition-colors hover:text-gold"
+          >
+            <SearchIcon />
+            <span className="hidden sm:inline">Search</span>
+          </button>
+        </div>
 
-        <nav className="hidden items-center gap-6 text-[11px] font-medium uppercase tracking-[0.2em] text-brown lg:flex">
-          {primaryLinks.map((link) => (
-            <NavLink key={link.to} to={link.to} className="transition-colors hover:text-maroon">
-              {link.label}
-            </NavLink>
-          ))}
-        </nav>
-
-        <Link
-          to="/"
-          className="absolute left-1/2 -translate-x-1/2 lg:static lg:translate-x-0"
-        >
-          <img src="/images/logo.webp" alt="Vinit Textiles" className="h-11 w-auto sm:h-14" />
+        {/* Center: logo mark + wordmark */}
+        <Link to="/" className="flex items-center gap-2.5">
+          <img src="/images/logo-mark.webp" alt="Vinit Textiles" className="h-9 w-auto sm:h-10" />
+          <span className="hidden font-display text-xl tracking-[0.12em] text-ivory sm:inline sm:text-2xl">
+            VINIT TEXTILES
+          </span>
         </Link>
 
-        <div className="flex items-center gap-4 text-brown">
-          <button type="button" aria-label="Search" className="hidden hover:text-maroon sm:block">
-            <SearchIcon />
-          </button>
-          
+        {/* Right: wishlist, cart, account */}
+        <div className="flex items-center gap-4 text-ivory sm:gap-5">
+          <Link to="/account" aria-label="Wishlist" className="hidden transition-colors hover:text-gold sm:block">
+            <HeartIcon />
+          </Link>
+          <Link to="/cart" aria-label="Cart" className="relative transition-colors hover:text-gold">
+            <BagIcon />
+            {count > 0 && (
+              <span className="absolute -right-2 -top-2 flex h-4 w-4 items-center justify-center rounded-full bg-gold text-[10px] font-semibold text-maroon">
+                {count}
+              </span>
+            )}
+          </Link>
           {user ? (
-            <Link to="/account" aria-label="Account" className="hover:opacity-80 transition-opacity">
-              <div className="flex h-7 w-7 items-center justify-center rounded-full bg-brown text-[11px] font-semibold text-ivory tracking-tight">
+            <Link to="/account" aria-label="Account" className="transition-opacity hover:opacity-80">
+              <div className="flex h-7 w-7 items-center justify-center rounded-full bg-gold text-[11px] font-semibold tracking-tight text-maroon">
                 {initials}
               </div>
             </Link>
@@ -78,41 +88,30 @@ export default function Header() {
               type="button"
               aria-label="Account"
               onClick={() => openAuthModal('login')}
-              className="hover:text-maroon"
+              className="transition-colors hover:text-gold"
             >
               <UserIcon />
             </button>
           )}
-
-          <Link to="/account" aria-label="Wishlist" className="hidden hover:text-maroon sm:block">
-            <HeartIcon />
-          </Link>
-          <Link to="/cart" aria-label="Cart" className="relative hover:text-maroon">
-            <BagIcon />
-            {count > 0 && (
-              <span className="absolute -right-2 -top-2 flex h-4 w-4 items-center justify-center rounded-full bg-maroon text-[10px] font-semibold text-ivory">
-                {count}
-              </span>
-            )}
-          </Link>
         </div>
       </div>
 
-      <nav
-        className={`border-t border-cream-dark ${menuOpen ? 'block' : 'hidden'} lg:block`}
-      >
-        <div className="container-ambika flex flex-col items-center gap-4 py-2 text-[10px] font-medium uppercase tracking-[0.2em] text-brown-light lg:flex-row lg:justify-center lg:gap-10">
-          {categoryLinks.map((link, index) => (
-            <NavLink
-              key={`${link.to}-${link.label}-${index}`}
-              to={link.to}
-              className="transition-colors hover:text-brown"
-            >
-              {link.label}
-            </NavLink>
-          ))}
+      {menuOpen && (
+        <div className="border-t border-gold/30 bg-ivory shadow-lg">
+          <div className="container-ambika flex flex-col items-center gap-4 py-6 text-[11px] font-medium uppercase tracking-[0.2em] text-brown sm:flex-row sm:flex-wrap sm:justify-center sm:gap-x-8 sm:gap-y-4">
+            {menuLinks.map((link) => (
+              <NavLink
+                key={`${link.to}-${link.label}`}
+                to={link.to}
+                onClick={() => setMenuOpen(false)}
+                className="transition-colors hover:text-maroon"
+              >
+                {link.label}
+              </NavLink>
+            ))}
+          </div>
         </div>
-      </nav>
+      )}
     </header>
   )
 }
