@@ -25,10 +25,15 @@ export default function Hero() {
     <section id="home-hero" className="pb-12">
       <div className="relative overflow-hidden bg-cream">
         <Link to={slide.to} className="block">
+          {/* Each slide is a complete pre-designed banner (headline, discount and
+              SHOP NOW button all baked in), so we show the WHOLE image with
+              object-contain — never crop — otherwise the SHOP NOW button (which
+              sits low/right on some slides) gets cut off. Height is capped to
+              ~84vh on desktop so the next section peeks in below the fold. */}
           <img
             src={slide.image}
             alt={slide.alt}
-            className="aspect-[16/9] w-full object-cover sm:aspect-[21/9]"
+            className="aspect-[16/9] w-full object-contain sm:aspect-auto sm:h-[84vh]"
           />
         </Link>
 
