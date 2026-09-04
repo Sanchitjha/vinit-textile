@@ -29,7 +29,7 @@ export default function Header() {
 
   return (
     <header className="sticky top-0 z-40 border-b border-cream-dark bg-ivory/95 backdrop-blur">
-      <div className="container-ambika flex items-center justify-between py-4">
+      <div className="container-ambika flex items-center justify-between py-2.5">
         <button
           type="button"
           className="flex flex-col gap-1.5 lg:hidden"
@@ -59,7 +59,7 @@ export default function Header() {
           to="/"
           className="absolute left-1/2 -translate-x-1/2 lg:static lg:translate-x-0"
         >
-          <img src="/images/logo.webp" alt="Vinit Textiles" className="h-16 w-auto sm:h-20" />
+          <img src="/images/logo.webp" alt="Vinit Textiles" className="h-11 w-auto sm:h-14" />
         </Link>
 
         <div className="flex items-center gap-4 text-brown">
@@ -101,7 +101,7 @@ export default function Header() {
       <nav
         className={`border-t border-cream-dark ${menuOpen ? 'block' : 'hidden'} lg:block`}
       >
-        <div className="container-ambika flex flex-col items-center gap-4 py-3 text-[10px] font-medium uppercase tracking-[0.2em] text-brown-light lg:flex-row lg:justify-center lg:gap-10">
+        <div className="container-ambika flex flex-col items-center gap-4 py-2 text-[10px] font-medium uppercase tracking-[0.2em] text-brown-light lg:flex-row lg:justify-center lg:gap-10">
           {categoryLinks.map((link, index) => (
             <NavLink
               key={`${link.to}-${link.label}-${index}`}
