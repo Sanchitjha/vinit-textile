@@ -22,7 +22,7 @@ export default function Hero() {
   }
 
   return (
-    <section className="pb-12">
+    <section id="home-hero" className="pb-12">
       <div className="relative overflow-hidden bg-cream">
         <Link to={slide.to} className="block">
           <img
@@ -31,6 +31,10 @@ export default function Hero() {
             className="aspect-[16/9] w-full object-cover sm:aspect-[21/9]"
           />
         </Link>
+
+        {/* Tints the top of the banner so the transparent header floating
+            on top of it stays readable, whatever the slide's own artwork looks like */}
+        <div className="pointer-events-none absolute inset-x-0 top-0 h-28 bg-gradient-to-b from-maroon/80 via-maroon/25 to-transparent sm:h-36" />
 
         <button
           type="button"

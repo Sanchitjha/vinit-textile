@@ -1,5 +1,5 @@
-import { useState } from 'react'
-import { Link, NavLink } from 'react-router-dom'
+import { useState, useEffect } from 'react'
+import { Link, NavLink, useLocation } from 'react-router-dom'
 import { BagIcon, CloseIcon, HeartIcon, SearchIcon, UserIcon } from '../icons/Icons'
 import { useCart } from '../../context/CartContext'
 import { useAuth } from '../../context/AuthContext'
@@ -19,13 +19,44 @@ export default function Header() {
   const [menuOpen, setMenuOpen] = useState(false)
   const { count } = useCart()
   const { user, openAuthModal } = useAuth()
+  const location = useLocation()
+  const isHome = location.pathname === '/'
+
+  // On the homepage, the header starts transparent, floating directly on the
+  // hero banner (no separate bar) — then turns into a solid maroon bar once
+  // the hero has scrolled out of view. Every other page keeps the plain
+  // solid bar, since there's no hero image behind it to float over.
+  const [overlay, setOverlay] = useState(isHome)
+
+  useEffect(() => {
+    if (!isHome) {
+      setOverlay(false)
+      return undefined
+    }
+    const hero = document.getElementById('home-hero')
+    if (!hero) {
+      setOverlay(false)
+      return undefined
+    }
+    // Flip back to a solid bar a little before the hero fully scrolls out
+    // (rootMargin pulls the trigger line down by the header's own height).
+    const observer = new IntersectionObserver(([entry]) => setOverlay(entry.isIntersecting), {
+      rootMargin: '-80px 0px 0px 0px',
+    })
+    observer.observe(hero)
+    return () => observer.disconnect()
+  }, [isHome])
 
   const initials = user?.name
     ? user.name.split(' ').map((n) => n[0]).join('').substring(0, 2).toUpperCase()
     : 'U'
 
   return (
-    <header className="sticky top-0 z-40 bg-maroon">
+    <header
+      className={`z-40 w-full transition-colors duration-300 ${isHome ? 'fixed top-0 left-0' : 'sticky top-0'} ${
+        overlay ? 'bg-transparent' : 'bg-maroon'
+      }`}
+    >
       <div className="container-ambika flex items-center justify-between gap-4 py-3.5">
         {/* Left: Menu + Search */}
         <div className="flex items-center gap-5 text-ivory sm:gap-7">
