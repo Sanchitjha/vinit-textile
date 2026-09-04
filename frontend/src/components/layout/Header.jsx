@@ -139,24 +139,23 @@ export default function Header() {
         </div>
       </div>
 
-      {/* Category menu dropdown — opens on MENU click. A compact light panel
-          (only as wide as the links) anchored to the left under the MENU button,
-          links stacked one per line, like a normal browser dropdown menu. */}
+      {/* Category menu dropdown — opens on MENU click. No panel/background of its
+          own: it's transparent, so it shows the hero through it (and simply sits
+          on the header's own maroon once scrolled past the hero). Compact width,
+          links stacked one per line, left-aligned. */}
       {menuOpen && (
         <div className="container-ambika">
-          <div className="w-60 max-w-[80vw] overflow-hidden rounded-b-xl border border-t-0 border-cream-dark bg-ivory shadow-xl">
-            <div className="flex flex-col text-xs font-medium uppercase tracking-[0.2em] text-brown">
-              {menuLinks.map((link) => (
-                <NavLink
-                  key={`${link.to}-${link.label}`}
-                  to={link.to}
-                  onClick={() => setMenuOpen(false)}
-                  className="border-b border-cream-dark/60 px-5 py-3 transition-colors last:border-b-0 hover:bg-cream hover:text-maroon"
-                >
-                  {link.label}
-                </NavLink>
-              ))}
-            </div>
+          <div className="flex w-60 max-w-[80vw] flex-col py-2 text-xs font-medium uppercase tracking-[0.2em] text-ivory">
+            {menuLinks.map((link) => (
+              <NavLink
+                key={`${link.to}-${link.label}`}
+                to={link.to}
+                onClick={() => setMenuOpen(false)}
+                className="py-2.5 transition-colors hover:text-gold"
+              >
+                {link.label}
+              </NavLink>
+            ))}
           </div>
         </div>
       )}
