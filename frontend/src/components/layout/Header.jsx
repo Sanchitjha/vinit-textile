@@ -139,22 +139,24 @@ export default function Header() {
         </div>
       </div>
 
-      {/* Category menu dropdown — opens on MENU click. A clean light panel with
-          the links stacked vertically (one per line, left-aligned), like a
-          normal browser dropdown menu — no maroon fill. */}
+      {/* Category menu dropdown — opens on MENU click. A compact light panel
+          (only as wide as the links) anchored to the left under the MENU button,
+          links stacked one per line, like a normal browser dropdown menu. */}
       {menuOpen && (
-        <div className="border-t border-cream-dark bg-ivory shadow-xl">
-          <div className="container-ambika flex flex-col items-start py-2 text-xs font-medium uppercase tracking-[0.2em] text-brown">
-            {menuLinks.map((link) => (
-              <NavLink
-                key={`${link.to}-${link.label}`}
-                to={link.to}
-                onClick={() => setMenuOpen(false)}
-                className="w-full border-b border-cream-dark/60 py-3 transition-colors last:border-b-0 hover:text-maroon"
-              >
-                {link.label}
-              </NavLink>
-            ))}
+        <div className="container-ambika">
+          <div className="w-60 max-w-[80vw] overflow-hidden rounded-b-xl border border-t-0 border-cream-dark bg-ivory shadow-xl">
+            <div className="flex flex-col text-xs font-medium uppercase tracking-[0.2em] text-brown">
+              {menuLinks.map((link) => (
+                <NavLink
+                  key={`${link.to}-${link.label}`}
+                  to={link.to}
+                  onClick={() => setMenuOpen(false)}
+                  className="border-b border-cream-dark/60 px-5 py-3 transition-colors last:border-b-0 hover:bg-cream hover:text-maroon"
+                >
+                  {link.label}
+                </NavLink>
+              ))}
+            </div>
           </div>
         </div>
       )}
