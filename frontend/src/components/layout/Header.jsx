@@ -32,16 +32,26 @@ export default function Header() {
       setOverHero(false)
       return undefined
     }
-    const hero = document.getElementById('home-hero')
-    if (!hero) {
-      setOverHero(false)
-      return undefined
+    // Transparent while the top of the page (the hero) is still in view; solid
+    // once scrolled past it. Recomputed on every scroll so it can never get
+    // stuck, plus once after load since the hero's height grows when its image
+    // finishes decoding.
+    const compute = () => {
+      const hero = document.getElementById('home-hero')
+      const heroHeight = hero ? hero.offsetHeight : 400
+      setOverHero(window.scrollY < heroHeight - 80)
     }
-    const observer = new IntersectionObserver(([entry]) => setOverHero(entry.isIntersecting), {
-      rootMargin: '-80px 0px 0px 0px',
-    })
-    observer.observe(hero)
-    return () => observer.disconnect()
+    compute()
+    const settle = setTimeout(compute, 600)
+    window.addEventListener('scroll', compute, { passive: true })
+    window.addEventListener('resize', compute)
+    window.addEventListener('load', compute)
+    return () => {
+      clearTimeout(settle)
+      window.removeEventListener('scroll', compute)
+      window.removeEventListener('resize', compute)
+      window.removeEventListener('load', compute)
+    }
   }, [isHome])
 
   // Stay transparent only while floating on the hero AND the menu is closed —
