@@ -139,18 +139,18 @@ export default function Header() {
         </div>
       </div>
 
-      {/* Category menu dropdown — opens on MENU click, desktop and mobile alike.
-          Always a solid maroon panel so the links stay clearly readable over
-          any hero image (bright or dark), rather than transparent text. */}
+      {/* Category menu dropdown — opens on MENU click. A clean light panel with
+          the links stacked vertically (one per line, left-aligned), like a
+          normal browser dropdown menu — no maroon fill. */}
       {menuOpen && (
-        <div className="border-t border-gold/30 bg-maroon/95 shadow-xl backdrop-blur-md">
-          <div className="container-ambika flex flex-col items-center gap-4 py-6 text-[11px] font-bold uppercase tracking-[0.2em] text-ivory sm:flex-row sm:flex-wrap sm:justify-center sm:gap-x-8 sm:gap-y-4">
+        <div className="border-t border-cream-dark bg-ivory shadow-xl">
+          <div className="container-ambika flex flex-col items-start py-2 text-xs font-medium uppercase tracking-[0.2em] text-brown">
             {menuLinks.map((link) => (
               <NavLink
                 key={`${link.to}-${link.label}`}
                 to={link.to}
                 onClick={() => setMenuOpen(false)}
-                className="transition-colors hover:text-gold"
+                className="w-full border-b border-cream-dark/60 py-3 transition-colors last:border-b-0 hover:text-maroon"
               >
                 {link.label}
               </NavLink>
