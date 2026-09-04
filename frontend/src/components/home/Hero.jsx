@@ -32,9 +32,10 @@ export default function Hero() {
           />
         </Link>
 
-        {/* Tints the top of the banner so the transparent header floating
-            on top of it stays readable, whatever the slide's own artwork looks like */}
-        <div className="pointer-events-none absolute inset-x-0 top-0 h-28 bg-gradient-to-b from-maroon/80 via-maroon/25 to-transparent sm:h-36" />
+        {/* Tints the top of the banner so the transparent header (logo row +
+            category nav row) floating on top of it stays readable, whatever
+            the slide's own artwork looks like */}
+        <div className="pointer-events-none absolute inset-x-0 top-0 h-32 bg-gradient-to-b from-maroon/85 via-maroon/45 to-transparent sm:h-44" />
 
         <button
           type="button"

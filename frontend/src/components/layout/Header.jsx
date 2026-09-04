@@ -4,7 +4,7 @@ import { BagIcon, CloseIcon, HeartIcon, SearchIcon, UserIcon } from '../icons/Ic
 import { useCart } from '../../context/CartContext'
 import { useAuth } from '../../context/AuthContext'
 
-const menuLinks = [
+const navLinks = [
   { label: 'Best Seller', to: '/shop/saree' },
   { label: 'Saree', to: '/shop/saree' },
   { label: 'Salwar Suits', to: '/shop/kurti' },
@@ -22,10 +22,9 @@ export default function Header() {
   const location = useLocation()
   const isHome = location.pathname === '/'
 
-  // On the homepage, the header starts transparent, floating directly on the
-  // hero banner (no separate bar) — then turns into a solid maroon bar once
-  // the hero has scrolled out of view. Every other page keeps the plain
-  // solid bar, since there's no hero image behind it to float over.
+  // On the homepage the header floats transparent directly on the hero banner
+  // (no separate bar) and turns into a solid maroon bar once the hero has
+  // scrolled out of view. Other pages keep the plain solid bar throughout.
   const [overlay, setOverlay] = useState(isHome)
 
   useEffect(() => {
@@ -38,8 +37,6 @@ export default function Header() {
       setOverlay(false)
       return undefined
     }
-    // Flip back to a solid bar a little before the hero fully scrolls out
-    // (rootMargin pulls the trigger line down by the header's own height).
     const observer = new IntersectionObserver(([entry]) => setOverlay(entry.isIntersecting), {
       rootMargin: '-80px 0px 0px 0px',
     })
@@ -57,25 +54,25 @@ export default function Header() {
         overlay ? 'bg-transparent' : 'bg-maroon'
       }`}
     >
+      {/* Row 1: search / logo / account icons */}
       <div className="container-ambika flex items-center justify-between gap-4 py-3.5">
-        {/* Left: Menu + Search */}
+        {/* Left: mobile menu toggle + search */}
         <div className="flex items-center gap-5 text-ivory sm:gap-7">
           <button
             type="button"
             aria-label="Toggle menu"
             onClick={() => setMenuOpen((open) => !open)}
-            className="flex items-center gap-2 text-[11px] font-medium uppercase tracking-[0.2em] transition-colors hover:text-gold"
+            className="flex items-center transition-colors hover:text-gold lg:hidden"
           >
             {menuOpen ? (
               <CloseIcon />
             ) : (
               <span className="flex flex-col gap-[3px]">
-                <span className="block h-0.5 w-4 bg-current" />
-                <span className="block h-0.5 w-4 bg-current" />
-                <span className="block h-0.5 w-4 bg-current" />
+                <span className="block h-0.5 w-5 bg-current" />
+                <span className="block h-0.5 w-5 bg-current" />
+                <span className="block h-0.5 w-5 bg-current" />
               </span>
             )}
-            <span className="hidden sm:inline">Menu</span>
           </button>
           <button
             type="button"
@@ -127,15 +124,31 @@ export default function Header() {
         </div>
       </div>
 
+      {/* Row 2: full category nav, always visible on desktop (transparent over hero) */}
+      <nav className="hidden border-t border-ivory/15 lg:block">
+        <div className="container-ambika flex items-center justify-center gap-x-8 py-2.5 text-[11px] font-medium uppercase tracking-[0.2em] text-ivory">
+          {navLinks.map((link) => (
+            <NavLink
+              key={`${link.to}-${link.label}`}
+              to={link.to}
+              className="transition-colors hover:text-gold"
+            >
+              {link.label}
+            </NavLink>
+          ))}
+        </div>
+      </nav>
+
+      {/* Mobile dropdown */}
       {menuOpen && (
-        <div className="border-t border-gold/30 bg-ivory shadow-lg">
-          <div className="container-ambika flex flex-col items-center gap-4 py-6 text-[11px] font-medium uppercase tracking-[0.2em] text-brown sm:flex-row sm:flex-wrap sm:justify-center sm:gap-x-8 sm:gap-y-4">
-            {menuLinks.map((link) => (
+        <div className="border-t border-ivory/15 bg-maroon lg:hidden">
+          <div className="container-ambika flex flex-col items-center gap-4 py-6 text-[11px] font-medium uppercase tracking-[0.2em] text-ivory">
+            {navLinks.map((link) => (
               <NavLink
                 key={`${link.to}-${link.label}`}
                 to={link.to}
                 onClick={() => setMenuOpen(false)}
-                className="transition-colors hover:text-maroon"
+                className="transition-colors hover:text-gold"
               >
                 {link.label}
               </NavLink>
