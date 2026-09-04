@@ -51,15 +51,16 @@ export default function Hero() {
     <section id="home-hero" className="pb-12">
       <div className="relative overflow-hidden bg-cream">
         <Link to={slide.to} className="block">
-          {/* Full-bleed (full screen width, no side gaps). Capped at 86vh so the
-              hero stays compact and the next section peeks below. When an image
-              is taller than the cap it's trimmed only from the TOP (object-bottom)
-              — that's the empty ceiling/headroom — so the models and the SHOP NOW
-              button (which sit lower) always stay in view. */}
+          {/* Mobile: full natural image (whole wide banner, nothing cropped).
+              Desktop (sm+): fixed 90vh height so the hero stays compact and the
+              next section peeks; object-cover + object-bottom trims only the
+              empty ceiling/headroom from the TOP, keeping the models and the
+              SHOP NOW button in view. A definite height (not h-auto+object-cover,
+              which can collapse to 0) is what makes this render reliably. */}
           <img
             src={slide.image}
             alt={slide.alt}
-            className="block h-auto max-h-[90vh] w-full object-cover object-bottom"
+            className="block h-auto w-full sm:h-[90vh] sm:object-cover sm:object-bottom"
           />
         </Link>
 
