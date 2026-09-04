@@ -1,6 +1,9 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import { ChevronLeftIcon, ChevronRightIcon } from '../icons/Icons'
+
+// How long each slide stays before auto-advancing (ms).
+const AUTOPLAY_MS = 1000
 
 // Each slide is a complete, pre-designed banner (title, discount, CTA all
 // baked into the image itself) — so we just show the image full-bleed and
@@ -20,6 +23,25 @@ export default function Hero() {
   const go = (direction) => {
     setActive((current) => (current + direction + slides.length) % slides.length)
   }
+
+  // Preload all slide images once so the fast auto-rotation never flashes a
+  // blank/half-loaded frame the first time each slide comes around.
+  useEffect(() => {
+    slides.forEach((s) => {
+      const img = new Image()
+      img.src = s.image
+    })
+  }, [])
+
+  // Auto-advance to the next slide on a timer, on both desktop and mobile.
+  // Keyed on `active` so a manual dot/arrow tap restarts the countdown
+  // instead of jumping again immediately after.
+  useEffect(() => {
+    const id = setInterval(() => {
+      setActive((current) => (current + 1) % slides.length)
+    }, AUTOPLAY_MS)
+    return () => clearInterval(id)
+  }, [active])
 
   return (
     <section id="home-hero" className="pb-12">
