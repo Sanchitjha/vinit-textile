@@ -172,6 +172,17 @@ export default function Header() {
           </div>
         </div>
       )}
+
+      {/* Search row — opens on the Search click, same header (transparent over
+          hero / solid maroon elsewhere), full-width pill input with an animated
+          "typing" placeholder. Same on mobile and desktop. */}
+      {searchOpen && (
+        <div className="container-ambika pb-4">
+          <div className="mx-auto w-full sm:max-w-md">
+            <SearchBar autoFocus onSubmitted={() => setSearchOpen(false)} />
+          </div>
+        </div>
+      )}
     </header>
   )
 }
