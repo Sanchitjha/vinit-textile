@@ -4,16 +4,28 @@ import { HeartIcon } from '../icons/Icons'
 import { toneFor } from '../../data/products'
 
 export default function ProductCard({ product }) {
-  const discount = Math.round(100 - (product.price / product.mrp) * 100)
+  const discount = product.mrp && product.mrp > product.price 
+    ? Math.round(100 - (product.price / product.mrp) * 100) 
+    : 0
+  
+  const productId = product._id || product.id
 
   return (
-    <Link to={`/product/${product.id}`} className="group block">
+    <Link to={`/product/${productId}`} className="group block">
       <div className="relative overflow-hidden bg-cream">
-        <Placeholder 
-          label={product.name} 
-          tone={toneFor(product.id)} 
-          className="transition-transform duration-700 ease-in-out group-hover:scale-105" 
-        />
+        {product.images && product.images.length > 0 ? (
+          <img 
+            src={product.images[0]} 
+            alt={product.name}
+            className="aspect-[3/4] w-full object-cover transition-transform duration-700 ease-in-out group-hover:scale-105"
+          />
+        ) : (
+          <Placeholder 
+            label={product.name} 
+            tone={toneFor(productId)} 
+            className="transition-transform duration-700 ease-in-out group-hover:scale-105" 
+          />
+        )}
         <button
           type="button"
           aria-label="Add to wishlist"
@@ -34,8 +46,13 @@ export default function ProductCard({ product }) {
           {product.name}
         </h3>
         <p className="text-sm pt-1">
-          <span className="font-medium text-brown">₹{product.price.toLocaleString('en-IN')}</span>{' '}
-          <span className="text-stone line-through">₹{product.mrp.toLocaleString('en-IN')}</span>
+          <span className="font-medium text-brown">₹{product.price?.toLocaleString('en-IN') ?? 0}</span>
+          {product.mrp && (
+            <>
+              {' '}
+              <span className="text-stone line-through">₹{product.mrp.toLocaleString('en-IN')}</span>
+            </>
+          )}
         </p>
       </div>
     </Link>

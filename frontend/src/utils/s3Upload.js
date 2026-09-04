@@ -10,12 +10,12 @@ export const uploadFileToS3 = async (file) => {
       fileName: file.name,
       contentType: file.type,
     });
-    
-    if (!startRes.data.success) {
+    console.log(startRes, 'startRes')
+    if (!startRes.success) {
       throw new Error(startRes.data.message || 'Failed to start upload');
     }
-    
-    const { uploadId, key } = startRes.data.data;
+
+    const { uploadId, key } = startRes.data;
 
     // 2. Get presigned URLs for all parts
     const multiRes = await apiClient.post('/upload/multipart', {
@@ -23,19 +23,19 @@ export const uploadFileToS3 = async (file) => {
       uploadId,
       parts: partsCount,
     });
-    
-    if (!multiRes.data.success) {
+
+    if (!multiRes.success) {
       throw new Error('Failed to get presigned URLs');
     }
-    
-    const { urls } = multiRes.data.data;
-    
+
+    const { urls } = multiRes.data;
+
     // 3. Upload parts concurrently
     const uploadPromises = urls.map(async ({ partNumber, url }) => {
       const start = (partNumber - 1) * CHUNK_SIZE;
       const end = Math.min(start + CHUNK_SIZE, file.size);
       const chunk = file.slice(start, end);
-      
+
       const response = await fetch(url, {
         method: 'PUT',
         body: chunk,
@@ -43,11 +43,11 @@ export const uploadFileToS3 = async (file) => {
           // pre-signed URLs sometimes require empty content-type if not specified in signing
         }
       });
-      
+
       if (!response.ok) {
         throw new Error(`Failed to upload part ${partNumber}`);
       }
-      
+
       // ETag is returned in headers
       const etag = response.headers.get('ETag');
       return {
@@ -64,13 +64,13 @@ export const uploadFileToS3 = async (file) => {
       uploadId,
       parts: completedParts,
     });
-    
-    if (!completeRes.data.success) {
+
+    if (!completeRes.success) {
       throw new Error('Failed to complete upload');
     }
-    
+
     // 5. Return final URL
-    return completeRes.data.data.url;
+    return completeRes.data.url;
   } catch (error) {
     console.error('Upload error:', error);
     throw error;

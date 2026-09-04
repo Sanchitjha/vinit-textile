@@ -35,9 +35,10 @@ export default function ProductDetail() {
         setProduct(fetchedProduct)
 
         if (fetchedProduct) {
+          const categoryId = fetchedProduct.category?._id || fetchedProduct.category?.id || fetchedProduct.category
           const [catRes, relatedRes] = await Promise.all([
-            apiClient.get(`/categories/${fetchedProduct.category}`),
-            apiClient.get(`/sarees?category=${fetchedProduct.category}&limit=4`)
+            apiClient.get(`/categories/${categoryId}`),
+            apiClient.get(`/sarees?category=${categoryId}&limit=4`)
           ]).catch(() => [{data: null}, {data: {items: []}}])
           setCategoryMeta(catRes.data)
           setRelated(relatedRes.data?.items?.filter(p => p.id !== fetchedProduct.id) || [])
@@ -67,7 +68,7 @@ export default function ProductDetail() {
     )
   }
 
-  const discount = Math.round(100 - (product.price / product.mrp) * 100)
+  const discount = product.mrp ? Math.round(100 - (product.price / product.mrp) * 100) : 0
 
   return (
     <section className="container-ambika py-16">
@@ -94,12 +95,20 @@ export default function ProductDetail() {
                   activeThumb === thumb ? 'border-brown' : 'border-transparent'
                 } transition-colors`}
               >
-                <Placeholder tone={toneFor(product.id)} ratio="aspect-[3/4]" />
+                {product.images && product.images[thumb] ? (
+                  <img src={product.images[thumb]} alt="" className="h-full w-full object-cover" />
+                ) : (
+                  <Placeholder tone={toneFor(product.id)} ratio="aspect-[3/4]" />
+                )}
               </button>
             ))}
           </div>
           <div className="flex-1 overflow-hidden bg-cream">
-            <Placeholder label={product.name} tone={toneFor(product.id)} ratio="aspect-[3/4] sm:aspect-[4/5] w-full" />
+            {product.images && product.images.length > 0 ? (
+              <img src={product.images[activeThumb] || product.images[0]} alt={product.name} className="aspect-[3/4] sm:aspect-[4/5] w-full object-cover" />
+            ) : (
+              <Placeholder label={product.name} tone={toneFor(product.id)} ratio="aspect-[3/4] sm:aspect-[4/5] w-full" />
+            )}
           </div>
         </div>
 
@@ -118,12 +127,16 @@ export default function ProductDetail() {
 
           <div className="mt-6 flex items-baseline gap-4">
             <span className="text-xl font-medium text-brown">
-              ₹{product.price.toLocaleString('en-IN')}
+              ₹{product.price?.toLocaleString('en-IN')}
             </span>
-            <span className="text-sm text-brown-light line-through">
-              ₹{product.mrp.toLocaleString('en-IN')}
-            </span>
-            <span className="text-[10px] uppercase tracking-widest font-semibold text-brown">{discount}% off</span>
+            {product.mrp && (
+              <span className="text-sm text-brown-light line-through">
+                ₹{product.mrp.toLocaleString('en-IN')}
+              </span>
+            )}
+            {discount > 0 && (
+              <span className="text-[10px] uppercase tracking-widest font-semibold text-brown">{discount}% off</span>
+            )}
           </div>
 
           <p className="mt-8 max-w-md text-sm leading-relaxed text-brown-light">

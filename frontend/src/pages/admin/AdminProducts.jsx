@@ -18,6 +18,7 @@ export default function AdminProducts() {
     description: '',
     category: '',
     price: 0,
+    stock: 0,
     sku: '',
     fabric: '',
     color: '',
@@ -75,12 +76,13 @@ export default function AdminProducts() {
       const payload = {
         ...formData,
         price: Number(formData.price),
+        stock: Number(formData.stock),
         images: uploadedUrls
       }
       
       await apiClient.post('/sarees', payload)
       setIsFormOpen(false)
-      setFormData({ name: '', description: '', category: '', price: 0, sku: '', fabric: '', color: '' })
+      setFormData({ name: '', description: '', category: '', price: 0, stock: 0, sku: '', fabric: '', color: '' })
       setSelectedFiles([])
       setPreviewUrls([])
       fetchData()
@@ -131,7 +133,7 @@ export default function AdminProducts() {
             <select required className="w-full border p-2 rounded" value={formData.category} onChange={e => setFormData({...formData, category: e.target.value})}>
               <option value="">Select Category</option>
               {categories.map(cat => (
-                <option key={cat.id} value={cat.id}>{cat.name}</option>
+                <option key={cat._id} value={cat._id}>{cat.name}</option>
               ))}
             </select>
           </div>
@@ -203,7 +205,7 @@ export default function AdminProducts() {
           </thead>
           <tbody className="divide-y divide-gray-200/30 dark:divide-gray-700/30">
             {products.map(prod => (
-              <tr key={prod.id} className="hover:bg-white/40 dark:hover:bg-white/5 transition-colors">
+              <tr key={prod._id} className="hover:bg-white/40 dark:hover:bg-white/5 transition-colors">
                 <td className="p-4">
                   <img src={prod.images[0]} alt={prod.name} className="w-12 h-12 object-cover rounded" />
                 </td>
@@ -211,7 +213,7 @@ export default function AdminProducts() {
                 <td className="p-4 text-gray-500">{prod.sku}</td>
                 <td className="p-4">₹{prod.price}</td>
                 <td className="p-4">
-                  <button onClick={() => handleDelete(prod.id)} className="text-red-500 hover:underline">Delete</button>
+                  <button onClick={() => handleDelete(prod._id)} className="text-red-500 hover:underline">Delete</button>
                 </td>
               </tr>
             ))}
