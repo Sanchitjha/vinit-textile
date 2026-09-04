@@ -81,6 +81,13 @@ export default function Home() {
         imageAlt="Bridal Beauty — discover more with full self confidence"
       />
 
+      <Banner
+        title="Fashion That Rewards You Back"
+        to="/account"
+        image="/images/banner-rewards.webp"
+        imageAlt="Fashion that rewards you back — shop, earn, redeem, repeat"
+      />
+
       <LookbookStrip />
       <Newsletter />
     </>
