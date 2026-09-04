@@ -48,6 +48,7 @@ export const SareeQueryDto = z.object({
   limit: z.coerce.number().int().positive().max(100).default(20),
   search: z.string().optional(),
   category: z.string().optional(),
+  categorySlug: z.string().optional(),
   subCategory: z.string().optional(),
   fabric: z.string().optional(),
   sareeType: z.string().optional(),

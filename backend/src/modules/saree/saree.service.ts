@@ -23,7 +23,18 @@ export class SareeService {
   }
 
   async list(query: SareeQueryDtoType): Promise<PaginatedResult<ISareeDocument>> {
-    const { page, limit, sort, ...filters } = query;
+    const { page, limit, sort, categorySlug, ...filters } = query;
+    
+    if (categorySlug) {
+      const cat = await this.categoryRepository.findBySlug(categorySlug);
+      if (cat) {
+        filters.category = cat.id;
+      } else {
+        // If category slug is invalid, return empty result by providing a dummy non-existent ID
+        filters.category = '000000000000000000000000';
+      }
+    }
+
     const filter = this.sareeRepository.buildFilter({ ...filters, isActive: true });
     const { skip, limit: safeLimit } = toSkipLimit({ page, limit });
     const { items, total } = await this.sareeRepository.findWithFilters(filter, { skip, limit: safeLimit }, sort);
