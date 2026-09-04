@@ -9,6 +9,7 @@ import Login from './pages/Login'
 import SignUp from './pages/SignUp'
 import ProductListing from './pages/ProductListing'
 import ProductDetail from './pages/ProductDetail'
+import SearchResults from './pages/SearchResults'
 import Cart from './pages/Cart'
 import Account from './pages/Account'
 import About from './pages/About'
@@ -48,6 +49,7 @@ export default function App() {
             <Route path="/signup" element={<SignUp />} />
             <Route path="/shop/:category" element={<ProductListing />} />
             <Route path="/product/:id" element={<ProductDetail />} />
+            <Route path="/search" element={<SearchResults />} />
             <Route path="/cart" element={<Cart />} />
             <Route path="/account" element={<Account />} />
             <Route path="/about" element={<About />} />
