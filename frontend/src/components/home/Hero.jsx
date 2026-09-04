@@ -26,14 +26,13 @@ export default function Hero() {
       <div className="relative overflow-hidden bg-cream">
         <Link to={slide.to} className="block">
           {/* Each slide is a complete pre-designed banner (headline, discount and
-              SHOP NOW button all baked in), so we show the WHOLE image with
-              object-contain — never crop — otherwise the SHOP NOW button (which
-              sits low/right on some slides) gets cut off. Height is capped to
-              ~84vh on desktop so the next section peeks in below the fold. */}
+              SHOP NOW button all baked in). We show it full-bleed at its natural
+              aspect ratio — full screen width, whole image, nothing cropped —
+              so the SHOP NOW button always shows and there are no side gaps. */}
           <img
             src={slide.image}
             alt={slide.alt}
-            className="aspect-[16/9] w-full object-contain sm:aspect-auto sm:h-[84vh]"
+            className="block h-auto w-full"
           />
         </Link>
 
