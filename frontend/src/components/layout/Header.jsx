@@ -54,9 +54,10 @@ export default function Header() {
     }
   }, [isHome])
 
-  // Transparent while floating on the hero — stays transparent even when the
-  // MENU dropdown is open, so the whole header keeps floating over the banner.
-  const transparent = overHero
+  // Transparent while floating on the hero, but goes solid maroon the moment the
+  // MENU dropdown opens — so the dropdown reads as a proper dark panel with bold
+  // white links instead of faint text lost on a bright banner.
+  const transparent = overHero && !menuOpen
 
   const initials = user?.name
     ? user.name.split(' ').map((n) => n[0]).join('').substring(0, 2).toUpperCase()
