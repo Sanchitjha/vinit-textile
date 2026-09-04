@@ -87,7 +87,7 @@ export default function Header() {
           <button
             type="button"
             aria-label="Toggle menu"
-            onClick={() => setMenuOpen((open) => !open)}
+            onClick={toggleMenu}
             className="flex items-center gap-2 text-[11px] font-bold uppercase tracking-[0.2em] transition-colors hover:text-gold"
           >
             {menuOpen ? (
@@ -103,10 +103,11 @@ export default function Header() {
           </button>
           <button
             type="button"
-            aria-label="Search"
+            aria-label="Toggle search"
+            onClick={toggleSearch}
             className="flex items-center gap-2 text-[11px] font-bold uppercase tracking-[0.2em] transition-colors hover:text-gold"
           >
-            <SearchIcon />
+            {searchOpen ? <CloseIcon /> : <SearchIcon />}
             <span className="hidden sm:inline">Search</span>
           </button>
         </div>
