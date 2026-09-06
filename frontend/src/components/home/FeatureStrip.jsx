@@ -8,14 +8,18 @@ const features = [
 
 export default function FeatureStrip() {
   return (
-    <section className="container-ambika py-4">
-      <div className="grid gap-8 border-y border-cream-dark py-6 sm:grid-cols-3">
+    <section className="container-ambika py-1 sm:py-2">
+      <div className="grid grid-cols-3 gap-1 sm:gap-6 md:gap-8 border-y border-cream-dark py-2 sm:py-3.5">
         {features.map(({ icon: Icon, title, desc }) => (
-          <div key={title} className="flex items-center justify-center gap-5">
-            <Icon className="shrink-0 text-brown" />
-            <div>
-              <p className="text-sm font-semibold uppercase tracking-widest text-brown">{title}</p>
-              <p className="mt-1 text-xs text-brown-light">{desc}</p>
+          <div key={title} className="flex items-center justify-center gap-1 min-[380px]:gap-2 sm:gap-4 text-left">
+            <Icon className="w-3.5 h-3.5 min-[380px]:w-4 min-[380px]:h-4 sm:w-5 sm:h-5 md:w-6 md:h-6 shrink-0 text-brown" />
+            <div className="min-w-0">
+              <p className="text-[9px] min-[380px]:text-[10px] sm:text-xs md:text-sm font-semibold uppercase tracking-tight sm:tracking-widest text-brown leading-tight truncate sm:whitespace-normal">
+                {title}
+              </p>
+              <p className="mt-0.5 text-[8px] min-[380px]:text-[9px] sm:text-xs text-brown-light leading-tight truncate sm:whitespace-normal">
+                {desc}
+              </p>
             </div>
           </div>
         ))}
