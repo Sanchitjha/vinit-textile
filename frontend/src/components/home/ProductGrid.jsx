@@ -3,7 +3,7 @@ import ProductCard from '../ui/ProductCard'
 
 export default function ProductGrid({ title, subtitle, items, to }) {
   return (
-    <section className="container-ambika py-10">
+    <section className="container-ambika pt-4 sm:pt-6 pb-10">
       <div className="text-center">
         <h2 className="font-display text-4xl text-brown">{title}</h2>
         {subtitle && <p className="mt-3 text-sm text-brown-light">{subtitle}</p>}
