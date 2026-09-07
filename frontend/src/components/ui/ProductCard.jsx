@@ -10,12 +10,38 @@ export default function ProductCard({ product }) {
     ? Math.round(100 - (product.price / mrp) * 100)
     : 0
 
+  const rawImage = product.images?.[0] || product.image
+  const isBanner = typeof rawImage === 'string' && rawImage.includes('banner-')
+
+  const portraitMap = {
+    'VT-BAN-001': '/images/hero-1.webp',
+    'VT-ORG-002': '/images/hero-2.webp',
+    'VT-LIN-003': '/images/hero-3.webp',
+    'VT-COT-004': '/images/hero-4.webp',
+    'amb-saree-banarasi-teal': '/images/hero-1.webp',
+    'amb-saree-organza-maroon': '/images/hero-2.webp',
+    'amb-saree-linen-emerald': '/images/hero-3.webp',
+    'amb-saree-cotton-yellow': '/images/hero-4.webp',
+    'amb-lehenga-bridal-red': '/images/occasion-bridal.webp',
+    'amb-lehenga-net-blush': '/images/occasion-wedding.webp',
+    'amb-lehenga-festive-teal': '/images/occasion-diwali.webp',
+    'amb-lehenga-classic-maroon': '/images/lookbook-1.webp',
+    'amb-kurti-straight-mustard': '/images/occasion-festive-everyday.webp',
+    'amb-kurti-anarkali-teal': '/images/lookbook-2.webp',
+    'amb-kurti-printed-rose': '/images/lookbook-3.webp',
+    'amb-kurti-palazzo-olive': '/images/split-ready-to-wear.webp',
+  }
+
+  const productImage = (!isBanner && rawImage)
+    ? rawImage
+    : (portraitMap[product.sku] || portraitMap[id] || '/images/hero-1.webp')
+
   return (
     <Link to={`/product/${id}`} className="group block">
       <div className="relative overflow-hidden bg-cream">
-        {(product.images?.[0] || product.image) ? (
+        {productImage ? (
           <img
-            src={product.images?.[0] || product.image}
+            src={productImage}
             alt={product.name}
             className="aspect-[3/4] w-full object-contain bg-ivory transition-transform duration-700 ease-in-out group-hover:scale-105"
           />

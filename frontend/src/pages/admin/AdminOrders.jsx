@@ -62,15 +62,15 @@ export default function AdminOrders() {
           </thead>
           <tbody className="divide-y divide-gray-200/30 dark:divide-gray-700/30">
             {orders.map(order => (
-              <tr key={order.id} className="hover:bg-white/40 dark:hover:bg-white/5 transition-colors">
-                <td className="p-4 font-mono text-xs">{order.id}</td>
+              <tr key={order._id || order.id} className="hover:bg-white/40 dark:hover:bg-white/5 transition-colors">
+                <td className="p-4 font-mono text-xs">{order._id || order.id}</td>
                 <td className="p-4">{order.user?.name || 'Guest'}</td>
                 <td className="p-4">₹{order.totalAmount}</td>
                 <td className="p-4 text-gray-500">{new Date(order.createdAt).toLocaleDateString()}</td>
                 <td className="p-4">
                   <select 
                     value={order.orderStatus}
-                    onChange={(e) => handleStatusChange(order.id, e.target.value)}
+                    onChange={(e) => handleStatusChange(order._id || order.id, e.target.value)}
                     className={`px-2 py-1 rounded-lg text-xs border backdrop-blur-sm ${statusColors[order.orderStatus] || 'bg-white/50 text-gray-800'} dark:border-gray-700/30 outline-none`}
                   >
                     <option value="PENDING">Pending</option>
