@@ -65,8 +65,13 @@ export class SareeService {
     const existingSku = await this.sareeRepository.findBySku(dto.sku);
     if (existingSku) throw new ConflictError('SKU already exists', 'SKU_EXISTS');
 
+    let discount = dto.discount;
+    if ((discount === undefined || discount === 0) && dto.compareAtPrice && dto.compareAtPrice > dto.price) {
+      discount = Math.round(((dto.compareAtPrice - dto.price) / dto.compareAtPrice) * 100);
+    }
+
     const slug = await this.generateUniqueSlug(dto.name);
-    const saree = await this.sareeRepository.create({ ...dto, slug });
+    const saree = await this.sareeRepository.create({ ...dto, discount: discount || 0, slug });
     return this.attachPresignedUrls(saree);
   }
 
@@ -84,6 +89,12 @@ export class SareeService {
     const patch: Partial<ISareeDocument> & { slug?: string } = { ...dto };
     if (dto.name && dto.name !== saree.name) {
       patch.slug = await this.generateUniqueSlug(dto.name, id);
+    }
+
+    const price = patch.price ?? saree.price;
+    const compareAtPrice = patch.compareAtPrice ?? saree.compareAtPrice;
+    if (compareAtPrice && compareAtPrice > price && (patch.discount === undefined || patch.discount === 0)) {
+      patch.discount = Math.round(((compareAtPrice - price) / compareAtPrice) * 100);
     }
 
     const updated = await this.sareeRepository.updateById(id, patch);
