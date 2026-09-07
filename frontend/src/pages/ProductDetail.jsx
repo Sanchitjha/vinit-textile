@@ -84,32 +84,64 @@ export default function ProductDetail() {
       </nav>
 
       <div className="mt-10 grid gap-12 lg:grid-cols-2 lg:items-start">
-        <div className="flex gap-4">
-          <div className="hidden flex-col gap-3 sm:flex">
-            {[0, 1, 2, 3].map((thumb) => (
+        <div className="flex flex-col sm:flex-row gap-4">
+          {/* Desktop Left Thumbnails */}
+          <div className="hidden flex-col gap-3 sm:flex max-h-[600px] overflow-y-auto pr-1 no-scrollbar">
+            {(product.images && product.images.length > 0 ? product.images : [0, 1, 2, 3]).map((img, thumbIdx) => (
               <button
-                key={thumb}
+                key={thumbIdx}
                 type="button"
-                onClick={() => setActiveThumb(thumb)}
-                className={`h-24 w-20 overflow-hidden border ${
-                  activeThumb === thumb ? 'border-brown' : 'border-transparent'
-                } transition-colors`}
+                onClick={() => setActiveThumb(thumbIdx)}
+                className={`h-24 w-20 overflow-hidden border-2 rounded-lg transition-all ${
+                  activeThumb === thumbIdx ? 'border-brown scale-105 shadow-sm' : 'border-transparent opacity-70 hover:opacity-100'
+                }`}
               >
-                {product.images && product.images[thumb] ? (
-                  <img src={product.images[thumb]} alt="" className="h-full w-full object-cover" />
+                {typeof img === 'string' ? (
+                  <img src={img} alt={`${product.name} detail ${thumbIdx + 1}`} className="h-full w-full object-cover" />
                 ) : (
                   <Placeholder tone={toneFor(product.id)} ratio="aspect-[3/4]" />
                 )}
               </button>
             ))}
           </div>
-          <div className="flex-1 overflow-hidden bg-cream">
+
+          {/* Main Hero Image */}
+          <div className="flex-1 overflow-hidden bg-cream rounded-xl relative group">
             {product.images && product.images.length > 0 ? (
-              <img src={product.images[activeThumb] || product.images[0]} alt={product.name} className="aspect-[3/4] sm:aspect-[4/5] w-full object-contain bg-ivory" />
+              <img 
+                src={product.images[activeThumb] || product.images[0]} 
+                alt={product.name} 
+                className="aspect-[3/4] sm:aspect-[4/5] w-full object-contain bg-ivory transition-all duration-300" 
+              />
             ) : (
               <Placeholder label={product.name} tone={toneFor(product.id)} ratio="aspect-[3/4] sm:aspect-[4/5] w-full" />
             )}
+            
+            {/* Image Counter Badge */}
+            {product.images && product.images.length > 1 && (
+              <div className="absolute right-3 bottom-3 bg-black/70 text-white text-[10px] font-semibold px-2.5 py-1 rounded-full backdrop-blur-xs">
+                {activeThumb + 1} / {product.images.length}
+              </div>
+            )}
           </div>
+
+          {/* Mobile Bottom Thumbnails */}
+          {product.images && product.images.length > 1 && (
+            <div className="flex sm:hidden gap-2.5 overflow-x-auto pb-2 pt-1 no-scrollbar">
+              {product.images.map((img, thumbIdx) => (
+                <button
+                  key={thumbIdx}
+                  type="button"
+                  onClick={() => setActiveThumb(thumbIdx)}
+                  className={`h-20 w-16 shrink-0 overflow-hidden border-2 rounded-md transition-all ${
+                    activeThumb === thumbIdx ? 'border-brown scale-105 shadow-sm' : 'border-transparent opacity-60'
+                  }`}
+                >
+                  <img src={img} alt="" className="h-full w-full object-cover" />
+                </button>
+              ))}
+            </div>
+          )}
         </div>
 
         <div className="lg:sticky lg:top-32 h-fit">

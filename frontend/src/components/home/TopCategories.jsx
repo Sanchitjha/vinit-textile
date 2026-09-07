@@ -1,16 +1,38 @@
 import { Link } from 'react-router-dom'
 
+const arches = [
+  { label: 'SALE', to: '/shop/saree' },
+  { label: 'Bestsellers / New arrivals', to: '/shop/saree' },
+  { label: 'Partywear Collection', to: '/shop/partywear' },
+  { label: 'Wedding Edit', to: '/shop/bridal-saree' },
+  { label: 'Everyday elegance / office wear', to: '/shop/saree' },
+  { label: 'Pooja & Traditional', to: '/shop/silk-saree' },
+  { label: 'Bridal Edit', to: '/shop/bridal-saree' },
+]
+
 export default function TopCategories() {
   return (
-    <section className="py-2">
+    <section className="py-3 bg-cream-light/30">
       <div className="container-ambika overflow-x-auto scrollbar-hide">
-        <Link to="/shop/saree" className="block min-w-[800px] sm:min-w-0">
+        <div className="relative min-w-[850px] sm:min-w-0">
           <img
-            src="/images/banner-sarees-collection.webp"
-            alt="Sarees — Timeless Elegance, Just For You. Bestsellers/New Arrivals, Partywear Collection, Wedding Edit, Everyday Elegance/Office Wear, Pooja & Traditional, Bridal Edit"
-            className="w-full object-cover"
+            src="/images/banner-sarees-collection.png"
+            alt="Sarees — Timeless Elegance, Just For You"
+            className="w-full h-auto object-contain block drop-shadow-xs"
           />
-        </Link>
+          {/* Clickable hotspot overlays for each of the 7 arches */}
+          <div className="absolute inset-0 flex">
+            {arches.map((arch, idx) => (
+              <Link
+                key={idx}
+                to={arch.to}
+                title={arch.label}
+                aria-label={arch.label}
+                className="w-[14.28%] h-full block cursor-pointer hover:bg-black/5 active:bg-black/10 transition-colors rounded-2xl"
+              />
+            ))}
+          </div>
+        </div>
       </div>
     </section>
   )
