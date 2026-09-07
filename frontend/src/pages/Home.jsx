@@ -8,6 +8,7 @@ import Banner from '../components/home/Banner'
 import ProductGrid from '../components/home/ProductGrid'
 import SplitFeature from '../components/home/SplitFeature'
 import LookbookStrip from '../components/home/LookbookStrip'
+import EntireCollectionGrid from '../components/home/EntireCollectionGrid'
 import Newsletter from '../components/home/Newsletter'
 import { apiClient } from '../api/client'
 
@@ -30,7 +31,6 @@ export default function Home() {
     <>
       <Hero />
       <AnnouncementTicker />
-      <FeatureStrip />
       <TopCategories />
       <ShopByOccasion />
 
@@ -40,6 +40,8 @@ export default function Home() {
         image="/images/banner-new-arrivals.webp"
         imageAlt="New Arrivals up to 50% off — festive maroon saree"
       />
+
+      <FeatureStrip />
 
       <ProductGrid
         title="Newest Collection"
@@ -91,6 +93,7 @@ export default function Home() {
       />
 
       <LookbookStrip />
+      <EntireCollectionGrid />
       <Newsletter />
     </>
   )
