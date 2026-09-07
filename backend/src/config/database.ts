@@ -4,6 +4,8 @@ import { logger } from '../shared/utils/logger.util';
 
 class Database {
   private static instance: Database;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  private replSet: any = null;
 
   private constructor() {}
 
@@ -27,13 +29,33 @@ class Database {
       logger.warn('MongoDB disconnected');
     });
 
-    // Fail fast on an unreachable/misconfigured host rather than hanging —
-    // matters most in serverless, where a stuck connection burns function time.
-    await mongoose.connect(env.mongoUri, { serverSelectionTimeoutMS: 8000 });
+    if (env.mongoUri === 'in-memory' || !env.mongoUri) {
+      logger.info('Starting in-memory MongoDB replica set via mongodb-memory-server...');
+      const { MongoMemoryReplSet } = await import('mongodb-memory-server');
+      this.replSet = await MongoMemoryReplSet.create({ replSet: { count: 1, storageEngine: 'wiredTiger' } });
+      const uri = this.replSet.getUri();
+      logger.info(`In-memory MongoDB replica set running at ${uri}`);
+      await mongoose.connect(uri);
+      return;
+    }
+
+    try {
+      await mongoose.connect(env.mongoUri, { serverSelectionTimeoutMS: 5000 });
+    } catch (err) {
+      logger.warn('Could not connect to external MongoDB, falling back to in-memory replica set...', err);
+      const { MongoMemoryReplSet } = await import('mongodb-memory-server');
+      this.replSet = await MongoMemoryReplSet.create({ replSet: { count: 1, storageEngine: 'wiredTiger' } });
+      const uri = this.replSet.getUri();
+      logger.info(`Fallback in-memory MongoDB replica set running at ${uri}`);
+      await mongoose.connect(uri);
+    }
   }
 
   async disconnect(): Promise<void> {
     await mongoose.disconnect();
+    if (this.replSet) {
+      await this.replSet.stop();
+    }
   }
 }
 
