@@ -21,7 +21,7 @@ export default function Banner({
 }) {
   if (image) {
     return (
-      <section className="py-6">
+      <section className="py-2 sm:py-3">
         <Link to={to} className="block overflow-hidden bg-cream">
           <img src={image} alt={imageAlt || title} className="w-full object-cover" />
         </Link>
