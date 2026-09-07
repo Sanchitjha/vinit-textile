@@ -1,9 +1,19 @@
 import { useState, useEffect } from 'react'
 import { Link, NavLink, useLocation } from 'react-router-dom'
-import { BagIcon, CloseIcon, HeartIcon, SearchIcon, UserIcon } from '../icons/Icons'
+import { BagIcon, CloseIcon, HeartIcon, SearchIcon, UserIcon, MandalaMotifIcon } from '../icons/Icons'
 import { useCart } from '../../context/CartContext'
 import { useAuth } from '../../context/AuthContext'
 import SearchOverlay from './SearchOverlay'
+
+const SEARCH_PHRASES = [
+  'Search Pure silk sarees',
+  'Search Banarasi sarees',
+  'Search Wedding collection',
+  'Search Bridal sarees',
+  'Search Ready to wear sarees',
+  'Search Partywear sarees',
+  'Search Festival special',
+]
 
 const menuLinks = [
   { label: 'Best Seller', to: '/shop/saree' },
@@ -18,10 +28,53 @@ const menuLinks = [
 export default function Header() {
   const [menuOpen, setMenuOpen] = useState(false)
   const [searchOpen, setSearchOpen] = useState(false)
+  const [placeholder, setPlaceholder] = useState('Search Pure silk sarees')
+  const [showCursor, setShowCursor] = useState(true)
   const { count } = useCart()
   const { user, openAuthModal } = useAuth()
   const location = useLocation()
   const isHome = location.pathname === '/'
+
+  // Typewriter effect
+  useEffect(() => {
+    let phraseIndex = 0
+    let charIndex = 0
+    let deleting = false
+    let timeoutId
+
+    const tick = () => {
+      const phrase = SEARCH_PHRASES[phraseIndex]
+      if (!deleting) {
+        charIndex += 1
+        setPlaceholder(phrase.slice(0, charIndex))
+        if (charIndex === phrase.length) {
+          deleting = true
+          timeoutId = setTimeout(tick, 1800)
+          return
+        }
+        timeoutId = setTimeout(tick, 75)
+      } else {
+        charIndex -= 1
+        setPlaceholder(phrase.slice(0, charIndex))
+        if (charIndex === 0) {
+          deleting = false
+          phraseIndex = (phraseIndex + 1) % SEARCH_PHRASES.length
+          timeoutId = setTimeout(tick, 400)
+          return
+        }
+        timeoutId = setTimeout(tick, 35)
+      }
+    }
+
+    timeoutId = setTimeout(tick, 400)
+    return () => clearTimeout(timeoutId)
+  }, [])
+
+  // Blinking cursor
+  useEffect(() => {
+    const id = setInterval(() => setShowCursor((c) => !c), 530)
+    return () => clearInterval(id)
+  }, [])
 
   // On the homepage the header floats transparent directly on the hero banner
   // (no separate bar) and turns into a solid maroon bar once the hero has
@@ -81,8 +134,8 @@ export default function Header() {
       }`}
     >
       <div className="container-ambika flex items-center justify-between gap-4 py-3.5">
-        {/* Left: Menu + Search (labels show on desktop, icons only on mobile) */}
-        <div className="flex items-center gap-5 text-ivory sm:gap-7">
+        {/* Left: Menu */}
+        <div className="flex items-center gap-4 text-ivory">
           <button
             type="button"
             aria-label="Toggle menu"
@@ -100,24 +153,37 @@ export default function Header() {
             )}
             <span className="hidden sm:inline">Menu</span>
           </button>
-          <button
-            type="button"
-            aria-label="Toggle search"
-            onClick={toggleSearch}
-            className="flex items-center gap-2 text-[11px] font-bold uppercase tracking-[0.2em] transition-colors hover:text-gold"
-          >
-            {searchOpen ? <CloseIcon /> : <SearchIcon />}
-            <span className="hidden sm:inline">Search</span>
-          </button>
         </div>
 
         {/* Center: logo mark + wordmark */}
         <Link to="/" className="flex items-center gap-2.5">
           <img src="/images/logo-mark.webp" alt="Vinit Textiles" className="h-9 w-auto sm:h-10" />
-          <span className="hidden font-display text-xl tracking-[0.12em] text-ivory sm:inline sm:text-2xl">
+          <span className="font-display text-xl tracking-[0.12em] text-ivory sm:text-2xl">
             VINIT TEXTILES
           </span>
         </Link>
+
+        {/* Center-Right: Desktop Search Pill */}
+        <button
+          type="button"
+          aria-label="Open search"
+          onClick={toggleSearch}
+          className={`hidden sm:flex items-center gap-2.5 rounded-full px-4 py-2 text-xs transition-all shadow-xs max-w-xs md:max-w-sm w-full mx-2 ${
+            transparent
+              ? 'border border-white/70 bg-white/15 text-white backdrop-blur-xs hover:bg-white/25'
+              : 'border border-[#EBDCD5] bg-white text-[#4A1D1B] hover:border-[#C44331]'
+          }`}
+        >
+          <MandalaMotifIcon className="w-4 h-4 shrink-0 text-[#C44331]" />
+          <span className="flex-1 text-left font-normal text-xs truncate">
+            {placeholder}
+            <span
+              className={`inline-block w-[1.5px] h-3.5 bg-current ml-0.5 align-middle transition-opacity duration-100 ${
+                showCursor ? 'opacity-100' : 'opacity-0'
+              }`}
+            />
+          </span>
+        </button>
 
         {/* Right: wishlist, cart, account */}
         <div className="flex items-center gap-4 text-ivory sm:gap-5">
@@ -149,6 +215,31 @@ export default function Header() {
             </button>
           )}
         </div>
+      </div>
+
+      {/* Mobile Search Pill Row (Right under logo row) */}
+      <div className="sm:hidden px-4 pb-3 pt-0">
+        <button
+          type="button"
+          aria-label="Open search"
+          onClick={toggleSearch}
+          className={`w-full flex items-center gap-2.5 rounded-full px-4 py-2 text-xs transition-all shadow-xs ${
+            transparent
+              ? 'border border-white/80 bg-white/15 text-white backdrop-blur-xs hover:bg-white/25'
+              : 'border border-[#EBDCD5] bg-white text-[#4A1D1B] hover:border-[#C44331]'
+          }`}
+        >
+          <MandalaMotifIcon className="w-4 h-4 shrink-0 text-[#C44331]" />
+          <span className="flex-1 text-left font-normal text-xs truncate">
+            {placeholder}
+            <span
+              className={`inline-block w-[1.5px] h-3.5 bg-current ml-0.5 align-middle transition-opacity duration-100 ${
+                showCursor ? 'opacity-100' : 'opacity-0'
+              }`}
+            />
+          </span>
+          <SearchIcon className="w-3.5 h-3.5 shrink-0 opacity-60" />
+        </button>
       </div>
 
       {/* Category menu dropdown — opens on MENU click. A proper floating
