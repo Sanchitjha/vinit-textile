@@ -123,7 +123,7 @@ export default function AdminCoupons() {
           </thead>
           <tbody className="divide-y divide-gray-200/30 dark:divide-gray-700/30">
             {coupons.map(coupon => (
-              <tr key={coupon.id} className="hover:bg-white/40 dark:hover:bg-white/5 transition-colors">
+              <tr key={coupon._id || coupon.id} className="hover:bg-white/40 dark:hover:bg-white/5 transition-colors">
                 <td className="p-4 font-medium">{coupon.code}</td>
                 <td className="p-4">
                   {coupon.discountType === 'percentage' ? `${coupon.discountValue}%` : `₹${coupon.discountValue}`}
@@ -136,7 +136,7 @@ export default function AdminCoupons() {
                   </span>
                 </td>
                 <td className="p-4">
-                  <button onClick={() => handleDelete(coupon.id)} className="text-red-500 hover:underline">Delete</button>
+                  <button onClick={() => handleDelete(coupon._id || coupon.id)} className="text-red-500 hover:underline">Delete</button>
                 </td>
               </tr>
             ))}
