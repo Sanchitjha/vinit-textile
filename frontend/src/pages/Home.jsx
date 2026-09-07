@@ -76,7 +76,7 @@ export default function Home() {
 
       <Banner
         title="Bridal Beauty"
-        to="/shop/lehenga"
+        to="/shop/saree"
         image="/images/banner-bridal-beauty.webp"
         imageAlt="Bridal Beauty — discover more with full self confidence"
       />

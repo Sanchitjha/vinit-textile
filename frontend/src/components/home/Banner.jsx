@@ -21,7 +21,7 @@ export default function Banner({
 }) {
   if (image) {
     return (
-      <section className="container-ambika py-16">
+      <section className="py-6">
         <Link to={to} className="block overflow-hidden bg-cream">
           <img src={image} alt={imageAlt || title} className="w-full object-cover" />
         </Link>
@@ -54,7 +54,7 @@ export default function Banner({
           : 'bg-ivory/75'
 
   return (
-    <section className="container-ambika py-16">
+    <section className="container-ambika py-6">
       <div className="relative overflow-hidden bg-cream">
         <Placeholder label={label} tone={tone} ratio="aspect-[21/9] sm:aspect-[3/1]" />
         <div className={`absolute inset-0 ${scrimClass}`} />

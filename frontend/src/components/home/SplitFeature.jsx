@@ -14,7 +14,7 @@ export default function SplitFeature({
   imageAlt,
 }) {
   return (
-    <section className="container-ambika py-20">
+    <section className="container-ambika py-10">
       <div className={`flex flex-col items-center gap-16 lg:flex-row ${reverse ? 'lg:flex-row-reverse' : ''}`}>
         <div className="w-full lg:w-1/2 overflow-hidden bg-cream">
           {image ? (

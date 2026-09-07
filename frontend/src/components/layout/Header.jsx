@@ -3,15 +3,14 @@ import { Link, NavLink, useLocation } from 'react-router-dom'
 import { BagIcon, CloseIcon, HeartIcon, SearchIcon, UserIcon } from '../icons/Icons'
 import { useCart } from '../../context/CartContext'
 import { useAuth } from '../../context/AuthContext'
-import SearchBar from './SearchBar'
+import SearchOverlay from './SearchOverlay'
 
 const menuLinks = [
   { label: 'Best Seller', to: '/shop/saree' },
   { label: 'Saree', to: '/shop/saree' },
-  { label: 'Salwar Suits', to: '/shop/kurti' },
-  { label: 'Lehenga', to: '/shop/lehenga' },
+  { label: 'Festival Special', to: '/shop/saree' },
   { label: 'New Arrivals', to: '/shop/dress' },
-  { label: 'Bridal', to: '/shop/lehenga' },
+  { label: 'Bridal', to: '/shop/saree' },
   { label: 'About', to: '/about' },
   { label: 'Contact', to: '/contact' },
 ]
@@ -174,15 +173,9 @@ export default function Header() {
         </div>
       )}
 
-      {/* Search row — opens on the Search click, same header (transparent over
-          hero / solid maroon elsewhere), full-width pill input with an animated
-          "typing" placeholder. Same on mobile and desktop. */}
+      {/* Full-page search overlay */}
       {searchOpen && (
-        <div className="container-ambika pb-4">
-          <div className="mx-auto w-full sm:max-w-md">
-            <SearchBar autoFocus onSubmitted={() => setSearchOpen(false)} />
-          </div>
-        </div>
+        <SearchOverlay onClose={() => setSearchOpen(false)} />
       )}
     </header>
   )

@@ -13,7 +13,7 @@ export default function Newsletter() {
 
   return (
     <section className="bg-cream">
-      <div className="container-ambika flex flex-col items-center gap-6 py-20 text-center">
+      <div className="container-ambika flex flex-col items-center gap-6 py-10 text-center">
         <h2 className="font-display text-4xl text-brown">Be The First To Know</h2>
         <p className="max-w-sm text-sm text-brown-light">
           Join the club &amp; get exclusive access to new arrivals, festive edits and members-only

@@ -6,7 +6,7 @@ import { occasions } from '../../data/products'
 
 export default function ShopByOccasion() {
   return (
-    <section className="bg-maroon py-14">
+    <section className="bg-maroon py-8">
       <div className="container-ambika">
         <p className="text-center text-xs font-semibold uppercase tracking-[0.3em] text-gold">
           Curated For You
@@ -24,12 +24,12 @@ export default function ShopByOccasion() {
                   <img
                     src={occasion.image}
                     alt={occasion.name}
-                    className="aspect-[3/4] w-full object-cover transition-transform duration-300 group-hover:scale-105"
+                    className="aspect-[2/3] w-full object-cover object-top transition-transform duration-300 group-hover:scale-105"
                   />
                 ) : (
                   <Placeholder
                     tone={occasion.tone}
-                    ratio="aspect-[3/4]"
+                    ratio="aspect-[2/3]"
                     className="transition-transform duration-300 group-hover:scale-105"
                   />
                 )}

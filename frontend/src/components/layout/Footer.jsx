@@ -110,16 +110,6 @@ const paymentLogos = [
     ),
   },
   {
-    name: 'Airtel',
-    svg: (
-      <svg viewBox="0 0 80 26" className="h-5.5 w-auto">
-        <path fill="#E40000" d="M13 3c-6.1 0-11 4.9-11 11s4.9 11 11 11c3.1 0 5.9-1.3 7.8-3.3l-3.3-3.3c-1.2 1.2-2.8 1.9-4.5 1.9-3.6 0-6.6-3-6.6-6.6s3-6.6 6.6-6.6c1.7 0 3.3.7 4.5 1.9l3.3-3.3C18.9 4.3 16.1 3 13 3z" />
-        <circle cx="13" cy="14" r="2.8" fill="#E40000" />
-        <text x="29" y="19" fill="#E40000" fontWeight="bold" fontSize="15" fontFamily="system-ui, sans-serif">airtel</text>
-      </svg>
-    ),
-  },
-  {
     name: 'Amazon Pay',
     svg: (
       <svg viewBox="0 0 95 26" className="h-5.5 w-auto">
@@ -127,37 +117,6 @@ const paymentLogos = [
         <text x="56" y="16" fill="#00A8E1" fontWeight="bold" fontSize="14" fontFamily="system-ui, sans-serif">pay</text>
         <path d="M8 20c14 5 32 4 43-2" stroke="#FF9900" strokeWidth="2.2" fill="none" strokeLinecap="round" />
         <path d="M49 16.5l3.5 2.5-2.5 3.5" fill="#FF9900" />
-      </svg>
-    ),
-  },
-  {
-    name: 'MobiKwik',
-    svg: (
-      <svg viewBox="0 0 90 24" className="h-5.5 w-auto">
-        <circle cx="12" cy="12" r="11" fill="#2DA94F" />
-        <text x="12" y="17.5" fill="#FFFFFF" fontWeight="900" fontSize="14" textAnchor="middle" fontFamily="system-ui, sans-serif">m</text>
-        <text x="28" y="17" fill="#2DA94F" fontWeight="800" fontSize="13" fontFamily="system-ui, sans-serif">MobiKwik</text>
-      </svg>
-    ),
-  },
-  {
-    name: 'HDFC Bank',
-    svg: (
-      <svg viewBox="0 0 90 24" className="h-5.5 w-auto">
-        <rect x="0" y="2" width="20" height="20" fill="#EE2A24" rx="1.5" />
-        <rect x="4.5" y="6.5" width="11" height="11" fill="#FFFFFF" />
-        <rect x="8" y="10" width="4" height="4" fill="#004B8D" />
-        <text x="26" y="17" fill="#004B8D" fontWeight="800" fontSize="12" fontFamily="system-ui, sans-serif">HDFC BANK</text>
-      </svg>
-    ),
-  },
-  {
-    name: 'Freecharge',
-    svg: (
-      <svg viewBox="0 0 95 24" className="h-5.5 w-auto">
-        <circle cx="12" cy="12" r="11" fill="#F36F21" />
-        <path d="M14 4.5l-5.5 9h4.5l-2.5 6.5 7.5-9.5h-4.5l2.5-6z" fill="#FFFFFF" />
-        <text x="28" y="16.5" fill="#F36F21" fontWeight="800" fontSize="12" fontFamily="system-ui, sans-serif">freecharge</text>
       </svg>
     ),
   },
@@ -262,44 +221,7 @@ export default function Footer() {
               ))}
             </div>
 
-            {/* App Promotion */}
-            <p className="text-[11px] text-gray-600 mb-3 font-normal">
-              Vinit Textiles is now at your fingertips. Download the Vinit Textiles app
-            </p>
 
-            {/* Store Badges */}
-            <div className="flex flex-wrap items-center gap-3">
-              {/* Google Play */}
-              <a
-                href="#"
-                className="flex items-center gap-2 bg-black text-white px-3.5 py-1.5 rounded-md hover:bg-gray-800 transition-colors shadow-xs"
-              >
-                <svg viewBox="0 0 24 24" className="w-5 h-5 fill-current shrink-0">
-                  <path fill="#4285F4" d="M3.6 1.7C3.3 2 3.1 2.5 3.1 3.1v17.8c0 .6.2 1.1.5 1.4l.1.1 10-10v-.2L3.7 1.6l-.1.1z" />
-                  <path fill="#34A853" d="M17.1 15.6l-3.3-3.3v-.2l3.3-3.3.1.1 3.9 2.2c1.1.6 1.1 1.6 0 2.3l-4 2.2z" />
-                  <path fill="#FBBC04" d="M17.2 15.6L13.7 12 3.7 22c.4.4 1 .4 1.7 0l11.8-6.4" />
-                  <path fill="#EA4335" d="M17.2 8.4L5.4 1.7C4.7 1.3 4.1 1.3 3.7 1.7L13.7 11.7l3.5-3.3z" />
-                </svg>
-                <div className="flex flex-col text-left leading-none">
-                  <span className="text-[8px] uppercase tracking-wider text-gray-300 font-medium">GET IT ON</span>
-                  <span className="text-[11px] font-semibold text-white mt-0.5">Google Play</span>
-                </div>
-              </a>
-
-              {/* App Store */}
-              <a
-                href="#"
-                className="flex items-center gap-2 bg-black text-white px-3.5 py-1.5 rounded-md hover:bg-gray-800 transition-colors shadow-xs"
-              >
-                <svg viewBox="0 0 24 24" className="w-5 h-5 fill-current shrink-0">
-                  <path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.81-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M15.97 6.85c.66-.8 1.11-1.92.99-3.04-.96.04-2.12.64-2.8 1.44-.61.71-1.14 1.86-.99 2.97 1.07.08 2.14-.56 2.8-1.37z" />
-                </svg>
-                <div className="flex flex-col text-left leading-none">
-                  <span className="text-[8px] text-gray-300 font-medium">Download on the</span>
-                  <span className="text-[11px] font-semibold text-white mt-0.5">App Store</span>
-                </div>
-              </a>
-            </div>
           </div>
         </div>
       </div>

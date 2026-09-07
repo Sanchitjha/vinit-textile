@@ -13,11 +13,19 @@ export default function ProductCard({ product }) {
   return (
     <Link to={`/product/${id}`} className="group block">
       <div className="relative overflow-hidden bg-cream">
-        <Placeholder
-          label={product.name}
-          tone={toneFor(id)}
-          className="transition-transform duration-700 ease-in-out group-hover:scale-105"
-        />
+        {(product.images?.[0] || product.image) ? (
+          <img
+            src={product.images?.[0] || product.image}
+            alt={product.name}
+            className="aspect-[3/4] w-full object-contain bg-ivory transition-transform duration-700 ease-in-out group-hover:scale-105"
+          />
+        ) : (
+          <Placeholder
+            label={product.name}
+            tone={toneFor(id)}
+            className="transition-transform duration-700 ease-in-out group-hover:scale-105"
+          />
+        )}
         <button
           type="button"
           aria-label="Add to wishlist"

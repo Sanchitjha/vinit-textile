@@ -47,7 +47,7 @@ export default function Hero() {
   }, [active])
 
   return (
-    <section id="home-hero" className="pb-12">
+    <section id="home-hero" className="pb-4">
       <div className="relative overflow-hidden bg-cream">
         <Link to={slide.to} className="block">
           {/* Full-bleed: full screen width, whole image at its natural ratio,
