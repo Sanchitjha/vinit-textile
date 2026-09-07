@@ -3,9 +3,11 @@ import { createApp } from './app';
 import { database } from './config/database';
 import { env } from './config/env';
 import { logger } from './shared/utils/logger.util';
+import { seedInitialData } from './shared/utils/seed.util';
 
 async function bootstrap(): Promise<void> {
   await database.connect();
+  await seedInitialData();
 
   const app = createApp();
   const server = http.createServer(app);
