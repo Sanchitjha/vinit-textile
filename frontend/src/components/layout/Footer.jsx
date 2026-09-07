@@ -2,24 +2,24 @@ import { Link } from 'react-router-dom'
 import { FacebookIcon, InstagramIcon, PinterestIcon, YouTubeIcon } from '../icons/Icons'
 
 const customerServiceLinks = [
-  'SIZE CHART',
-  'SHIPPING & DELIVERY',
-  'TRACK YOUR ORDER',
-  'CUSTOMER REVIEWS',
-  'RETURNS',
-  'CONTACT US',
-  "FAQ'S",
+  { label: 'SIZE CHART', to: '/size-chart' },
+  { label: 'SHIPPING & DELIVERY', to: '/shipping-delivery' },
+  { label: 'TRACK YOUR ORDER', to: '/track-order' },
+  { label: 'CUSTOMER REVIEWS', to: '/reviews' },
+  { label: 'RETURNS', to: '/returns' },
+  { label: 'CONTACT US', to: '/contact' },
+  { label: "FAQ'S", to: '/faqs' },
 ]
 
 const aboutLinks = [
-  'ABOUT US',
-  'OUR STORES',
-  'CONTACT US',
-  'OWN A FRANCHISE',
-  'BLOG',
-  'RETURNS POLICY',
-  'PRIVACY POLICY',
-  'TERMS & CONDITIONS',
+  { label: 'ABOUT US', to: '/about' },
+  { label: 'OUR STORES', to: '/stores' },
+  { label: 'CONTACT US', to: '/contact' },
+  { label: 'OWN A FRANCHISE', to: '/franchise' },
+  { label: 'BLOG', to: '/blog' },
+  { label: 'RETURNS POLICY', to: '/returns-policy' },
+  { label: 'PRIVACY POLICY', to: '/privacy-policy' },
+  { label: 'TERMS & CONDITIONS', to: '/terms-conditions' },
 ]
 
 const popularSearches = [
@@ -164,11 +164,11 @@ export default function Footer() {
               CUSTOMER SERVICE
             </h4>
             <ul className="space-y-2 text-[11px] text-gray-600 font-normal">
-              {customerServiceLinks.map((link) => (
-                <li key={link}>
-                  <a href="#" className="hover:text-gray-900 transition-colors uppercase">
-                    {link}
-                  </a>
+              {customerServiceLinks.map((item) => (
+                <li key={item.label}>
+                  <Link to={item.to} className="hover:text-gray-900 transition-colors uppercase">
+                    {item.label}
+                  </Link>
                 </li>
               ))}
             </ul>
@@ -180,11 +180,11 @@ export default function Footer() {
               ABOUT VINIT TEXTILES
             </h4>
             <ul className="space-y-2 text-[11px] text-gray-600 font-normal">
-              {aboutLinks.map((link) => (
-                <li key={link}>
-                  <a href="#" className="hover:text-gray-900 transition-colors uppercase">
-                    {link}
-                  </a>
+              {aboutLinks.map((item) => (
+                <li key={item.label}>
+                  <Link to={item.to} className="hover:text-gray-900 transition-colors uppercase">
+                    {item.label}
+                  </Link>
                 </li>
               ))}
             </ul>
@@ -232,9 +232,9 @@ export default function Footer() {
             <span className="font-bold text-gray-800 mr-1.5">Popular Searches</span>
             {popularSearches.map((term, index) => (
               <span key={term}>
-                <a href="#" className="hover:text-gray-900 transition-colors">
+                <Link to={`/shop/saree?q=${encodeURIComponent(term)}`} className="hover:text-gray-900 transition-colors">
                   {term}
-                </a>
+                </Link>
                 {index < popularSearches.length - 1 && (
                   <span className="mx-1.5 text-gray-400">|</span>
                 )}
@@ -251,9 +251,9 @@ export default function Footer() {
             <span className="font-bold text-gray-800 mr-1.5">Explore Trending Articles</span>
             {trendingArticles.map((term, index) => (
               <span key={term}>
-                <a href="#" className="hover:text-gray-900 transition-colors">
+                <Link to="/blog" className="hover:text-gray-900 transition-colors">
                   {term}
-                </a>
+                </Link>
                 {index < trendingArticles.length - 1 && (
                   <span className="mx-1.5 text-gray-400">|</span>
                 )}
