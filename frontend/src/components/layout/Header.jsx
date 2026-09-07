@@ -170,8 +170,8 @@ export default function Header() {
           onClick={toggleSearch}
           className={`hidden sm:flex items-center gap-2.5 rounded-full px-4 py-2 text-xs transition-all shadow-xs max-w-xs md:max-w-sm w-full mx-2 ${
             transparent
-              ? 'border border-white/70 bg-white/15 text-white backdrop-blur-xs hover:bg-white/25'
-              : 'border border-[#EBDCD5] bg-white text-[#4A1D1B] hover:border-[#C44331]'
+              ? 'border border-white/90 bg-transparent text-white hover:bg-white/10'
+              : 'border border-[#EBDCD5]/40 bg-transparent text-ivory hover:border-gold'
           }`}
         >
           <MandalaMotifIcon className="w-4 h-4 shrink-0 text-[#C44331]" />
@@ -225,8 +225,8 @@ export default function Header() {
           onClick={toggleSearch}
           className={`w-full flex items-center gap-2.5 rounded-full px-4 py-2 text-xs transition-all shadow-xs ${
             transparent
-              ? 'border border-white/80 bg-white/15 text-white backdrop-blur-xs hover:bg-white/25'
-              : 'border border-[#EBDCD5] bg-white text-[#4A1D1B] hover:border-[#C44331]'
+              ? 'border border-white/90 bg-transparent text-white hover:bg-white/10'
+              : 'border border-[#EBDCD5]/40 bg-transparent text-ivory hover:border-gold'
           }`}
         >
           <MandalaMotifIcon className="w-4 h-4 shrink-0 text-[#C44331]" />
