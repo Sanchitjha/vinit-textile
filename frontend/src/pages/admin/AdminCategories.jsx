@@ -107,7 +107,7 @@ export default function AdminCategories() {
           </thead>
           <tbody className="divide-y divide-gray-200/30 dark:divide-gray-700/30">
             {categories.map(cat => (
-              <tr key={cat.id} className="hover:bg-white/40 dark:hover:bg-white/5 transition-colors">
+              <tr key={cat._id || cat.id} className="hover:bg-white/40 dark:hover:bg-white/5 transition-colors">
                 <td className="p-4">{cat.name}</td>
                 <td className="p-4">{cat.description}</td>
                 <td className="p-4">
@@ -116,7 +116,7 @@ export default function AdminCategories() {
                   </span>
                 </td>
                 <td className="p-4">
-                  <button onClick={() => handleDelete(cat.id)} className="text-red-500 hover:underline">Delete</button>
+                  <button onClick={() => handleDelete(cat._id || cat.id)} className="text-red-500 hover:underline">Delete</button>
                 </td>
               </tr>
             ))}
