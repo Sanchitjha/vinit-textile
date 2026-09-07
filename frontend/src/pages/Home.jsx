@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import Hero from '../components/home/Hero'
+import AnnouncementTicker from '../components/layout/AnnouncementTicker'
 import FeatureStrip from '../components/home/FeatureStrip'
 import TopCategories from '../components/home/TopCategories'
 import ShopByOccasion from '../components/home/ShopByOccasion'
@@ -28,6 +29,7 @@ export default function Home() {
   return (
     <>
       <Hero />
+      <AnnouncementTicker />
       <FeatureStrip />
       <TopCategories />
       <ShopByOccasion />

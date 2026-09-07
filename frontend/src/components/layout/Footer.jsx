@@ -2,7 +2,6 @@ import { Link } from 'react-router-dom'
 import { FacebookIcon, InstagramIcon, PinterestIcon, YouTubeIcon } from '../icons/Icons'
 
 const customerServiceLinks = [
-  'DOWNLOAD THE APP',
   'SIZE CHART',
   'SHIPPING & DELIVERY',
   'TRACK YOUR ORDER',

@@ -14,6 +14,17 @@ import Cart from './pages/Cart'
 import Account from './pages/Account'
 import About from './pages/About'
 import Contact from './pages/Contact'
+import SizeChart from './pages/SizeChart'
+import ShippingDelivery from './pages/ShippingDelivery'
+import TrackOrder from './pages/TrackOrder'
+import CustomerReviews from './pages/CustomerReviews'
+import ReturnsPolicy from './pages/ReturnsPolicy'
+import Faqs from './pages/Faqs'
+import Stores from './pages/Stores'
+import Franchise from './pages/Franchise'
+import Blog from './pages/Blog'
+import PrivacyPolicy from './pages/PrivacyPolicy'
+import TermsConditions from './pages/TermsConditions'
 import NotFound from './pages/NotFound'
 
 // Admin imports
@@ -54,6 +65,18 @@ export default function App() {
             <Route path="/account" element={<Account />} />
             <Route path="/about" element={<About />} />
             <Route path="/contact" element={<Contact />} />
+            <Route path="/size-chart" element={<SizeChart />} />
+            <Route path="/shipping-delivery" element={<ShippingDelivery />} />
+            <Route path="/track-order" element={<TrackOrder />} />
+            <Route path="/reviews" element={<CustomerReviews />} />
+            <Route path="/returns" element={<ReturnsPolicy />} />
+            <Route path="/returns-policy" element={<ReturnsPolicy />} />
+            <Route path="/faqs" element={<Faqs />} />
+            <Route path="/stores" element={<Stores />} />
+            <Route path="/franchise" element={<Franchise />} />
+            <Route path="/blog" element={<Blog />} />
+            <Route path="/privacy-policy" element={<PrivacyPolicy />} />
+            <Route path="/terms-conditions" element={<TermsConditions />} />
             
             {/* Admin Routes */}
             <Route path="/admin/login" element={<AdminLogin />} />

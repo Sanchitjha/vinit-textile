@@ -105,7 +105,7 @@ export default function ProductDetail() {
           </div>
           <div className="flex-1 overflow-hidden bg-cream">
             {product.images && product.images.length > 0 ? (
-              <img src={product.images[activeThumb] || product.images[0]} alt={product.name} className="aspect-[3/4] sm:aspect-[4/5] w-full object-cover" />
+              <img src={product.images[activeThumb] || product.images[0]} alt={product.name} className="aspect-[3/4] sm:aspect-[4/5] w-full object-contain bg-ivory" />
             ) : (
               <Placeholder label={product.name} tone={toneFor(product.id)} ratio="aspect-[3/4] sm:aspect-[4/5] w-full" />
             )}
