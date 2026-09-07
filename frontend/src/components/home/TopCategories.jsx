@@ -16,7 +16,7 @@ export default function TopCategories() {
       <div className="container-ambika overflow-x-auto scrollbar-hide">
         <div className="relative min-w-[850px] sm:min-w-0">
           <img
-            src="/images/banner-sarees-collection.png"
+            src="/images/banner-sarees-collection.png?v=2"
             alt="Sarees — Timeless Elegance, Just For You"
             className="w-full h-auto object-contain block drop-shadow-xs"
           />
