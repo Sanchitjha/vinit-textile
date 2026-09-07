@@ -1,15 +1,17 @@
 import { useEffect, useRef, useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
-import { CloseIcon, SearchIcon } from '../icons/Icons'
+import { CloseIcon, SearchIcon, MandalaMotifIcon } from '../icons/Icons'
 import { apiClient } from '../../api/client'
 
-// Typing placeholder phrases
+// Typing placeholder phrases — matching Koskii style
 const PLACEHOLDER_PHRASES = [
-  'Search Sarees',
-  'Search Silk Sarees',
-  'Search Wedding Collection',
-  'Search Bridal Sarees',
-  'Search Festival Special',
+  'Search Pure silk sarees',
+  'Search Banarasi sarees',
+  'Search Wedding collection',
+  'Search Bridal sarees',
+  'Search Ready to wear sarees',
+  'Search Partywear sarees',
+  'Search Festival special',
 ]
 
 // Top search tags — these are our categories
@@ -127,38 +129,51 @@ export default function SearchOverlay({ onClose }) {
   }
 
   return (
-    <div className="fixed inset-0 z-[100] bg-ivory animate-[fadeIn_0.2s_ease-out]">
+    <div className="fixed inset-0 z-[100] bg-[#FAF7F2] animate-[fadeIn_0.2s_ease-out]">
       {/* Search bar header */}
-      <div className="border-b border-cream-dark bg-white shadow-sm">
-        <div className="container-ambika flex items-center gap-4 py-3">
-          <SearchIcon className="w-5 h-5 text-brown-light shrink-0" />
-          <form onSubmit={submit} className="relative flex-1">
-            <input
-              ref={inputRef}
-              type="text"
-              value={value}
-              onChange={(e) => setValue(e.target.value)}
-              placeholder=""
-              aria-label="Search products"
-              className="w-full bg-transparent text-lg text-brown outline-none font-body"
-            />
-            {/* Typing animation */}
-            {!value && (
-              <span className="pointer-events-none absolute left-0 top-1/2 -translate-y-1/2 text-lg text-brown-light/60">
-                {placeholder}
-                <span
-                  className={`inline-block w-[2px] h-5 bg-gold ml-[1px] align-middle transition-opacity duration-100 ${
-                    showCursor ? 'opacity-100' : 'opacity-0'
-                  }`}
-                />
-              </span>
+      <div className="border-b border-[#EDE4DE] bg-white shadow-xs">
+        <div className="container-ambika flex items-center gap-3 py-3">
+          <div className="flex-1 flex items-center gap-3 rounded-full border border-[#D9CBC3] bg-[#FAF7F2] px-4 py-2 sm:py-2.5 focus-within:border-[#C44331] focus-within:bg-white focus-within:shadow-xs transition-all">
+            <MandalaMotifIcon className="w-5 h-5 text-[#C44331] shrink-0" />
+            <form onSubmit={submit} className="relative flex-1">
+              <input
+                ref={inputRef}
+                type="text"
+                value={value}
+                onChange={(e) => setValue(e.target.value)}
+                placeholder=""
+                aria-label="Search products"
+                className="w-full bg-transparent text-sm sm:text-base text-[#4A1D1B] outline-none font-body"
+              />
+              {/* Typing animation */}
+              {!value && (
+                <span className="pointer-events-none absolute left-0 top-1/2 -translate-y-1/2 text-sm sm:text-base text-[#8C7470]">
+                  {placeholder}
+                  <span
+                    className={`inline-block w-[1.5px] h-4 bg-[#C44331] ml-[1px] align-middle transition-opacity duration-100 ${
+                      showCursor ? 'opacity-100' : 'opacity-0'
+                    }`}
+                  />
+                </span>
+              )}
+            </form>
+            {value ? (
+              <button
+                type="button"
+                onClick={() => setValue('')}
+                className="text-xs text-[#9E837E] hover:text-[#4A1D1B] px-1 font-semibold"
+              >
+                Clear
+              </button>
+            ) : (
+              <SearchIcon className="w-4 h-4 text-[#8C7470] shrink-0" />
             )}
-          </form>
+          </div>
           <button
             type="button"
             aria-label="Close search"
             onClick={onClose}
-            className="flex h-9 w-9 items-center justify-center text-brown-light transition-colors hover:text-brown"
+            className="flex h-9 w-9 items-center justify-center rounded-full text-gray-500 hover:text-black hover:bg-gray-100 transition-colors"
           >
             <CloseIcon />
           </button>
