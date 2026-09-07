@@ -140,6 +140,18 @@ export async function seedInitialData(): Promise<void> {
         await SareeModel.create(item);
       }
       logger.info('Seeded initial sarees collection for store and admin');
+    } else {
+      // Sanitize existing items in MongoDB Atlas so no banner graphics are stored as product images
+      const sarees = await SareeModel.find();
+      const heroPhotos = ['/images/hero-1.webp', '/images/hero-2.webp', '/images/hero-3.webp', '/images/hero-4.webp'];
+      let idx = 0;
+      for (const saree of sarees) {
+        if (saree.images.some(img => img.includes('banner-') || img.includes('banner'))) {
+          saree.images = [heroPhotos[idx % heroPhotos.length], '/images/lookbook-1.webp'];
+          await saree.save();
+          idx++;
+        }
+      }
     }
 
     // 4. Seed Coupons
