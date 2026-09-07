@@ -6,31 +6,56 @@ import { slugify } from '../../shared/utils/slugify.util';
 import { AdjustStockDtoType, CreateSareeDtoType, SareeQueryDtoType, UpdateSareeDtoType } from './saree.dto';
 import { SareeRepository } from './saree.repository';
 import { ISareeDocument } from './saree.types';
+import { UploadService } from '../upload/upload.service';
 
 export class SareeService {
   constructor(
     private readonly sareeRepository: SareeRepository = new SareeRepository(),
     private readonly categoryRepository: CategoryRepository = new CategoryRepository(),
+    private readonly uploadService: UploadService = new UploadService(),
   ) {}
 
+  private async attachPresignedUrls(saree: ISareeDocument): Promise<ISareeDocument> {
+    if (saree && saree.images && saree.images.length > 0) {
+      saree.images = await this.uploadService.presignImageUrls(saree.images);
+    }
+    return saree;
+  }
+
   async list(query: SareeQueryDtoType): Promise<PaginatedResult<ISareeDocument>> {
-    const { page, limit, sort, ...filters } = query;
+    const { page, limit, sort, categorySlug, ...filters } = query;
+    
+    if (categorySlug) {
+      const cat = await this.categoryRepository.findBySlug(categorySlug);
+      if (cat) {
+        filters.category = cat.id;
+      } else {
+        // If category slug is invalid, return empty result by providing a dummy non-existent ID
+        filters.category = '000000000000000000000000';
+      }
+    }
+
     const filter = this.sareeRepository.buildFilter({ ...filters, isActive: true });
     const { skip, limit: safeLimit } = toSkipLimit({ page, limit });
     const { items, total } = await this.sareeRepository.findWithFilters(filter, { skip, limit: safeLimit }, sort);
+    
+    for (let i = 0; i < items.length; i++) {
+      items[i] = await this.attachPresignedUrls(items[i]);
+    }
+    
     return { items, meta: buildPaginationMeta(page, safeLimit, total) };
   }
 
   async getById(id: string): Promise<ISareeDocument> {
     const saree = await this.sareeRepository.findById(id);
     if (!saree) throw new NotFoundError('Saree not found', 'SAREE_NOT_FOUND');
-    return saree;
+    return this.attachPresignedUrls(saree);
   }
 
   async getBySlug(slug: string): Promise<ISareeDocument> {
     const saree = await this.sareeRepository.findBySlug(slug);
     if (!saree) throw new NotFoundError('Saree not found', 'SAREE_NOT_FOUND');
-    return saree;
+    return this.attachPresignedUrls(saree);
   }
 
   async create(dto: CreateSareeDtoType): Promise<ISareeDocument> {
@@ -41,7 +66,8 @@ export class SareeService {
     if (existingSku) throw new ConflictError('SKU already exists', 'SKU_EXISTS');
 
     const slug = await this.generateUniqueSlug(dto.name);
-    return this.sareeRepository.create({ ...dto, slug });
+    const saree = await this.sareeRepository.create({ ...dto, slug });
+    return this.attachPresignedUrls(saree);
   }
 
   async update(id: string, dto: UpdateSareeDtoType): Promise<ISareeDocument> {
@@ -62,7 +88,7 @@ export class SareeService {
 
     const updated = await this.sareeRepository.updateById(id, patch);
     if (!updated) throw new NotFoundError('Saree not found', 'SAREE_NOT_FOUND');
-    return updated;
+    return this.attachPresignedUrls(updated);
   }
 
   async delete(id: string): Promise<void> {
@@ -78,7 +104,7 @@ export class SareeService {
     }
     const updated = await this.sareeRepository.setStock(id, nextStock);
     if (!updated) throw new NotFoundError('Saree not found', 'SAREE_NOT_FOUND');
-    return updated;
+    return this.attachPresignedUrls(updated);
   }
 
   async listLowStock(threshold: number): Promise<ISareeDocument[]> {

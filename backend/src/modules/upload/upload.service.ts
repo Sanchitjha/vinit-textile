@@ -4,7 +4,8 @@ import {
   UploadPartCommand, 
   CompleteMultipartUploadCommand, 
   AbortMultipartUploadCommand,
-  DeleteObjectCommand 
+  DeleteObjectCommand,
+  GetObjectCommand
 } from '@aws-sdk/client-s3';
 import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
 import { env } from '../../config/env';
@@ -86,11 +87,11 @@ export class UploadService {
       },
     });
 
-    const response = await this.s3Client!.send(command);
+    await this.s3Client!.send(command);
     
-    // return the location URL of the finished object
+    // explicitly construct the URL to avoid %2F encoding returned by response.Location
     return {
-      url: response.Location || `https://${this.bucketName}.s3.${env.aws.region}.amazonaws.com/${key}`,
+      url: `https://${this.bucketName}.s3.${env.aws.region}.amazonaws.com/${key}`,
       key,
     };
   }
@@ -118,5 +119,28 @@ export class UploadService {
 
     await this.s3Client!.send(command);
     return { success: true };
+  }
+
+  async presignImageUrls(urls: string[]): Promise<string[]> {
+    if (!env.aws.isConfigured || !this.s3Client) return urls;
+
+    return Promise.all(
+      urls.map(async (url) => {
+        try {
+          if (!url.includes(this.bucketName)) return url;
+          const urlObj = new URL(url);
+          // decode %2F, %20, and convert '+' to spaces
+          const key = decodeURIComponent(urlObj.pathname.substring(1).replace(/\+/g, '%20'));
+          
+          const command = new GetObjectCommand({
+            Bucket: this.bucketName,
+            Key: key,
+          });
+          return await getSignedUrl(this.s3Client!, command, { expiresIn: 3600 });
+        } catch (err) {
+          return url; // fallback to original if anything fails
+        }
+      })
+    );
   }
 }
