@@ -6,14 +6,14 @@ const envSchema = z.object({
   PORT: z.coerce.number().int().positive().default(5000),
   API_VERSION: z.string().default('v1'),
 
-  MONGO_URI: z.string().min(1, 'MONGO_URI is required'),
+  MONGO_URI: z.string().default('in-memory'),
 
-  JWT_ACCESS_SECRET: z.string().min(1, 'JWT_ACCESS_SECRET is required'),
-  JWT_REFRESH_SECRET: z.string().min(1, 'JWT_REFRESH_SECRET is required'),
+  JWT_ACCESS_SECRET: z.string().default('vinit-textiles-access-secret-2026'),
+  JWT_REFRESH_SECRET: z.string().default('vinit-textiles-refresh-secret-2026'),
   JWT_ACCESS_EXPIRY: z.string().default('15m'),
   JWT_REFRESH_EXPIRY: z.string().default('7d'),
 
-  CORS_ORIGIN: z.string().default('http://localhost:3000'),
+  CORS_ORIGIN: z.string().default('http://localhost:5173,http://localhost:3000'),
 
   RAZORPAY_KEY_ID: z.string().optional().default(''),
   RAZORPAY_KEY_SECRET: z.string().optional().default(''),
