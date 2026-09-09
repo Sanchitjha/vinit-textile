@@ -18,6 +18,7 @@ export default function AdminDashboard() {
     async function fetchDashboard() {
       try {
         setLoading(true)
+        setError(null)
         const [dashboardRes, usersRes, lowStockRes] = await Promise.all([
           apiClient.get('/admin/dashboard'),
           apiClient.get('/admin/users?limit=1'),
@@ -25,15 +26,12 @@ export default function AdminDashboard() {
         ])
         setStats(dashboardRes.data)
         setTotalCustomers(usersRes.data?.meta?.total ?? 0)
+        setLowStockItems(lowStockRes.data || [])
       } catch (err) {
-        // Graceful fallback so dashboard is always informative
-        setStats({ totalOrders: 284, totalRevenue: 1485600, lowStockCount: 3 })
-        setTotalCustomers(840)
-        setLowStockItems([
-          { id: '1', name: 'Linen Georgette Saree with Sequin Border', sku: 'VT-LIN-003', price: 2895, stock: 3, images: ['/images/banner-sarees-collection.webp'] },
-          { id: '2', name: 'Maroon Organza Saree with Gota Swirl', sku: 'VT-ORG-002', price: 4200, stock: 4, images: ['/images/banner-timeless-elegance.webp'] },
-          { id: '3', name: 'Teal Banarasi Silk Saree with Gold Zari', sku: 'VT-BAN-001', price: 6800, stock: 5, images: ['/images/banner-new-arrivals.webp'] },
-        ])
+        // Show the real error rather than fake numbers — an admin dashboard
+        // that quietly substitutes made-up revenue/order figures on failure
+        // is worse than one that visibly says the data didn't load.
+        setError(err.message || 'Failed to load dashboard data')
       } finally {
         setLoading(false)
       }
