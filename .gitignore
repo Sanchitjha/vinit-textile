@@ -9,3 +9,10 @@ product-images/*
 # Hero/marketing banner images (not per-SKU product shots) — same reasoning.
 banners/*
 !banners/README.md
+
+# Same staging-area reasoning, but this one lives inside frontend/public and
+# got accidentally committed (271 raw, unoptimized files, ~500MB, half of it
+# exact duplicates) — see frontend/public/images/products/README.md, which
+# already documented "not committed to git" as the intent.
+frontend/public/images/products/*
+!frontend/public/images/products/README.md
