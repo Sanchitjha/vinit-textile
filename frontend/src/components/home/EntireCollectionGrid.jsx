@@ -2,6 +2,7 @@ import { useState, useEffect, useMemo } from 'react'
 import ProductCard from '../ui/ProductCard'
 import { apiClient } from '../../api/client'
 import { products as fallbackProducts } from '../../data/products'
+import { onlyRealProducts } from '../../utils/catalogue'
 
 export default function EntireCollectionGrid() {
   const [activeType, setActiveType] = useState('all')
@@ -13,7 +14,7 @@ export default function EntireCollectionGrid() {
       try {
         setLoading(true)
         const res = await apiClient.get('/sarees?limit=50')
-        const items = res.data?.items || []
+        const items = onlyRealProducts(res.data?.items)
         setProducts(items.length > 0 ? items : fallbackProducts)
       } catch (err) {
         console.warn('Backend connection fallback for full grid:', err.message)

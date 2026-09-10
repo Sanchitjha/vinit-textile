@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { CloseIcon, SearchIcon, MandalaMotifIcon } from '../icons/Icons'
+import { onlyRealProducts } from '../../utils/catalogue'
 import { apiClient } from '../../api/client'
 
 // Typing placeholder phrases — matching Koskii style
@@ -44,7 +45,7 @@ export default function SearchOverlay({ onClose }) {
     async function fetchProducts() {
       try {
         const res = await apiClient.get('/sarees?limit=8&sort=newest')
-        setProducts(res.data?.items || [])
+        setProducts(onlyRealProducts(res.data?.items))
       } catch (err) {
         console.error(err)
       }

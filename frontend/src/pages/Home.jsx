@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import Hero from '../components/home/Hero'
+import { onlyRealProducts } from '../utils/catalogue'
 import AnnouncementTicker from '../components/layout/AnnouncementTicker'
 import FeatureStrip from '../components/home/FeatureStrip'
 import TopCategories from '../components/home/TopCategories'
@@ -19,7 +20,7 @@ export default function Home() {
     async function fetchProducts() {
       try {
         const res = await apiClient.get('/sarees?limit=4&sort=newest')
-        setProducts(res.data?.items || [])
+        setProducts(onlyRealProducts(res.data?.items))
       } catch (err) {
         console.error(err)
       }

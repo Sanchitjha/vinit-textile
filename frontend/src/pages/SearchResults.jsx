@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { Link, useSearchParams } from 'react-router-dom'
 import ProductCard from '../components/ui/ProductCard'
+import { onlyRealProducts } from '../utils/catalogue'
 import { apiClient } from '../api/client'
 
 export default function SearchResults() {
@@ -22,7 +23,7 @@ export default function SearchResults() {
       setError(null)
       try {
         const res = await apiClient.get(`/sarees?search=${encodeURIComponent(q)}`)
-        if (!cancelled) setProducts(res.data?.items || [])
+        if (!cancelled) setProducts(onlyRealProducts(res.data?.items))
       } catch (err) {
         if (!cancelled) setError(err.message)
       } finally {

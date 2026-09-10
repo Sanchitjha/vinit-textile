@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from 'react'
 import { Link, useParams } from 'react-router-dom'
 import ProductCard from '../components/ui/ProductCard'
+import { onlyRealProducts } from '../utils/catalogue'
 import { apiClient } from '../api/client'
 
 const filterGroups = [
@@ -28,7 +29,7 @@ export default function ProductListing() {
           apiClient.get(`/sarees?categorySlug=${category}`)
         ])
         setCategories(catRes.data || [])
-        setProducts(prodRes.data?.items || [])
+        setProducts(onlyRealProducts(prodRes.data?.items))
       } catch (err) {
         console.error(err)
       } finally {
