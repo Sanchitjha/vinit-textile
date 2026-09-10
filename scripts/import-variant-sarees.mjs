@@ -66,10 +66,12 @@ async function main() {
   console.log('logged in as', lj.data.user.email, '(', lj.data.user.role, ')\n');
 
   // 2. existing products -> base map
-  const sr = await fetch(`${API}/sarees?limit=200`);
+  const sr = await fetch(`${API}/sarees?limit=100`);
   const sj = await sr.json();
+  const items = sj?.data?.items;
+  if (!Array.isArray(items)) { console.error('could not list sarees:', sr.status, JSON.stringify(sj)); process.exit(1); }
   const bySku = {};
-  sj.data.items.forEach((p) => { bySku[p.sku.toUpperCase()] = p; });
+  items.forEach((p) => { bySku[p.sku.toUpperCase()] = p; });
   const existing = new Set(Object.keys(bySku));
 
   let created = 0, skipped = 0, failed = 0;
