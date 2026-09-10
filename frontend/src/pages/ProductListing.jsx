@@ -26,7 +26,7 @@ export default function ProductListing() {
       try {
         const [catRes, prodRes] = await Promise.all([
           apiClient.get('/categories'),
-          apiClient.get(`/sarees?categorySlug=${category}`)
+          apiClient.get(`/sarees?categorySlug=${category}&limit=100`)
         ])
         setCategories(catRes.data || [])
         setProducts(onlyRealProducts(prodRes.data?.items))
