@@ -154,19 +154,31 @@ const paymentLogos = [
 
 export default function Footer() {
   return (
-    <footer className="bg-[#FFF0EC] text-gray-700 text-xs">
+    <footer className="relative isolate overflow-hidden bg-maroon text-cream/70 text-xs">
+      {/* Background artwork — dimmed behind everything, like a mural */}
+      <img
+        src="/images/footer-bg.webp"
+        alt=""
+        aria-hidden="true"
+        className="pointer-events-none absolute inset-0 -z-10 h-full w-full object-cover opacity-20"
+      />
+      <div
+        aria-hidden="true"
+        className="pointer-events-none absolute inset-0 -z-10 bg-gradient-to-b from-maroon/85 via-maroon/80 to-maroon/95"
+      />
+
       {/* Main Top Navigation */}
       <div className="container-ambika py-12 lg:py-14">
         <div className="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-12 lg:gap-12">
           {/* Column 1: CUSTOMER SERVICE */}
           <div className="lg:col-span-3">
-            <h4 className="text-[11px] font-bold tracking-wider text-gray-900 uppercase mb-4">
+            <h4 className="text-[11px] font-bold tracking-wider text-ivory uppercase mb-4">
               CUSTOMER SERVICE
             </h4>
-            <ul className="space-y-2 text-[11px] text-gray-600 font-normal">
+            <ul className="space-y-2 text-[11px] text-cream/70 font-normal">
               {customerServiceLinks.map((item) => (
                 <li key={item.label}>
-                  <Link to={item.to} className="hover:text-gray-900 transition-colors uppercase">
+                  <Link to={item.to} className="hover:text-gold transition-colors uppercase">
                     {item.label}
                   </Link>
                 </li>
@@ -176,13 +188,13 @@ export default function Footer() {
 
           {/* Column 2: ABOUT VINIT TEXTILES */}
           <div className="lg:col-span-4">
-            <h4 className="text-[11px] font-bold tracking-wider text-gray-900 uppercase mb-4">
+            <h4 className="text-[11px] font-bold tracking-wider text-ivory uppercase mb-4">
               ABOUT VINIT TEXTILES
             </h4>
-            <ul className="space-y-2 text-[11px] text-gray-600 font-normal">
+            <ul className="space-y-2 text-[11px] text-cream/70 font-normal">
               {aboutLinks.map((item) => (
                 <li key={item.label}>
-                  <Link to={item.to} className="hover:text-gray-900 transition-colors uppercase">
+                  <Link to={item.to} className="hover:text-gold transition-colors uppercase">
                     {item.label}
                   </Link>
                 </li>
@@ -192,10 +204,10 @@ export default function Footer() {
 
           {/* Column 3: SIGN UP AND SAVE */}
           <div className="lg:col-span-5">
-            <h4 className="text-[11px] font-bold tracking-wider text-gray-900 uppercase mb-3">
+            <h4 className="text-[11px] font-bold tracking-wider text-ivory uppercase mb-3">
               SIGN UP AND SAVE
             </h4>
-            <p className="text-[11px] text-gray-600 mb-4 leading-relaxed">
+            <p className="text-[11px] text-cream/70 mb-4 leading-relaxed">
               subscribe to get special offers, free giveaways, and once-in-a-lifetime deals.
             </p>
 
@@ -213,7 +225,7 @@ export default function Footer() {
                   target={href.startsWith('http') ? '_blank' : undefined}
                   rel={href.startsWith('http') ? 'noreferrer' : undefined}
                   aria-label={label}
-                  className="flex h-9 w-9 items-center justify-center rounded-full bg-white border border-gray-200 shadow-2xs text-gray-800 hover:text-black hover:border-gray-400 hover:shadow-xs transition-all"
+                  className="flex h-9 w-9 items-center justify-center rounded-full bg-white/10 border border-white/20 text-cream hover:text-gold hover:border-white/50 hover:bg-white/15 transition-all"
                 >
                   <Icon className="w-4 h-4" />
                 </a>
@@ -226,17 +238,17 @@ export default function Footer() {
       </div>
 
       {/* Popular Searches */}
-      <div className="border-t border-[#F5D5CE]">
-        <div className="container-ambika py-4 text-[11px] text-gray-600 leading-relaxed">
+      <div className="border-t border-white/10">
+        <div className="container-ambika py-4 text-[11px] text-cream/70 leading-relaxed">
           <p>
-            <span className="font-bold text-gray-800 mr-1.5">Popular Searches</span>
+            <span className="font-bold text-ivory mr-1.5">Popular Searches</span>
             {popularSearches.map((term, index) => (
               <span key={term}>
-                <Link to={`/shop/saree?q=${encodeURIComponent(term)}`} className="hover:text-gray-900 transition-colors">
+                <Link to={`/shop/saree?q=${encodeURIComponent(term)}`} className="hover:text-gold transition-colors">
                   {term}
                 </Link>
                 {index < popularSearches.length - 1 && (
-                  <span className="mx-1.5 text-gray-400">|</span>
+                  <span className="mx-1.5 text-cream/30">|</span>
                 )}
               </span>
             ))}
@@ -245,17 +257,17 @@ export default function Footer() {
       </div>
 
       {/* Explore Trending Articles */}
-      <div className="border-t border-[#F5D5CE]">
-        <div className="container-ambika py-4 text-[11px] text-gray-600 leading-relaxed">
+      <div className="border-t border-white/10">
+        <div className="container-ambika py-4 text-[11px] text-cream/70 leading-relaxed">
           <p>
-            <span className="font-bold text-gray-800 mr-1.5">Explore Trending Articles</span>
+            <span className="font-bold text-ivory mr-1.5">Explore Trending Articles</span>
             {trendingArticles.map((term, index) => (
               <span key={term}>
-                <Link to="/blog" className="hover:text-gray-900 transition-colors">
+                <Link to="/blog" className="hover:text-gold transition-colors">
                   {term}
                 </Link>
                 {index < trendingArticles.length - 1 && (
-                  <span className="mx-1.5 text-gray-400">|</span>
+                  <span className="mx-1.5 text-cream/30">|</span>
                 )}
               </span>
             ))}
@@ -264,7 +276,7 @@ export default function Footer() {
       </div>
 
       {/* Payment & Partner Logos Row */}
-      <div className="border-t border-[#F5D5CE]">
+      <div className="border-t border-white/10">
         <div className="container-ambika py-6">
           <div className="flex flex-wrap items-center justify-center gap-2 sm:gap-2.5">
             {paymentLogos.map((item) => (
@@ -278,7 +290,7 @@ export default function Footer() {
             ))}
           </div>
 
-          <p className="mt-4 text-center text-[10px] text-gray-500">
+          <p className="mt-4 text-center text-[10px] text-cream/50">
             © {new Date().getFullYear()} Vinit Textiles All Rights Reserved.
           </p>
         </div>
