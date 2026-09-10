@@ -15,11 +15,14 @@ const SEARCH_PHRASES = [
   'Search Festival special',
 ]
 
+// NOTE: every catalogue link points at /shop/saree for now — that's the only
+// category the backend has products in (all 11). Re-point these to the proper
+// sub-category slugs once products are re-categorised in the admin panel.
 const menuLinks = [
   { label: 'Best Seller', to: '/shop/saree' },
   { label: 'Saree', to: '/shop/saree' },
   { label: 'Festival Special', to: '/shop/saree' },
-  { label: 'New Arrivals', to: '/shop/dress' },
+  { label: 'New Arrivals', to: '/shop/saree' },
   { label: 'Bridal', to: '/shop/saree' },
   { label: 'About', to: '/about' },
   { label: 'Contact', to: '/contact' },

@@ -1,13 +1,14 @@
 import { Link } from 'react-router-dom'
 
+// All point to /shop/saree for now — the only category the backend has stock in.
 const arches = [
   { label: 'SALE', to: '/shop/saree' },
   { label: 'Bestsellers / New arrivals', to: '/shop/saree' },
-  { label: 'Partywear Collection', to: '/shop/partywear' },
-  { label: 'Wedding Edit', to: '/shop/bridal-saree' },
+  { label: 'Partywear Collection', to: '/shop/saree' },
+  { label: 'Wedding Edit', to: '/shop/saree' },
   { label: 'Everyday elegance / office wear', to: '/shop/saree' },
-  { label: 'Pooja & Traditional', to: '/shop/silk-saree' },
-  { label: 'Bridal Edit', to: '/shop/bridal-saree' },
+  { label: 'Pooja & Traditional', to: '/shop/saree' },
+  { label: 'Bridal Edit', to: '/shop/saree' },
 ]
 
 export default function TopCategories() {

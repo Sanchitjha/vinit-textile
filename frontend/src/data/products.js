@@ -10,18 +10,18 @@ export const categories = [
 
 export const sareeOccasions = [
   { slug: 'bestsellers', name: 'Bestsellers / New Arrivals', to: '/shop/saree', tone: 'vermillion' },
-  { slug: 'partywear', name: 'Partywear Collection', to: '/shop/partywear', tone: 'maroon' },
-  { slug: 'wedding', name: 'Wedding Edit', to: '/shop/bridal-saree', tone: 'gold' },
-  { slug: 'silk-saree', name: 'Royal Silk Edit', to: '/shop/silk-saree', tone: 'gold' },
-  { slug: 'organza-saree', name: 'Organza Drape', to: '/shop/organza-saree', tone: 'mauve' },
-  { slug: 'bridal', name: 'Bridal Edit', to: '/shop/bridal-saree', tone: 'teal' },
+  { slug: 'partywear', name: 'Partywear Collection', to: '/shop/saree', tone: 'maroon' },
+  { slug: 'wedding', name: 'Wedding Edit', to: '/shop/saree', tone: 'gold' },
+  { slug: 'silk-saree', name: 'Royal Silk Edit', to: '/shop/saree', tone: 'gold' },
+  { slug: 'organza-saree', name: 'Organza Drape', to: '/shop/saree', tone: 'mauve' },
+  { slug: 'bridal', name: 'Bridal Edit', to: '/shop/saree', tone: 'teal' },
 ]
 
 export const occasions = [
-  { slug: 'wedding', name: 'Wedding Edit', to: '/shop/bridal-saree', image: '/product-images/categories/bridal-saree/VT-1699/01.webp' },
-  { slug: 'diwali', name: 'Diwali Collection', to: '/shop/partywear', image: '/product-images/categories/partywear/VT-1499/01.webp' },
-  { slug: 'bridal', name: 'Bridal Trousseau', to: '/shop/bridal-saree', image: '/product-images/categories/bridal-saree/VT-1855/01.webp' },
-  { slug: 'festive', name: 'Festive Everyday', to: '/shop/silk-saree', image: '/product-images/categories/silk-saree/VT-12590/01.webp' },
+  { slug: 'wedding', name: 'Wedding Edit', to: '/shop/saree', image: '/product-images/categories/bridal-saree/VT-1699/01.webp' },
+  { slug: 'diwali', name: 'Diwali Collection', to: '/shop/saree', image: '/product-images/categories/partywear/VT-1499/01.webp' },
+  { slug: 'bridal', name: 'Bridal Trousseau', to: '/shop/saree', image: '/product-images/categories/bridal-saree/VT-1855/01.webp' },
+  { slug: 'festive', name: 'Festive Everyday', to: '/shop/saree', image: '/product-images/categories/silk-saree/VT-12590/01.webp' },
 ]
 
 const FALLBACK_TONES = ['brown', 'mauve', 'gold', 'teal', 'cream', 'ivory']
