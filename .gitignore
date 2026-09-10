@@ -17,9 +17,11 @@ banners/*
 frontend/public/images/products/*
 !frontend/public/images/products/README.md
 
-# A second, complete copy of product-images/categories/ (~230MB, byte-for-byte
-# identical) had also been committed here by mistake. Never let anything land
-# in frontend/public/product-images/ — anything under frontend/public/ is
-# copied verbatim into every Vite build, so this alone made every `vercel
-# deploy` upload ~1GB. Use the root-level product-images/ staging area instead.
-frontend/public/product-images/
+# frontend/public/product-images/ IS committed — but only the optimised .webp
+# catalogue images (~17MB total, referenced by src/data/products.js). The raw
+# multi-MB originals stay in the repo-root product-images/ staging area above
+# and are converted with frontend/optimize-images.cjs. Block raw formats here
+# so a stray .png/.jpg drop can never bloat the build again.
+frontend/public/product-images/**/*.png
+frontend/public/product-images/**/*.jpg
+frontend/public/product-images/**/*.jpeg
