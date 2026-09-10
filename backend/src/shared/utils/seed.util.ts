@@ -1,4 +1,4 @@
-import { Role } from '../constants/roles.constant';
+﻿import { Role } from '../constants/roles.constant';
 import { logger } from './logger.util';
 import { UserModel } from '../../modules/user/user.model';
 import { CategoryModel } from '../../modules/category/category.model';
@@ -44,12 +44,28 @@ export async function seedInitialData(): Promise<void> {
 
     // 3. Seed Sarees
     if (sareeCategory) {
+      // Fetch specific category IDs for proper filtering
+      const silkCat    = await CategoryModel.findOne({ slug: 'silk-saree' });
+      const organzaCat = await CategoryModel.findOne({ slug: 'organza-saree' });
+      const cottonCat  = await CategoryModel.findOne({ slug: 'cotton-saree' });
+      const georgetCat = await CategoryModel.findOne({ slug: 'georgette-saree' });
+      const partyCat   = await CategoryModel.findOne({ slug: 'partywear' });
+      const bridalCat  = await CategoryModel.findOne({ slug: 'bridal-saree' });
+
+      // Fallback to generic 'saree' if a specific one isn't found
+      const silk    = (silkCat    ?? sareeCategory)._id;
+      const organza = (organzaCat ?? sareeCategory)._id;
+      const cotton  = (cottonCat  ?? sareeCategory)._id;
+      const georgette = (georgetCat ?? sareeCategory)._id;
+      const party   = (partyCat   ?? sareeCategory)._id;
+      const bridal  = (bridalCat  ?? sareeCategory)._id;
+
       const initialSarees = [
         {
           name: 'Royal Zari Woven Silk Saree (VT-12590)',
           slug: 'royal-zari-woven-silk-saree-vt-12590',
           description: 'Authentic Surat handloom silk saree with intricate floral zari weave border.',
-          category: sareeCategory._id,
+          category: silk,
           images: [
             '/product-images/categories/silk-saree/VT-12590/01.png',
             '/product-images/categories/silk-saree/VT-12590/02.png',
@@ -75,7 +91,7 @@ export async function seedInitialData(): Promise<void> {
           name: 'Traditional Banarasi Silk Saree (VT-1395)',
           slug: 'traditional-banarasi-silk-saree-vt-1395',
           description: 'Rich Banarasi weave in vibrant festive colors woven by master artisans.',
-          category: sareeCategory._id,
+          category: silk,
           images: [
             '/product-images/categories/silk-saree/VT-1395/01.jpg',
             '/product-images/categories/silk-saree/VT-1395/02.jpg',
@@ -102,7 +118,7 @@ export async function seedInitialData(): Promise<void> {
           name: 'Festive Organza Zari Drape Saree (VT-1425)',
           slug: 'festive-organza-zari-drape-saree-vt-1425',
           description: 'Sheer lightweight organza drape adorned with delicate zari accents.',
-          category: sareeCategory._id,
+          category: organza,
           images: [
             '/product-images/categories/organza-saree/VT-1425/01.jpg',
             '/product-images/categories/organza-saree/VT-1425/02.jpg',
@@ -129,7 +145,7 @@ export async function seedInitialData(): Promise<void> {
           name: 'Handloom Cotton Silk Floral Saree (VT-1460)',
           slug: 'handloom-cotton-silk-floral-saree-vt-1460',
           description: 'Breathable handloom cotton silk with subtle metallic thread floral motifs.',
-          category: sareeCategory._id,
+          category: cotton,
           images: [
             '/product-images/categories/cotton-saree/VT-1460/01.png',
             '/product-images/categories/cotton-saree/VT-1460/02.png',
@@ -156,7 +172,7 @@ export async function seedInitialData(): Promise<void> {
           name: 'Georgette Micro-Sequin Border Saree (VT-1470)',
           slug: 'georgette-micro-sequin-border-saree-vt-1470',
           description: 'Airy georgette saree featuring a brilliant micro-sequin embroidered border.',
-          category: sareeCategory._id,
+          category: georgette,
           images: [
             '/product-images/categories/georgette-saree/VT-1470/01.png',
             '/product-images/categories/georgette-saree/VT-1470/02.png',
@@ -183,7 +199,7 @@ export async function seedInitialData(): Promise<void> {
           name: 'Designer Partywear Embroidered Saree (VT-1499)',
           slug: 'designer-partywear-embroidered-saree-vt-1499',
           description: 'Contemporary partywear drape with handcrafted embroidery work.',
-          category: sareeCategory._id,
+          category: party,
           images: [
             '/product-images/categories/partywear/VT-1499/01.png',
             '/product-images/categories/partywear/VT-1499/02.png',
@@ -209,7 +225,7 @@ export async function seedInitialData(): Promise<void> {
           name: 'Pure Kanjivaram Style Brocade Silk Saree (VT-1565)',
           slug: 'pure-kanjivaram-style-brocade-silk-saree-vt-1565',
           description: 'Grand Kanjivaram style temple border woven silk saree.',
-          category: sareeCategory._id,
+          category: silk,
           images: [
             '/product-images/categories/silk-saree/VT-1565/01.png',
             '/product-images/categories/silk-saree/VT-1565/02.png',
@@ -236,7 +252,7 @@ export async function seedInitialData(): Promise<void> {
           name: 'Festive Chanderi Silk Zari Saree (VT-1599)',
           slug: 'festive-chanderi-silk-zari-saree-vt-1599',
           description: 'Lustrous Chanderi silk drape woven with traditional peacock motifs.',
-          category: sareeCategory._id,
+          category: silk,
           images: [
             '/product-images/categories/silk-saree/VT-1599/01.png',
             '/product-images/categories/silk-saree/VT-1599/02.png',
@@ -263,7 +279,7 @@ export async function seedInitialData(): Promise<void> {
           name: 'Royal Velvet Border Handwoven Saree (VT-1699)',
           slug: 'royal-velvet-border-handwoven-saree-vt-1699',
           description: 'Opulent bridal drape with rich velvet border and intricate threadwork.',
-          category: sareeCategory._id,
+          category: bridal,
           images: [
             '/product-images/categories/bridal-saree/VT-1699/01.jpg',
             '/product-images/categories/bridal-saree/VT-1699/02.jpg',
@@ -290,7 +306,7 @@ export async function seedInitialData(): Promise<void> {
           name: 'Premium Bridal Trousseau Velvet Saree (VT-1855)',
           slug: 'premium-bridal-trousseau-velvet-saree-vt-1855',
           description: 'Exclusive bridal trousseau saree with heavy zardozi embroidery.',
-          category: sareeCategory._id,
+          category: bridal,
           images: [
             '/product-images/categories/bridal-saree/VT-1855/01.png',
             '/product-images/categories/bridal-saree/VT-1855/02.png',
