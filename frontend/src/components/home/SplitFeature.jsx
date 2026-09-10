@@ -21,7 +21,7 @@ export default function SplitFeature({
             <img
               src={image}
               alt={imageAlt || title}
-              className="aspect-[4/5] w-full object-cover transition-transform duration-1000 hover:scale-105"
+              className="block w-full h-auto transition-transform duration-1000 hover:scale-105"
             />
           ) : (
             <Placeholder label={label} tone={tone} ratio="aspect-[4/5] sm:aspect-[4/5] w-full" className="transition-transform duration-1000 hover:scale-105" />
