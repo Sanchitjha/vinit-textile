@@ -12,22 +12,47 @@ class ApiError extends Error {
   }
 }
 
-async function fetchWithAuth(url, options = {}) {
+// A single in-flight refresh is shared by every request that 401s at the same
+// time, so we hit /auth/refresh once, not once per pending call.
+let refreshPromise = null;
+
+async function refreshAccessToken() {
+  if (!refreshPromise) {
+    refreshPromise = fetch(`${BASE_URL}/auth/refresh`, {
+      method: 'POST',
+      credentials: 'include', // send the httpOnly refreshToken cookie
+      headers: { 'Content-Type': 'application/json' },
+    })
+      .then(async (res) => {
+        if (!res.ok) throw new Error('refresh failed');
+        const body = await res.json();
+        const token = body?.data?.accessToken;
+        if (!token) throw new Error('no accessToken in refresh response');
+        localStorage.setItem('accessToken', token);
+        return token;
+      })
+      .finally(() => {
+        refreshPromise = null;
+      });
+  }
+  return refreshPromise;
+}
+
+async function fetchWithAuth(url, options = {}, retried = false) {
   const token = localStorage.getItem('accessToken');
-  
+
   const headers = {
     'Content-Type': 'application/json',
     ...(token ? { Authorization: `Bearer ${token}` } : {}),
     ...options.headers,
   };
 
-  const config = {
+  const response = await fetch(`${BASE_URL}${url}`, {
     ...options,
     headers,
-  };
+    credentials: 'include',
+  });
 
-  const response = await fetch(`${BASE_URL}${url}`, config);
-  
   let data;
   try {
     data = await response.json();
@@ -35,12 +60,21 @@ async function fetchWithAuth(url, options = {}) {
     data = null;
   }
 
+  // Access token expired (15 min TTL) — rotate it once via the refresh cookie
+  // and retry the original request, so an admin session doesn't die mid-task.
+  const isAuthCall = url.startsWith('/auth/refresh') || url.startsWith('/auth/login');
+  if (response.status === 401 && !retried && !isAuthCall) {
+    try {
+      await refreshAccessToken();
+      return fetchWithAuth(url, options, true);
+    } catch (e) {
+      localStorage.removeItem('accessToken');
+      // fall through and let the 401 surface
+    }
+  }
+
   if (!response.ok) {
-    throw new ApiError(
-      data?.message || 'Something went wrong',
-      response.status,
-      data
-    );
+    throw new ApiError(data?.message || 'Something went wrong', response.status, data);
   }
 
   return data;
