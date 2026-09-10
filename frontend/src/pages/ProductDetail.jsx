@@ -105,13 +105,14 @@ export default function ProductDetail() {
             ))}
           </div>
 
-          {/* Main Hero Image */}
-          <div className="flex-1 overflow-hidden bg-cream rounded-xl relative group">
+          {/* Main Hero Image — shown at its natural size (no aspect-ratio box),
+              so the whole photo is always visible, model's head included. */}
+          <div className="flex-1 bg-cream rounded-xl relative group overflow-hidden">
             {product.images && product.images.length > 0 ? (
-              <img 
-                src={product.images[activeThumb] || product.images[0]} 
-                alt={product.name} 
-                className="aspect-[3/4] sm:aspect-[4/5] w-full object-contain bg-ivory transition-all duration-300" 
+              <img
+                src={product.images[activeThumb] || product.images[0]}
+                alt={product.name}
+                className="block w-full h-auto bg-ivory transition-all duration-300"
               />
             ) : (
               <Placeholder label={product.name} tone={toneFor(product.id)} ratio="aspect-[3/4] sm:aspect-[4/5] w-full" />

@@ -160,11 +160,11 @@ export default function Footer() {
         src="/images/footer-bg.webp"
         alt=""
         aria-hidden="true"
-        className="pointer-events-none absolute inset-0 -z-10 h-full w-full object-cover opacity-20"
+        className="pointer-events-none absolute inset-0 -z-10 h-full w-full object-cover opacity-40"
       />
       <div
         aria-hidden="true"
-        className="pointer-events-none absolute inset-0 -z-10 bg-gradient-to-b from-maroon/85 via-maroon/80 to-maroon/95"
+        className="pointer-events-none absolute inset-0 -z-10 bg-gradient-to-b from-maroon/60 via-maroon/55 to-maroon/75"
       />
 
       {/* Main Top Navigation */}
