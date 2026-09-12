@@ -1,8 +1,10 @@
 import { Link } from 'react-router-dom'
+import Seo from '../components/seo/Seo'
 
 export default function TermsConditions() {
   return (
     <div className="bg-[#FAF7F2] text-[#332421] min-h-screen py-10 sm:py-16">
+      <Seo title="Terms & Conditions" description="Vinit Textiles' terms and conditions covering orders, pricing, product representation and intellectual property." />
       <div className="container-ambika max-w-4xl mx-auto">
         <div className="text-center mb-10">
           <p className="text-xs uppercase tracking-[0.25em] text-[#C44331] font-semibold">User Agreement</p>
