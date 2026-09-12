@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import { ChevronDownIcon, WhatsAppIcon } from '../components/icons/Icons'
+import Seo from '../components/seo/Seo'
 
 const faqCategories = [
   {
@@ -94,8 +95,25 @@ export default function Faqs() {
     setOpenMap((prev) => ({ ...prev, [key]: !prev[key] }))
   }
 
+  const faqJsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'FAQPage',
+    mainEntity: faqCategories.flatMap((cat) =>
+      cat.items.map((item) => ({
+        '@type': 'Question',
+        name: item.q,
+        acceptedAnswer: { '@type': 'Answer', text: item.a },
+      }))
+    ),
+  }
+
   return (
     <div className="bg-[#FAF7F2] text-[#332421] min-h-screen py-10 sm:py-16">
+      <Seo
+        title="FAQs"
+        description="Answers to common questions about Vinit Textiles orders, shipping, payments, returns and saree fabric care."
+        jsonLd={faqJsonLd}
+      />
       <div className="container-ambika max-w-4xl mx-auto">
         {/* Header */}
         <div className="text-center mb-10">
