@@ -48,6 +48,14 @@ export default function App() {
   const location = useLocation()
   const isAdminRoute = location.pathname.startsWith('/admin')
 
+  // The static <head> tags in index.html (marked data-default) are a fallback
+  // for link-preview bots that don't run JS. Once React has mounted and every
+  // page's <Seo> has registered its own tags via react-helmet-async, drop the
+  // static ones so browsers/Googlebot don't see duplicates.
+  useEffect(() => {
+    document.querySelectorAll('[data-default="true"]').forEach((el) => el.remove())
+  }, [])
+
   return (
     <CartProvider>
       <ScrollToTop />
