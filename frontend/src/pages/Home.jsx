@@ -12,6 +12,8 @@ import LookbookStrip from '../components/home/LookbookStrip'
 import EntireCollectionGrid from '../components/home/EntireCollectionGrid'
 import Newsletter from '../components/home/Newsletter'
 import { apiClient } from '../api/client'
+import Seo from '../components/seo/Seo'
+import { SITE_URL, SITE_NAME } from '../lib/seoConfig'
 
 export default function Home() {
   const [products, setProducts] = useState([])
@@ -28,8 +30,36 @@ export default function Home() {
     fetchProducts()
   }, [])
 
+  const organizationJsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'Organization',
+    name: SITE_NAME,
+    url: SITE_URL,
+    logo: `${SITE_URL}/images/logo.webp`,
+    sameAs: [],
+    address: {
+      '@type': 'PostalAddress',
+      addressLocality: 'Surat',
+      addressRegion: 'Gujarat',
+      addressCountry: 'IN',
+    },
+  }
+
+  const websiteJsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'WebSite',
+    name: SITE_NAME,
+    url: SITE_URL,
+    potentialAction: {
+      '@type': 'SearchAction',
+      target: `${SITE_URL}/search?q={search_term_string}`,
+      'query-input': 'required name=search_term_string',
+    },
+  }
+
   return (
     <>
+      <Seo jsonLd={[organizationJsonLd, websiteJsonLd]} />
       <Hero />
       <AnnouncementTicker />
       <TopCategories />
