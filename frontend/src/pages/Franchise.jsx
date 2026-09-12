@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { WhatsAppIcon, SparkleIcon, ShieldCheckIcon, TruckIcon } from '../components/icons/Icons'
+import Seo from '../components/seo/Seo'
 
 export default function Franchise() {
   const [formData, setFormData] = useState({
@@ -21,6 +22,10 @@ export default function Franchise() {
 
   return (
     <div className="bg-[#FAF7F2] text-[#332421] min-h-screen py-10 sm:py-16">
+      <Seo
+        title="Franchise & Wholesale"
+        description="Partner with Vinit Textiles for franchise and wholesale saree sourcing — direct manufacturer pricing from our Surat, Gujarat hub."
+      />
       <div className="container-ambika max-w-5xl mx-auto">
         {/* Header */}
         <div className="text-center mb-12">
