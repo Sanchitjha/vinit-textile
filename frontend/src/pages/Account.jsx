@@ -6,6 +6,7 @@ import { toneFor } from '../data/products'
 import { useCart } from '../context/CartContext'
 import { useAuth } from '../context/AuthContext'
 import { apiClient } from '../api/client'
+import Seo from '../components/seo/Seo'
 
 const tabs = ['Profile', 'My Orders', 'Addresses', 'Wishlist']
 
@@ -36,6 +37,7 @@ export default function Account() {
 
   return (
     <section className="container-ambika py-10">
+      <Seo title="My Account" description="Manage your Vinit Textiles profile, orders, addresses and wishlist." noindex />
       <h1 className="font-display text-4xl text-maroon">My Account</h1>
 
       <div className="mt-8 flex flex-col gap-10 lg:flex-row">
