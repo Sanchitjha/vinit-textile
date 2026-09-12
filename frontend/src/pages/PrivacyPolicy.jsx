@@ -1,8 +1,10 @@
 import { Link } from 'react-router-dom'
+import Seo from '../components/seo/Seo'
 
 export default function PrivacyPolicy() {
   return (
     <div className="bg-[#FAF7F2] text-[#332421] min-h-screen py-10 sm:py-16">
+      <Seo title="Privacy Policy" description="How Vinit Textiles collects, uses and protects your personal data." />
       <div className="container-ambika max-w-4xl mx-auto">
         <div className="text-center mb-10">
           <p className="text-xs uppercase tracking-[0.25em] text-[#C44331] font-semibold">Your Data Security</p>
