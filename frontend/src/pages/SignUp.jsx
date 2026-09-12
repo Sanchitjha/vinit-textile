@@ -3,6 +3,7 @@ import { Link, useNavigate } from 'react-router-dom'
 import AuthShell from '../components/layout/AuthShell'
 import Button from '../components/ui/Button'
 import { useAuth } from '../context/AuthContext'
+import Seo from '../components/seo/Seo'
 
 export default function SignUp() {
   const navigate = useNavigate()
@@ -29,6 +30,7 @@ export default function SignUp() {
 
   return (
     <AuthShell tone="mauve" label="Bridal editorial — join the club">
+      <Seo title="Sign Up" description="Create your Vinit Textiles account for early access to new arrivals and festive edits." noindex />
       <p className="text-[10px] font-semibold uppercase tracking-[0.3em] text-brown-light">Join The Club</p>
       <h1 className="font-display mt-4 text-4xl text-brown">Create Your Account</h1>
       <p className="mt-4 text-sm leading-relaxed text-brown-light">
