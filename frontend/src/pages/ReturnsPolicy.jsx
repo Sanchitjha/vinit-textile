@@ -1,9 +1,14 @@
 import { Link } from 'react-router-dom'
 import { ReturnIcon, ShieldCheckIcon, WhatsAppIcon } from '../components/icons/Icons'
+import Seo from '../components/seo/Seo'
 
 export default function ReturnsPolicy() {
   return (
     <div className="bg-[#FAF7F2] text-[#332421] min-h-screen py-10 sm:py-16">
+      <Seo
+        title="Returns & Exchange Policy"
+        description="Vinit Textiles' 7-day hassle-free return and exchange policy, refund timelines and doorstep pickup process."
+      />
       <div className="container-ambika max-w-4xl mx-auto">
         {/* Header */}
         <div className="text-center mb-10">
