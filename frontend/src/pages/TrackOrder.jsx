@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import { TruckIcon, ShieldCheckIcon, WhatsAppIcon } from '../components/icons/Icons'
+import Seo from '../components/seo/Seo'
 
 export default function TrackOrder() {
   const [orderQuery, setOrderQuery] = useState('')
@@ -42,6 +43,7 @@ export default function TrackOrder() {
 
   return (
     <div className="bg-[#FAF7F2] text-[#332421] min-h-screen py-10 sm:py-16">
+      <Seo title="Track Your Order" description="Track your Vinit Textiles saree order using your Order ID, AWB or mobile number." noindex />
       <div className="container-ambika max-w-3xl mx-auto">
         {/* Title */}
         <div className="text-center mb-8">
