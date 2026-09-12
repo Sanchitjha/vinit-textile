@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import { StarIcon, ShieldCheckIcon } from '../components/icons/Icons'
+import Seo from '../components/seo/Seo'
 
 const reviewsData = [
   {
@@ -86,6 +87,10 @@ export default function CustomerReviews() {
 
   return (
     <div className="bg-[#FAF7F2] text-[#332421] min-h-screen py-10 sm:py-16">
+      <Seo
+        title="Customer Reviews"
+        description="Read verified reviews from Vinit Textiles customers — 4.9/5 average rating from brides, festive shoppers and boutique owners across India."
+      />
       <div className="container-ambika max-w-5xl mx-auto">
         {/* Header */}
         <div className="text-center mb-10">
