@@ -1,9 +1,14 @@
 import { Link } from 'react-router-dom'
 import { SparkleIcon, TruckIcon, ShieldCheckIcon, StarIcon } from '../components/icons/Icons'
+import Seo from '../components/seo/Seo'
 
 export default function About() {
   return (
     <div className="bg-[#FAF7F2] text-[#332421] min-h-screen">
+      <Seo
+        title="About Us"
+        description="Vinit Textiles is a direct-from-manufacturer saree brand in Surat, Gujarat — founded by Sowmya Mishra, Vinit Pandey and Nitish Pandey to make premium handloom sarees affordable."
+      />
       {/* Hero Banner */}
       <section className="relative overflow-hidden bg-gradient-to-b from-[#FFF5F2] to-[#FAF7F2] py-16 sm:py-24 border-b border-[#F0E4DE]">
         <div className="container-ambika text-center max-w-4xl mx-auto">
