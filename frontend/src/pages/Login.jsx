@@ -3,6 +3,7 @@ import { Link, useNavigate } from 'react-router-dom'
 import AuthShell from '../components/layout/AuthShell'
 import Button from '../components/ui/Button'
 import { useAuth } from '../context/AuthContext'
+import Seo from '../components/seo/Seo'
 
 export default function Login() {
   const navigate = useNavigate()
@@ -24,6 +25,7 @@ export default function Login() {
 
   return (
     <AuthShell tone="brown" label="Woman in festive saree — welcome back">
+      <Seo title="Log In" description="Log in to your Vinit Textiles account." noindex />
       <p className="text-[10px] font-semibold uppercase tracking-[0.3em] text-brown-light">Welcome Back</p>
       <h1 className="font-display mt-4 text-4xl text-brown">Log In to Vinit Textiles</h1>
       <p className="mt-4 text-sm leading-relaxed text-brown-light">
