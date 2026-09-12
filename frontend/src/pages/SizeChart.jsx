@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
+import Seo from '../components/seo/Seo'
 
 const blouseSizes = [
   { size: 'XS', bustIn: '32', bustCm: '81', waistIn: '26', waistCm: '66', shoulderIn: '13.5', shoulderCm: '34', armholeIn: '14.5', armholeCm: '37', lengthIn: '14', lengthCm: '35.5' },
@@ -16,6 +17,10 @@ export default function SizeChart() {
 
   return (
     <div className="bg-[#FAF7F2] text-[#332421] min-h-screen py-10 sm:py-16">
+      <Seo
+        title="Size Chart"
+        description="Vinit Textiles saree and blouse size chart — measurements in inches and centimeters for the perfect fit."
+      />
       <div className="container-ambika max-w-4xl mx-auto">
         {/* Breadcrumb / Title */}
         <div className="text-center mb-10">
