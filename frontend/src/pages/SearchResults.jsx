@@ -3,6 +3,7 @@ import { Link, useSearchParams } from 'react-router-dom'
 import ProductCard from '../components/ui/ProductCard'
 import { onlyRealProducts } from '../utils/catalogue'
 import { apiClient } from '../api/client'
+import Seo from '../components/seo/Seo'
 
 export default function SearchResults() {
   const [searchParams] = useSearchParams()
@@ -38,6 +39,7 @@ export default function SearchResults() {
 
   return (
     <section className="container-ambika py-16">
+      <Seo title={q ? `Search results for "${q}"` : 'Search'} description="Search the Vinit Textiles saree collection." noindex />
       <nav className="text-[10px] uppercase tracking-[0.2em] text-brown-light">
         <Link to="/" className="hover:text-brown">
           HOME
