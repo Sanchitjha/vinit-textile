@@ -8,6 +8,8 @@ import { useCart } from '../context/CartContext'
 import { useAuth } from '../context/AuthContext'
 import { apiClient } from '../api/client'
 import { toneFor } from '../data/products'
+import Seo from '../components/seo/Seo'
+import { SITE_URL, absoluteUrl } from '../lib/seoConfig'
 
 const sizes = ['S', 'M', 'L', 'XL']
 
@@ -53,12 +55,18 @@ export default function ProductDetail() {
   }, [id])
 
   if (loading) {
-    return <div className="py-20 text-center">Loading...</div>
+    return (
+      <div className="py-20 text-center">
+        <Seo title="Loading…" noindex />
+        Loading...
+      </div>
+    )
   }
 
   if (!product) {
     return (
       <section className="container-ambika py-20 text-center">
+        <Seo title="Product Not Found" description="This piece may have sold out or moved." noindex />
         <h1 className="font-display text-4xl text-brown">Product not found</h1>
         <p className="mt-4 text-sm text-brown-light">This piece may have sold out or moved.</p>
         <Link to="/shop/saree" className="mt-8 inline-block text-[11px] font-semibold uppercase tracking-widest text-brown hover:underline">
@@ -70,8 +78,42 @@ export default function ProductDetail() {
 
   const discount = product.mrp ? Math.round(100 - (product.price / product.mrp) * 100) : 0
 
+  const productJsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'Product',
+    name: product.name,
+    image: (product.images || []).map((img) => absoluteUrl(img)),
+    sku: product.sku,
+    description: `${product.name} — handcrafted saree from Vinit Textiles, finished with fine detailing for every celebration.`,
+    brand: { '@type': 'Brand', name: 'Vinit Textiles' },
+    offers: {
+      '@type': 'Offer',
+      url: absoluteUrl(`/product/${product.id || id}`),
+      priceCurrency: 'INR',
+      price: product.price,
+      availability: product.stock > 0 ? 'https://schema.org/InStock' : 'https://schema.org/OutOfStock',
+    },
+  }
+
+  const breadcrumbJsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    itemListElement: [
+      { '@type': 'ListItem', position: 1, name: 'Home', item: SITE_URL },
+      { '@type': 'ListItem', position: 2, name: categoryMeta?.name || 'Sarees', item: `${SITE_URL}/shop/${product.category}` },
+      { '@type': 'ListItem', position: 3, name: product.name, item: absoluteUrl(`/product/${product.id || id}`) },
+    ],
+  }
+
   return (
     <section className="container-ambika py-16">
+      <Seo
+        title={product.name}
+        description={`${product.name} — shop premium sarees at Vinit Textiles. ₹${product.price?.toLocaleString('en-IN')}. Direct from our Surat manufacturing hub.`}
+        image={product.images?.[0] ? absoluteUrl(product.images[0]) : undefined}
+        type="product"
+        jsonLd={[productJsonLd, breadcrumbJsonLd]}
+      />
       <nav className="text-[10px] uppercase tracking-[0.2em] text-brown-light">
         <Link to="/" className="hover:text-brown">
           HOME
