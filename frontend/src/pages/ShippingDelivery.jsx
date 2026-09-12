@@ -1,9 +1,14 @@
 import { Link } from 'react-router-dom'
 import { TruckIcon, ShieldCheckIcon, SparkleIcon } from '../components/icons/Icons'
+import Seo from '../components/seo/Seo'
 
 export default function ShippingDelivery() {
   return (
     <div className="bg-[#FAF7F2] text-[#332421] min-h-screen py-10 sm:py-16">
+      <Seo
+        title="Shipping & Delivery"
+        description="Vinit Textiles shipping timelines, COD availability and delivery policy across India and internationally."
+      />
       <div className="container-ambika max-w-4xl mx-auto">
         {/* Header */}
         <div className="text-center mb-10">
