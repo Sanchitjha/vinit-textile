@@ -3,6 +3,8 @@ import { Link, useParams } from 'react-router-dom'
 import ProductCard from '../components/ui/ProductCard'
 import { onlyRealProducts } from '../utils/catalogue'
 import { apiClient } from '../api/client'
+import Seo from '../components/seo/Seo'
+import { SITE_URL } from '../lib/seoConfig'
 
 const filterGroups = [
   { title: 'Price', options: ['Under ₹2,000', '₹2,000 – ₹5,000', '₹5,000 – ₹10,000', 'Above ₹10,000'] },
@@ -48,8 +50,22 @@ export default function ProductListing() {
     return list
   }, [products, sort])
 
+  const breadcrumbJsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    itemListElement: [
+      { '@type': 'ListItem', position: 1, name: 'Home', item: SITE_URL },
+      { '@type': 'ListItem', position: 2, name: meta.name, item: `${SITE_URL}/shop/${category}` },
+    ],
+  }
+
   return (
     <section className="container-ambika py-16">
+      <Seo
+        title={meta.name}
+        description={`Shop ${meta.name} at Vinit Textiles — premium sarees crafted for every celebration, direct from our Surat manufacturing hub.`}
+        jsonLd={breadcrumbJsonLd}
+      />
       <nav className="text-[10px] uppercase tracking-[0.2em] text-brown-light">
         <Link to="/" className="hover:text-brown">
           HOME
