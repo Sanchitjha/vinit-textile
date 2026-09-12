@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom'
 import { WhatsAppIcon } from '../components/icons/Icons'
+import Seo from '../components/seo/Seo'
 
 const storeLocations = [
   {
@@ -34,6 +35,10 @@ const storeLocations = [
 export default function Stores() {
   return (
     <div className="bg-[#FAF7F2] text-[#332421] min-h-screen py-10 sm:py-16">
+      <Seo
+        title="Our Stores"
+        description="Visit Vinit Textiles' Surat flagship studio, or book a live video shopping session with our stylists."
+      />
       <div className="container-ambika max-w-5xl mx-auto">
         {/* Header */}
         <div className="text-center mb-12">
