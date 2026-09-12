@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { MailIcon, WhatsAppIcon, ShieldCheckIcon } from '../components/icons/Icons'
+import Seo from '../components/seo/Seo'
 
 export default function Contact() {
   const [sent, setSent] = useState(false)
@@ -12,6 +13,25 @@ export default function Contact() {
 
   return (
     <div className="bg-[#FAF7F2] text-[#332421] min-h-screen py-10 sm:py-16">
+      <Seo
+        title="Contact Us"
+        description="Get in touch with Vinit Textiles — Surat, Gujarat. Order support, styling advice and wholesale inquiries via phone, email or WhatsApp."
+        jsonLd={{
+          '@context': 'https://schema.org',
+          '@type': 'Organization',
+          name: 'Vinit Textiles',
+          email: 'vinittextiles21@gmail.com',
+          telephone: '+91-97126-39342',
+          address: {
+            '@type': 'PostalAddress',
+            streetAddress: '8001-8004, The Rajhans Fabrizo Market, BRTS Road, Near Polaris Textile City, Magob',
+            addressLocality: 'Surat',
+            addressRegion: 'Gujarat',
+            postalCode: '395012',
+            addressCountry: 'IN',
+          },
+        }}
+      />
       <div className="container-ambika max-w-5xl mx-auto">
         {/* Header */}
         <div className="text-center mb-12">
