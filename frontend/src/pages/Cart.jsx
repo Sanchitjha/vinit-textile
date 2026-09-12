@@ -4,6 +4,7 @@ import Button from '../components/ui/Button'
 import { MinusIcon, PlusIcon } from '../components/icons/Icons'
 import { toneFor } from '../data/products'
 import { useCart } from '../context/CartContext'
+import Seo from '../components/seo/Seo'
 
 const FREE_SHIPPING_THRESHOLD = 1999
 
@@ -16,6 +17,7 @@ export default function Cart() {
   if (items.length === 0) {
     return (
       <section className="container-ambika py-24 text-center">
+        <Seo title="Your Cart" description="Review the items in your Vinit Textiles shopping cart." noindex />
         <h1 className="font-display text-4xl text-brown">Your cart is empty</h1>
         <p className="mt-4 text-sm text-brown-light">Explore the collection and find something you love.</p>
         <Button to="/shop/saree" variant="primary" className="mt-8">
@@ -27,6 +29,7 @@ export default function Cart() {
 
   return (
     <section className="container-ambika py-16">
+      <Seo title="Your Cart" description="Review the items in your Vinit Textiles shopping cart." noindex />
       <h1 className="font-display text-5xl text-brown">Shopping Cart</h1>
 
       <div className="mt-12 flex flex-col gap-12 lg:flex-row">
