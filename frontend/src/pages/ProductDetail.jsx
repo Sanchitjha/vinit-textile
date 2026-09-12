@@ -100,7 +100,7 @@ export default function ProductDetail() {
     '@type': 'BreadcrumbList',
     itemListElement: [
       { '@type': 'ListItem', position: 1, name: 'Home', item: SITE_URL },
-      { '@type': 'ListItem', position: 2, name: categoryMeta?.name || 'Sarees', item: `${SITE_URL}/shop/${product.category}` },
+      { '@type': 'ListItem', position: 2, name: categoryMeta?.name || 'Sarees', item: `${SITE_URL}/shop/${categoryMeta?.slug || ''}` },
       { '@type': 'ListItem', position: 3, name: product.name, item: absoluteUrl(`/product/${product.id || id}`) },
     ],
   }
@@ -119,7 +119,7 @@ export default function ProductDetail() {
           HOME
         </Link>{' '}
         /{' '}
-        <Link to={`/shop/${product.category}`} className="hover:text-brown">
+        <Link to={`/shop/${categoryMeta?.slug || ''}`} className="hover:text-brown">
           {categoryMeta?.name}
         </Link>{' '}
         / <span className="text-brown">{product.name}</span>
