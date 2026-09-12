@@ -1,4 +1,5 @@
 import { Link } from 'react-router-dom'
+import Seo from '../components/seo/Seo'
 
 const blogArticles = [
   {
@@ -46,6 +47,10 @@ const blogArticles = [
 export default function Blog() {
   return (
     <div className="bg-[#FAF7F2] text-[#332421] min-h-screen py-10 sm:py-16">
+      <Seo
+        title="Style Journal & Saree Guides"
+        description="Draping guides, saree trend forecasts, festive inspirations and fabric care tips from Vinit Textiles."
+      />
       <div className="container-ambika max-w-5xl mx-auto">
         {/* Header */}
         <div className="text-center mb-12">
