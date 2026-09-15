@@ -139,7 +139,7 @@ export default function ProductDetail() {
                 }`}
               >
                 {typeof img === 'string' ? (
-                  <img src={img} alt={`${product.name} detail ${thumbIdx + 1}`} className="h-full w-full object-cover" />
+                  <img src={img} alt={`${product.name} detail ${thumbIdx + 1}`} loading="lazy" decoding="async" className="h-full w-full object-cover" />
                 ) : (
                   <Placeholder tone={toneFor(product.id)} ratio="aspect-[3/4]" />
                 )}
@@ -154,6 +154,7 @@ export default function ProductDetail() {
               <img
                 src={product.images[activeThumb] || product.images[0]}
                 alt={product.name}
+                fetchPriority="high"
                 className="block w-full h-auto bg-ivory transition-all duration-300"
               />
             ) : (
@@ -180,7 +181,7 @@ export default function ProductDetail() {
                     activeThumb === thumbIdx ? 'border-brown scale-105 shadow-sm' : 'border-transparent opacity-60'
                   }`}
                 >
-                  <img src={img} alt="" className="h-full w-full object-cover" />
+                  <img src={img} alt="" loading="lazy" decoding="async" className="h-full w-full object-cover" />
                 </button>
               ))}
             </div>
