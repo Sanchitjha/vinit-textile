@@ -43,6 +43,8 @@ export default function ProductCard({ product }) {
           <img
             src={productImage}
             alt={product.name}
+            loading="lazy"
+            decoding="async"
             className="aspect-[3/4] w-full object-contain bg-ivory transition-transform duration-700 ease-in-out group-hover:scale-105"
           />
         ) : (
