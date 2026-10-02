@@ -28,6 +28,7 @@ export interface ISaree {
   tags: string[];
   careInstructions?: string;
   isFeatured: boolean;
+  isBestseller: boolean;
   isActive: boolean;
   ratings: number;
   reviewCount: number;
@@ -49,6 +50,7 @@ export interface SareeFilterOptions {
   minPrice?: number;
   maxPrice?: number;
   featured?: boolean;
+  bestseller?: boolean;
   isActive?: boolean;
 }
 

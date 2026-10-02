@@ -30,6 +30,7 @@ const SareeSchema = new Schema<ISareeDocument>(
     tags: { type: [String], default: [] },
     careInstructions: { type: String },
     isFeatured: { type: Boolean, default: false },
+    isBestseller: { type: Boolean, default: false },
     isActive: { type: Boolean, default: true },
     ratings: { type: Number, default: 0, min: 0, max: 5 },
     reviewCount: { type: Number, default: 0, min: 0 },
@@ -43,6 +44,7 @@ SareeSchema.index({ sareeType: 1 });
 SareeSchema.index({ color: 1 });
 SareeSchema.index({ price: 1 });
 SareeSchema.index({ isFeatured: 1 });
+SareeSchema.index({ isBestseller: 1 });
 SareeSchema.index({ name: 'text', description: 'text', tags: 'text' });
 
 export const SareeModel = model<ISareeDocument>('Saree', SareeSchema);

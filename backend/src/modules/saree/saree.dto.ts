@@ -29,6 +29,7 @@ export const CreateSareeDto = z.object({
   tags: z.array(z.string()).default([]),
   careInstructions: z.string().optional(),
   isFeatured: z.boolean().default(false),
+  isBestseller: z.boolean().default(false),
   isActive: z.boolean().default(true),
 });
 export type CreateSareeDtoType = z.infer<typeof CreateSareeDto>;
@@ -58,6 +59,10 @@ export const SareeQueryDto = z.object({
   minPrice: z.coerce.number().nonnegative().optional(),
   maxPrice: z.coerce.number().nonnegative().optional(),
   featured: z
+    .enum(['true', 'false'])
+    .transform((v) => v === 'true')
+    .optional(),
+  bestseller: z
     .enum(['true', 'false'])
     .transform((v) => v === 'true')
     .optional(),

@@ -52,6 +52,7 @@ export class SareeRepository {
     if (options.occasion) filter.occasion = new RegExp(`^${options.occasion}$`, 'i');
     if (options.region) filter.region = new RegExp(`^${options.region}$`, 'i');
     if (options.featured !== undefined) filter.isFeatured = options.featured;
+    if (options.bestseller !== undefined) filter.isBestseller = options.bestseller;
     if (options.minPrice !== undefined || options.maxPrice !== undefined) {
       filter.price = {};
       if (options.minPrice !== undefined) filter.price.$gte = options.minPrice;
