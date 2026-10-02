@@ -24,13 +24,13 @@ const PRICE_TILES = [
 
 export const shopLink = (params) => `/shop/all?${new URLSearchParams(params).toString()}`
 
-// Picks a photo per tile from a saree that matches it, avoiding photos already used by another tile.
-function buildTiles(values, designs, matches, toLink, makeLabel) {
-  const used = new Set()
+// Picks a photo per tile from a saree that matches it — always the least-used matching photo, so the
+// same saree isn't repeated across tiles while an unused one is available.
+function buildTiles(values, designs, matches, toLink, makeLabel, usage) {
   return values.map((value) => {
     const pool = designs.filter((p) => matches(p, value))
-    const pick = pool.find((p) => !used.has(p.images?.[0])) || pool[0]
-    if (pick) used.add(pick.images?.[0])
+    const pick = [...pool].sort((a, b) => (usage.get(a.images?.[0]) || 0) - (usage.get(b.images?.[0]) || 0))[0]
+    if (pick) usage.set(pick.images?.[0], (usage.get(pick.images?.[0]) || 0) + 1)
     return { label: makeLabel(value), to: toLink(value), image: pick?.images?.[0] }
   })
 }
@@ -45,15 +45,17 @@ function tally(designs, pick) {
 export function buildMenuSections(products) {
   const designs = uniqueDesigns(products)
   if (designs.length === 0) return []
+  const usage = new Map()
 
   const sale = buildTiles(
     PRICE_TILES.map((r) => r.id),
     designs,
     (p, id) => PRICE_TILES.find((r) => r.id === id).test(p.price),
     (id) => shopLink({ price: id }),
-    (id) => PRICE_TILES.find((r) => r.id === id).label
+    (id) => PRICE_TILES.find((r) => r.id === id).label,
+    usage
   )
-  sale.push({ label: 'All Sarees on Sale', to: shopLink({ sort: 'price-asc' }), image: designs[0]?.images?.[0] })
+  sale.push(...buildTiles(['all'], designs, () => true, () => shopLink({ sort: 'price-asc' }), () => 'All Sarees on Sale', usage))
 
   const cats = new Map()
   designs.forEach((p) => {
@@ -65,7 +67,8 @@ export function buildMenuSections(products) {
     designs,
     (p, slug) => p.category?.slug === slug,
     (slug) => `/shop/${slug}`,
-    (slug) => cats.get(slug)
+    (slug) => cats.get(slug),
+    usage
   )
 
   const occasions = tally(designs, (p) => p.occasion || []).slice(0, 8)
@@ -79,13 +82,13 @@ export function buildMenuSections(products) {
       id: 'occasion',
       title: 'Sarees by Occasion',
       viewAll: '/shop/all',
-      tiles: buildTiles(occasions, designs, (p, v) => (p.occasion || []).includes(v), (v) => shopLink({ occasion: v }), (v) => `${v} Sarees`),
+      tiles: buildTiles(occasions, designs, (p, v) => (p.occasion || []).includes(v), (v) => shopLink({ occasion: v }), (v) => `${v} Sarees`, usage),
     },
     {
       id: 'fabric',
       title: 'Sarees by Fabric',
       viewAll: '/shop/all',
-      tiles: buildTiles(fabrics, designs, (p, v) => p.fabric === v, (v) => shopLink({ fabric: v }), (v) => `${v} Sarees`),
+      tiles: buildTiles(fabrics, designs, (p, v) => p.fabric === v, (v) => shopLink({ fabric: v }), (v) => `${v} Sarees`, usage),
     },
     {
       id: 'colour',
@@ -96,7 +99,8 @@ export function buildMenuSections(products) {
         designs,
         (p, v) => (p.colors?.length ? p.colors : [p.color]).includes(v),
         (v) => shopLink({ color: v }),
-        (v) => `${v} Sarees`
+        (v) => `${v} Sarees`,
+        usage
       ),
     },
   ]
