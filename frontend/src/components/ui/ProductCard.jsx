@@ -2,6 +2,7 @@ import { Link } from 'react-router-dom'
 import Placeholder from './Placeholder'
 import { HeartIcon } from '../icons/Icons'
 import { toneFor } from '../../data/products'
+import { thumbUrl, fallbackToOriginal } from '../../utils/catalogue'
 
 export default function ProductCard({ product }) {
   const id = product._id || product.id
@@ -41,7 +42,8 @@ export default function ProductCard({ product }) {
       <div className="relative overflow-hidden bg-cream">
         {productImage ? (
           <img
-            src={productImage}
+            src={thumbUrl(productImage)}
+            onError={fallbackToOriginal(productImage)}
             alt={product.name}
             loading="lazy"
             decoding="async"

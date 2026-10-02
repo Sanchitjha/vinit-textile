@@ -29,7 +29,7 @@ export default function SignUp() {
   }
 
   return (
-    <AuthShell tone="mauve" label="Bridal editorial — join the club">
+    <AuthShell tone="mauve" label="Woman in a crimson embroidered saree — join the club" image="/product-images/categories/cotton-saree/VT-1460/01.webp">
       <Seo title="Sign Up" description="Create your Vinit Textiles account for early access to new arrivals and festive edits." noindex />
       <p className="text-[10px] font-semibold uppercase tracking-[0.3em] text-brown-light">Join The Club</p>
       <h1 className="font-display mt-4 text-4xl text-brown">Create Your Account</h1>

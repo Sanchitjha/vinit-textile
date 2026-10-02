@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from 'react'
-import { Link, useParams } from 'react-router-dom'
+import { Link, useLocation, useParams } from 'react-router-dom'
 import SareeCard from '../components/ui/SareeCard'
 import { CloseIcon, ChevronDownIcon } from '../components/icons/Icons'
 import { onlyRealProducts, uniqueDesigns, designKey } from '../utils/catalogue'
@@ -28,6 +28,17 @@ const COLOR_DOTS = {
 }
 
 const EMPTY_FILTERS = { price: [], fabric: [], color: [], occasion: [] }
+
+// Menu / shared links can pre-select filters: /shop/all?fabric=Georgette&sort=rating
+function readQuery(search) {
+  const sp = new URLSearchParams(search)
+  const filters = {}
+  Object.keys(EMPTY_FILTERS).forEach((k) => {
+    filters[k] = sp.getAll(k).filter(Boolean)
+  })
+  const sort = SORTS.some((x) => x.id === sp.get('sort')) ? sp.get('sort') : 'featured'
+  return { filters, sort }
+}
 
 // Counts are per design (colourway SKUs of one saree count once).
 function countBy(list, pick) {
@@ -126,6 +137,7 @@ function FilterPanel({ facets, filters, toggle }) {
 
 export default function ProductListing() {
   const { category } = useParams()
+  const { search } = useLocation()
   const [sort, setSort] = useState('featured')
   const [categories, setCategories] = useState([])
   const [allProducts, setAllProducts] = useState([])
@@ -149,9 +161,11 @@ export default function ProductListing() {
   }, [])
 
   useEffect(() => {
-    setFilters(EMPTY_FILTERS)
+    const q = readQuery(search)
+    setFilters(q.filters)
+    setSort(q.sort)
     setDrawerOpen(false)
-  }, [category])
+  }, [category, search])
 
   useEffect(() => {
     document.body.style.overflow = drawerOpen ? 'hidden' : ''
@@ -160,10 +174,13 @@ export default function ProductListing() {
     }
   }, [drawerOpen])
 
-  const meta = categories.find((c) => c.slug === category) ?? { name: category, slug: category }
+  const meta =
+    category === 'all'
+      ? { name: 'All Sarees', slug: 'all' }
+      : categories.find((c) => c.slug === category) ?? { name: category, slug: category }
 
   const inCategory = useMemo(
-    () => allProducts.filter((p) => (p.category?.slug || p.category) === category),
+    () => (category === 'all' ? allProducts : allProducts.filter((p) => (p.category?.slug || p.category) === category)),
     [allProducts, category]
   )
 
@@ -172,7 +189,8 @@ export default function ProductListing() {
     categories.forEach((c) => {
       counts[c.slug] = uniqueDesigns(allProducts.filter((p) => (p.category?.slug || p.category) === c.slug)).length
     })
-    return categories.filter((c) => counts[c.slug] > 0 || c.slug === category).map((c) => ({ ...c, count: counts[c.slug] || 0 }))
+    const all = { slug: 'all', name: 'All Sarees', count: uniqueDesigns(allProducts).length }
+    return [all, ...categories.filter((c) => counts[c.slug] > 0 || c.slug === category).map((c) => ({ ...c, count: counts[c.slug] || 0 }))]
   }, [categories, allProducts, category])
 
   const totalDesigns = useMemo(() => uniqueDesigns(inCategory).length, [inCategory])

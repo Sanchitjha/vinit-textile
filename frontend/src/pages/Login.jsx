@@ -24,7 +24,7 @@ export default function Login() {
   }
 
   return (
-    <AuthShell tone="brown" label="Woman in festive saree — welcome back">
+    <AuthShell tone="brown" label="Woman in a mustard embroidered saree — welcome back" image="/product-images/categories/bridal-saree/VT-1855/01.webp">
       <Seo title="Log In" description="Log in to your Vinit Textiles account." noindex />
       <p className="text-[10px] font-semibold uppercase tracking-[0.3em] text-brown-light">Welcome Back</p>
       <h1 className="font-display mt-4 text-4xl text-brown">Log In to Vinit Textiles</h1>

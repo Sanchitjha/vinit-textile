@@ -1,9 +1,10 @@
-import { useState, useEffect } from 'react'
-import { Link, NavLink, useLocation } from 'react-router-dom'
+import { useState, useEffect, useCallback } from 'react'
+import { Link, useLocation } from 'react-router-dom'
 import { BagIcon, CloseIcon, HeartIcon, SearchIcon, UserIcon, MandalaMotifIcon } from '../icons/Icons'
 import { useCart } from '../../context/CartContext'
 import { useAuth } from '../../context/AuthContext'
 import SearchOverlay from './SearchOverlay'
+import MenuDrawer from './MenuDrawer'
 
 const SEARCH_PHRASES = [
   'Search Pure silk sarees',
@@ -13,19 +14,6 @@ const SEARCH_PHRASES = [
   'Search Ready to wear sarees',
   'Search Partywear sarees',
   'Search Festival special',
-]
-
-// NOTE: every catalogue link points at /shop/saree for now — that's the only
-// category the backend has products in (all 11). Re-point these to the proper
-// sub-category slugs once products are re-categorised in the admin panel.
-const menuLinks = [
-  { label: 'Best Seller', to: '/shop/saree' },
-  { label: 'Saree', to: '/shop/saree' },
-  { label: 'Festival Special', to: '/shop/saree' },
-  { label: 'New Arrivals', to: '/shop/saree' },
-  { label: 'Bridal', to: '/shop/saree' },
-  { label: 'About', to: '/about' },
-  { label: 'Contact', to: '/contact' },
 ]
 
 export default function Header() {
@@ -121,6 +109,7 @@ export default function Header() {
     setMenuOpen((open) => !open)
     setSearchOpen(false)
   }
+  const closeMenu = useCallback(() => setMenuOpen(false), [])
   const toggleSearch = () => {
     setSearchOpen((open) => !open)
     setMenuOpen(false)
@@ -245,27 +234,8 @@ export default function Header() {
         </button>
       </div>
 
-      {/* Category menu dropdown — opens on MENU click. A proper floating
-          dropdown card (rounded, bordered, shadowed) anchored under the MENU
-          button, not just text flush against the header bar. */}
-      {menuOpen && (
-        <div className="container-ambika pt-1 pb-4">
-          <div className="w-60 max-w-[80vw] rounded-2xl border border-gold/25 bg-maroon shadow-2xl">
-            <div className="flex flex-col px-5 py-3 text-xs font-bold uppercase tracking-[0.2em] text-cream">
-              {menuLinks.map((link) => (
-                <NavLink
-                  key={`${link.to}-${link.label}`}
-                  to={link.to}
-                  onClick={() => setMenuOpen(false)}
-                  className="border-b border-ivory/10 py-2.5 transition-colors last:border-b-0 hover:text-gold"
-                >
-                  {link.label}
-                </NavLink>
-              ))}
-            </div>
-          </div>
-        </div>
-      )}
+      {/* Menu drawer — slides in from the left with image tiles by occasion / fabric / colour */}
+      <MenuDrawer open={menuOpen} onClose={closeMenu} />
 
       {/* Full-page search overlay */}
       {searchOpen && (

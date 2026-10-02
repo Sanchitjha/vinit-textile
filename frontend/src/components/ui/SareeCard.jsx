@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import { BagIcon, HeartIcon } from '../icons/Icons'
 import { useCart } from '../../context/CartContext'
+import { thumbUrl, fallbackToOriginal } from '../../utils/catalogue'
 
 export default function SareeCard({ product, bestseller = false }) {
   const { addToCart } = useCart()
@@ -15,7 +16,8 @@ export default function SareeCard({ product, bestseller = false }) {
     <div className="group">
       <Link to={`/product/${id}`} className="relative block overflow-hidden bg-cream">
         <img
-          src={product.images?.[0]}
+          src={thumbUrl(product.images?.[0])}
+          onError={fallbackToOriginal(product.images?.[0])}
           alt={product.name}
           loading="lazy"
           decoding="async"
