@@ -5,6 +5,7 @@ import { MinusIcon, PlusIcon } from '../components/icons/Icons'
 import { toneFor } from '../data/products'
 import { useCart } from '../context/CartContext'
 import Seo from '../components/seo/Seo'
+import { thumbUrl, fallbackToOriginal } from '../utils/catalogue'
 import EmptyCart from '../components/cart/EmptyCart'
 
 const FREE_SHIPPING_THRESHOLD = 1999
@@ -33,9 +34,18 @@ export default function Cart() {
         <div className="flex-1 divide-y divide-brown/10 border-y border-brown/10">
           {items.map((item) => (
             <div key={item.key} className="flex gap-6 py-8">
-              <div className="w-24 shrink-0 sm:w-32 bg-cream">
-                <Placeholder tone={toneFor(item.product.id)} ratio="aspect-[4/5]" />
-              </div>
+              <Link to={`/product/${item.product.id || item.product._id}`} className="block w-24 shrink-0 bg-cream sm:w-32">
+                {item.product.images?.[0] ? (
+                  <img
+                    src={thumbUrl(item.product.images[0])}
+                    onError={fallbackToOriginal(item.product.images[0])}
+                    alt={item.product.name}
+                    className="aspect-[4/5] w-full object-cover object-top"
+                  />
+                ) : (
+                  <Placeholder tone={toneFor(item.product.id)} ratio="aspect-[4/5]" />
+                )}
+              </Link>
               <div className="flex flex-1 flex-col justify-between">
                 <div className="flex justify-between gap-4">
                   <div>
