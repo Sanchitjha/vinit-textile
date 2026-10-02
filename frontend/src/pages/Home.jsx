@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import Hero from '../components/home/Hero'
-import { onlyRealProducts } from '../utils/catalogue'
+import { onlyRealProducts, uniqueDesigns, designKey } from '../utils/catalogue'
 import AnnouncementTicker from '../components/layout/AnnouncementTicker'
 import FeatureStrip from '../components/home/FeatureStrip'
 import TopCategories from '../components/home/TopCategories'
@@ -22,19 +22,16 @@ export default function Home() {
   useEffect(() => {
     async function fetchProducts() {
       try {
-        const res = await apiClient.get('/sarees?limit=4&sort=newest')
-        setProducts(onlyRealProducts(res.data?.items))
+        // Each design appears once on the whole page: Newest first, then Bestsellers
+        // from whatever designs are left (colourway SKUs share a base like VT-1499).
+        const res = await apiClient.get('/sarees?limit=50&sort=newest')
+        const newest = uniqueDesigns(onlyRealProducts(res.data?.items)).slice(0, 4)
+        setProducts(newest)
 
-        // Bestsellers: top-rated, one card per design (colourway SKUs share a base like VT-1499)
         const top = await apiClient.get('/sarees?limit=50&sort=rating_desc')
-        const seen = new Set()
-        const unique = onlyRealProducts(top.data?.items).filter((p) => {
-          const base = (p.sku || '').toUpperCase().match(/^VT-\d+/)?.[0] || p.sku
-          if (seen.has(base)) return false
-          seen.add(base)
-          return true
-        })
-        setBestsellers(unique.slice(0, 10))
+        const rest = uniqueDesigns(onlyRealProducts(top.data?.items), new Set(newest.map(designKey)))
+        // keep the 5-column grid full: whole rows only (unless fewer than one row exists)
+        setBestsellers(rest.length >= 5 ? rest.slice(0, Math.min(10, rest.length - (rest.length % 5))) : rest)
       } catch (err) {
         console.error(err)
       }
