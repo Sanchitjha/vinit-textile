@@ -368,7 +368,7 @@ export default function ProductListing() {
             ) : (
               <div className="grid grid-cols-2 gap-x-3 gap-y-8 md:grid-cols-3 xl:grid-cols-4">
                 {items.map((product) => (
-                  <SareeCard key={product.id || product._id} product={product} bestseller={Boolean(product.isFeatured)} />
+                  <SareeCard key={product.id || product._id} product={product} bestseller={Boolean(product.isBestseller)} />
                 ))}
               </div>
             )}
