@@ -30,8 +30,7 @@ export default function Home() {
 
         const top = await apiClient.get('/sarees?limit=50&sort=rating_desc')
         const rest = uniqueDesigns(onlyRealProducts(top.data?.items), new Set(newest.map(designKey)))
-        // keep the 5-column grid full: whole rows only (unless fewer than one row exists)
-        setBestsellers(rest.length >= 5 ? rest.slice(0, Math.min(10, rest.length - (rest.length % 5))) : rest)
+        setBestsellers(rest)
       } catch (err) {
         console.error(err)
       }
