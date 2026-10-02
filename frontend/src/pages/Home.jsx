@@ -10,6 +10,7 @@ import ProductGrid from '../components/home/ProductGrid'
 import SplitFeature from '../components/home/SplitFeature'
 import LookbookStrip from '../components/home/LookbookStrip'
 import EntireCollectionGrid from '../components/home/EntireCollectionGrid'
+import BestsellersGrid from '../components/home/BestsellersGrid'
 import Newsletter from '../components/home/Newsletter'
 import { apiClient } from '../api/client'
 import Seo from '../components/seo/Seo'
@@ -17,12 +18,24 @@ import { SITE_URL, SITE_NAME } from '../lib/seoConfig'
 
 export default function Home() {
   const [products, setProducts] = useState([])
+  const [bestsellers, setBestsellers] = useState([])
 
   useEffect(() => {
     async function fetchProducts() {
       try {
         const res = await apiClient.get('/sarees?limit=4&sort=newest')
         setProducts(onlyRealProducts(res.data?.items))
+
+        // Bestsellers: top-rated, one card per design (colourway SKUs share a base like VT-1499)
+        const top = await apiClient.get('/sarees?limit=50&sort=rating_desc')
+        const seen = new Set()
+        const unique = onlyRealProducts(top.data?.items).filter((p) => {
+          const base = (p.sku || '').toUpperCase().match(/^VT-\d+/)?.[0] || p.sku
+          if (seen.has(base)) return false
+          seen.add(base)
+          return true
+        })
+        setBestsellers(unique.slice(0, 10))
       } catch (err) {
         console.error(err)
       }
@@ -63,6 +76,7 @@ export default function Home() {
       <Hero />
       <AnnouncementTicker />
       <TopCategories />
+      <BestsellersGrid items={bestsellers} />
       <ShopByOccasion />
 
       <Banner
