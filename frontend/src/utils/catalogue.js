@@ -20,3 +20,22 @@ export function isRealProduct(product) {
 export function onlyRealProducts(list) {
   return Array.isArray(list) ? list.filter(isRealProduct) : []
 }
+
+// Colourway / alternate-photo SKUs share a base ("VT-1499", "VT-1499-BLUE", "VT-1499-V2" are one design).
+export function designKey(product) {
+  const sku = (product?.sku || '').toUpperCase()
+  return sku.match(/^VT-\d+/)?.[0] || sku || String(product?.id || product?._id || '')
+}
+
+// One entry per design — the base SKU when it is in the list, otherwise the first variant.
+// `skip` is a Set of design keys that must not appear (e.g. already shown elsewhere on the page).
+export function uniqueDesigns(list, skip = new Set()) {
+  const reps = new Map()
+  ;(Array.isArray(list) ? list : []).forEach((p) => {
+    const key = designKey(p)
+    if (skip.has(key)) return
+    const current = reps.get(key)
+    if (!current || ((p.sku || '').toUpperCase() === key && (current.sku || '').toUpperCase() !== key)) reps.set(key, p)
+  })
+  return [...reps.values()]
+}
