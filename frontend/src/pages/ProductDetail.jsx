@@ -11,8 +11,6 @@ import { toneFor } from '../data/products'
 import Seo from '../components/seo/Seo'
 import { SITE_URL, absoluteUrl } from '../lib/seoConfig'
 
-const sizes = ['S', 'M', 'L', 'XL']
-
 export default function ProductDetail() {
   const { id } = useParams() // id could be slug or actual id
   const navigate = useNavigate()
@@ -23,10 +21,11 @@ export default function ProductDetail() {
   const [related, setRelated] = useState([])
   const [categoryMeta, setCategoryMeta] = useState(null)
 
-  const [size, setSize] = useState('M')
   const [qty, setQty] = useState(1)
-  const [activeThumb, setActiveThumb] = useState(0)
   const [added, setAdded] = useState(false)
+  const [variants, setVariants] = useState([])
+  const [pincode, setPincode] = useState('')
+  const [deliveryMsg, setDeliveryMsg] = useState('')
 
   useEffect(() => {
     async function fetchProduct() {
@@ -44,6 +43,20 @@ export default function ProductDetail() {
           ]).catch(() => [{data: null}, {data: {items: []}}])
           setCategoryMeta(catRes.data)
           setRelated(relatedRes.data?.items?.filter(p => p.id !== fetchedProduct.id) || [])
+
+          // Other colourways share the base SKU (VT-1499, VT-1499-BLUE, ...)
+          const base = (fetchedProduct.sku || '').toUpperCase().match(/^VT-\d+/)?.[0]
+          if (base) {
+            apiClient.get('/sarees?limit=100').then((all) => {
+              const group = (all.data?.items || []).filter((p) => {
+                const sku = (p.sku || '').toUpperCase()
+                return sku === base || sku.startsWith(base + '-')
+              })
+              setVariants(group.length > 1 ? group : [])
+            }).catch(() => setVariants([]))
+          } else {
+            setVariants([])
+          }
         }
       } catch (err) {
         console.error(err)
@@ -126,67 +139,26 @@ export default function ProductDetail() {
       </nav>
 
       <div className="mt-10 grid gap-12 lg:grid-cols-2 lg:items-start">
-        <div className="flex flex-col sm:flex-row gap-4">
-          {/* Desktop Left Thumbnails */}
-          <div className="hidden flex-col gap-3 sm:flex max-h-[600px] overflow-y-auto pr-1 no-scrollbar">
-            {(product.images && product.images.length > 0 ? product.images : [0, 1, 2, 3]).map((img, thumbIdx) => (
-              <button
-                key={thumbIdx}
-                type="button"
-                onClick={() => setActiveThumb(thumbIdx)}
-                className={`h-24 w-20 overflow-hidden border-2 rounded-lg transition-all ${
-                  activeThumb === thumbIdx ? 'border-brown scale-105 shadow-sm' : 'border-transparent opacity-70 hover:opacity-100'
-                }`}
-              >
-                {typeof img === 'string' ? (
-                  <img src={img} alt={`${product.name} detail ${thumbIdx + 1}`} loading="lazy" decoding="async" className="h-full w-full object-cover" />
-                ) : (
-                  <Placeholder tone={toneFor(product.id)} ratio="aspect-[3/4]" />
-                )}
-              </button>
+        {/* All photos stacked in a 2-column grid (like most saree stores) — each shown at its
+            natural size so the whole photo, model's head included, is always visible. On phones
+            it becomes a swipeable strip. */}
+        {product.images && product.images.length > 0 ? (
+          <div className="no-scrollbar -mx-4 flex snap-x snap-mandatory gap-2 overflow-x-auto px-4 sm:mx-0 sm:grid sm:grid-cols-2 sm:gap-2 sm:overflow-visible sm:px-0">
+            {product.images.map((img, idx) => (
+              <img
+                key={img}
+                src={img}
+                alt={idx === 0 ? product.name : `${product.name} — photo ${idx + 1}`}
+                loading={idx < 2 ? 'eager' : 'lazy'}
+                fetchPriority={idx === 0 ? 'high' : undefined}
+                decoding="async"
+                className="block h-auto w-[85%] shrink-0 snap-center self-start bg-ivory sm:w-full"
+              />
             ))}
           </div>
-
-          {/* Main Hero Image — shown at its natural size (no aspect-ratio box),
-              so the whole photo is always visible, model's head included. */}
-          <div className="flex-1 bg-cream rounded-xl relative group overflow-hidden">
-            {product.images && product.images.length > 0 ? (
-              <img
-                src={product.images[activeThumb] || product.images[0]}
-                alt={product.name}
-                fetchPriority="high"
-                className="block w-full h-auto bg-ivory transition-all duration-300"
-              />
-            ) : (
-              <Placeholder label={product.name} tone={toneFor(product.id)} ratio="aspect-[3/4] sm:aspect-[4/5] w-full" />
-            )}
-            
-            {/* Image Counter Badge */}
-            {product.images && product.images.length > 1 && (
-              <div className="absolute right-3 bottom-3 bg-black/70 text-white text-[10px] font-semibold px-2.5 py-1 rounded-full backdrop-blur-xs">
-                {activeThumb + 1} / {product.images.length}
-              </div>
-            )}
-          </div>
-
-          {/* Mobile Bottom Thumbnails */}
-          {product.images && product.images.length > 1 && (
-            <div className="flex sm:hidden gap-2.5 overflow-x-auto pb-2 pt-1 no-scrollbar">
-              {product.images.map((img, thumbIdx) => (
-                <button
-                  key={thumbIdx}
-                  type="button"
-                  onClick={() => setActiveThumb(thumbIdx)}
-                  className={`h-20 w-16 shrink-0 overflow-hidden border-2 rounded-md transition-all ${
-                    activeThumb === thumbIdx ? 'border-brown scale-105 shadow-sm' : 'border-transparent opacity-60'
-                  }`}
-                >
-                  <img src={img} alt="" loading="lazy" decoding="async" className="h-full w-full object-cover" />
-                </button>
-              ))}
-            </div>
-          )}
-        </div>
+        ) : (
+          <Placeholder label={product.name} tone={toneFor(product.id)} ratio="aspect-[3/4] w-full" />
+        )}
 
         <div className="lg:sticky lg:top-32 h-fit">
           <p className="text-[10px] font-semibold uppercase tracking-[0.3em] text-brown-light">
@@ -220,27 +192,7 @@ export default function ProductDetail() {
             silhouette — finished with fine detailing so every thread tells a story.
           </p>
 
-          <div className="mt-10">
-            <p className="text-[10px] font-semibold uppercase tracking-widest text-brown">Size</p>
-            <div className="mt-3 flex gap-3">
-              {sizes.map((option) => (
-                <button
-                  key={option}
-                  type="button"
-                  onClick={() => setSize(option)}
-                  className={`flex h-12 w-12 items-center justify-center border text-[11px] font-semibold transition-colors rounded-none ${
-                    size === option
-                      ? 'border-brown bg-brown text-ivory'
-                      : 'border-brown/20 text-brown hover:border-brown'
-                  }`}
-                >
-                  {option}
-                </button>
-              ))}
-            </div>
-          </div>
-
-          <div className="mt-8 flex items-center gap-6">
+          <div className="mt-10 flex items-center gap-6">
             <div>
               <p className="text-[10px] font-semibold uppercase tracking-widest text-brown">Quantity</p>
               <div className="mt-3 flex items-center border border-brown/20 bg-transparent">
@@ -265,12 +217,36 @@ export default function ProductDetail() {
             </div>
           </div>
 
+          {variants.length > 1 && (
+            <div className="mt-10">
+              <p className="text-[10px] font-semibold uppercase tracking-widest text-brown">Colours</p>
+              <div className="mt-3 flex flex-wrap gap-3">
+                {variants.map((v) => {
+                  const vid = v.id || v._id
+                  const current = vid === (product.id || product._id)
+                  return (
+                    <Link
+                      key={vid}
+                      to={`/product/${vid}`}
+                      title={v.name}
+                      className={`block h-24 w-20 overflow-hidden border-2 transition-all ${
+                        current ? 'border-brown' : 'border-transparent opacity-80 hover:opacity-100'
+                      }`}
+                    >
+                      <img src={v.images?.[0]} alt={v.name} loading="lazy" className="h-full w-full object-cover" />
+                    </Link>
+                  )
+                })}
+              </div>
+            </div>
+          )}
+
           <div className="mt-10 flex flex-col gap-4 sm:flex-row">
             <Button
               variant="dark"
               className="sm:flex-1"
               onClick={() => {
-                addToCart(product, size, qty)
+                addToCart(product, undefined, qty)
                 if (user) {
                   navigate('/cart')
                 } else {
@@ -284,7 +260,7 @@ export default function ProductDetail() {
               variant="primary"
               className="sm:flex-1"
               onClick={() => {
-                addToCart(product, size, qty)
+                addToCart(product, undefined, qty)
                 setAdded(true)
               }}
             >
@@ -296,8 +272,35 @@ export default function ProductDetail() {
             <HeartIcon width={16} height={16} /> WISHLIST
           </Button>
 
-          <div className="mt-4 space-y-1 text-[11px] uppercase tracking-widest text-brown-light">
-            <p>Cash on delivery available</p>
+          <div className="mt-10">
+            <p className="text-[10px] font-semibold uppercase tracking-widest text-brown">Delivery estimate</p>
+            <form
+              className="mt-3 flex items-center border border-brown/20"
+              onSubmit={(e) => {
+                e.preventDefault()
+                setDeliveryMsg(
+                  /^[1-9]\d{5}$/.test(pincode)
+                    ? 'Dispatched in 24–48 hrs from Surat. Delivery in 3–4 days (metros) or 5–7 days (rest of India).'
+                    : 'Please enter a valid 6-digit pincode.'
+                )
+              }}
+            >
+              <input
+                value={pincode}
+                onChange={(e) => setPincode(e.target.value.replace(/\D/g, '').slice(0, 6))}
+                inputMode="numeric"
+                placeholder="Enter Pincode"
+                className="min-w-0 flex-1 bg-transparent px-4 py-3 text-[13px] text-brown placeholder:text-brown-light focus:outline-none"
+              />
+              <button type="submit" className="px-4 text-[11px] font-semibold uppercase tracking-widest text-maroon hover:underline">
+                Check delivery &gt;
+              </button>
+            </form>
+            {deliveryMsg && <p className="mt-2 text-[12px] text-brown-light">{deliveryMsg}</p>}
+          </div>
+
+          <div className="mt-6 space-y-1 text-[11px] uppercase tracking-widest text-brown-light">
+            <p>Cash on delivery available for orders up to ₹10,000</p>
             <p>Free shipping on orders above ₹1,999</p>
           </div>
 
