@@ -2,7 +2,7 @@ import { useEffect, useMemo, useState } from 'react'
 import { Link, useParams } from 'react-router-dom'
 import SareeCard from '../components/ui/SareeCard'
 import { CloseIcon, ChevronDownIcon } from '../components/icons/Icons'
-import { onlyRealProducts } from '../utils/catalogue'
+import { onlyRealProducts, uniqueDesigns, designKey } from '../utils/catalogue'
 import { apiClient } from '../api/client'
 import Seo from '../components/seo/Seo'
 import { SITE_URL } from '../lib/seoConfig'
@@ -29,12 +29,17 @@ const COLOR_DOTS = {
 
 const EMPTY_FILTERS = { price: [], fabric: [], color: [], occasion: [] }
 
+// Counts are per design (colourway SKUs of one saree count once).
 function countBy(list, pick) {
   const map = new Map()
   list.forEach((p) => {
-    new Set(pick(p).filter(Boolean)).forEach((v) => map.set(v, (map.get(v) || 0) + 1))
+    const key = designKey(p)
+    pick(p).filter(Boolean).forEach((v) => {
+      if (!map.has(v)) map.set(v, new Set())
+      map.get(v).add(key)
+    })
   })
-  return [...map.entries()].sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0]))
+  return [...map.entries()].map(([v, keys]) => [v, keys.size]).sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0]))
 }
 
 function FilterGroup({ title, children }) {
@@ -164,16 +169,17 @@ export default function ProductListing() {
 
   const visibleCategories = useMemo(() => {
     const counts = {}
-    allProducts.forEach((p) => {
-      const slug = p.category?.slug || p.category
-      counts[slug] = (counts[slug] || 0) + 1
+    categories.forEach((c) => {
+      counts[c.slug] = uniqueDesigns(allProducts.filter((p) => (p.category?.slug || p.category) === c.slug)).length
     })
     return categories.filter((c) => counts[c.slug] > 0 || c.slug === category).map((c) => ({ ...c, count: counts[c.slug] || 0 }))
   }, [categories, allProducts, category])
 
+  const totalDesigns = useMemo(() => uniqueDesigns(inCategory).length, [inCategory])
+
   const facets = useMemo(
     () => ({
-      price: Object.fromEntries(PRICE_RANGES.map((r) => [r.id, inCategory.filter((p) => r.test(p.price)).length])),
+      price: Object.fromEntries(PRICE_RANGES.map((r) => [r.id, uniqueDesigns(inCategory.filter((p) => r.test(p.price))).length])),
       fabric: countBy(inCategory, (p) => [p.fabric]),
       color: countBy(inCategory, (p) => (p.colors?.length ? p.colors : [p.color])),
       occasion: countBy(inCategory, (p) => p.occasion || []),
@@ -190,11 +196,13 @@ export default function ProductListing() {
       if (filters.occasion.length && !(p.occasion || []).some((o) => filters.occasion.includes(o))) return false
       return true
     })
-    if (sort === 'price-asc') list.sort((a, b) => a.price - b.price)
-    else if (sort === 'price-desc') list.sort((a, b) => b.price - a.price)
-    else if (sort === 'rating') list.sort((a, b) => (b.ratings || 0) - (a.ratings || 0))
-    else if (sort === 'newest') list.sort((a, b) => new Date(b.createdAt || 0) - new Date(a.createdAt || 0))
-    return list
+    // one card per design: the base SKU if it matches the filters, otherwise the first matching colourway
+    const designs = uniqueDesigns(list)
+    if (sort === 'price-asc') designs.sort((a, b) => a.price - b.price)
+    else if (sort === 'price-desc') designs.sort((a, b) => b.price - a.price)
+    else if (sort === 'rating') designs.sort((a, b) => (b.ratings || 0) - (a.ratings || 0))
+    else if (sort === 'newest') designs.sort((a, b) => new Date(b.createdAt || 0) - new Date(a.createdAt || 0))
+    return designs
   }, [inCategory, filters, sort])
 
   const toggle = (group, value) =>
@@ -280,7 +288,7 @@ export default function ProductListing() {
               Filters{activeChips.length > 0 && <span className="rounded-full bg-brown px-1.5 text-[10px] text-ivory">{activeChips.length}</span>}
             </button>
             <span className="hidden text-[11px] uppercase tracking-widest text-brown-light lg:block">
-              Showing {items.length} of {inCategory.length}
+              Showing {items.length} of {totalDesigns}
             </span>
             <label className="flex items-center gap-3 text-[10px] uppercase tracking-widest text-brown-light">
               Sort by
@@ -331,7 +339,7 @@ export default function ProductListing() {
               <div className="py-20 text-center">
                 <p className="font-display text-2xl text-brown">No sarees match these filters</p>
                 <p className="mt-2 text-sm text-brown-light">
-                  {inCategory.length === 0 ? 'This category has no products yet.' : 'Try removing a filter to see more.'}
+                  {totalDesigns === 0 ? 'This category has no products yet.' : 'Try removing a filter to see more.'}
                 </p>
                 {activeChips.length > 0 && (
                   <button type="button" onClick={clearAll} className="mt-6 border border-brown px-6 py-2.5 text-[11px] font-semibold uppercase tracking-widest text-brown hover:bg-brown hover:text-ivory">
