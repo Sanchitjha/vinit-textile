@@ -73,7 +73,7 @@ export default function ProductCard({ product }) {
         )}
 
         {/* Bestseller Golden Ribbon Badge Bottom-Left */}
-        {(product.isFeatured || product.isBestseller || (product.ratings && product.ratings >= 4.7)) && (
+        {product.isBestseller && (
           <div className="absolute left-0 bottom-2 bg-gradient-to-r from-[#DFB347] via-[#E8C867] to-[#D4AF37] text-[#3A1E14] font-black italic text-[9px] sm:text-[10px] tracking-wider uppercase px-2.5 py-0.5 shadow-md rounded-r-md z-10">
             BESTSELLER
           </div>
