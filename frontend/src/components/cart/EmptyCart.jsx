@@ -53,7 +53,7 @@ export default function EmptyCart() {
           <h2 className="mb-6 text-center text-sm font-bold uppercase tracking-[0.2em] text-maroon">You May Also Like</h2>
           <div className="grid grid-cols-2 gap-x-1.5 gap-y-6 sm:grid-cols-3 lg:grid-cols-4">
             {suggestions.map((p) => (
-              <SareeCard key={p.id || p._id} product={p} bestseller={Boolean(p.isFeatured)} />
+              <SareeCard key={p.id || p._id} product={p} bestseller={Boolean(p.isBestseller)} />
             ))}
           </div>
         </div>
