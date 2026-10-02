@@ -22,7 +22,7 @@ export default function Header() {
   const [placeholder, setPlaceholder] = useState('Search Pure silk sarees')
   const [showCursor, setShowCursor] = useState(true)
   const { count } = useCart()
-  const { user, openAuthModal } = useAuth()
+  const { user } = useAuth()
   const location = useLocation()
   const isHome = location.pathname === '/'
 
@@ -191,20 +191,15 @@ export default function Header() {
             )}
           </Link>
           {user ? (
-            <Link to="/account" aria-label="Account" className="transition-opacity hover:opacity-80">
+            <Link to="/me" aria-label="Account" className="transition-opacity hover:opacity-80">
               <div className="flex h-7 w-7 items-center justify-center rounded-full bg-gold text-[11px] font-semibold tracking-tight text-maroon">
                 {initials}
               </div>
             </Link>
           ) : (
-            <button
-              type="button"
-              aria-label="Account"
-              onClick={() => openAuthModal('login')}
-              className="transition-colors hover:text-gold"
-            >
+            <Link to="/me" aria-label="Account" className="transition-colors hover:text-gold">
               <UserIcon />
-            </button>
+            </Link>
           )}
         </div>
       </div>
