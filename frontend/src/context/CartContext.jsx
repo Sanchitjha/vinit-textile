@@ -14,7 +14,7 @@ function loadInitialState() {
 }
 
 function lineKey(productId, size) {
-  return `${productId}__${size}`
+  return `${productId}__${size ?? ""}`
 }
 
 function reducer(state, action) {
