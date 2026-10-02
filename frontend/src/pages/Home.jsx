@@ -22,15 +22,15 @@ export default function Home() {
   useEffect(() => {
     async function fetchProducts() {
       try {
-        // Each design appears once on the whole page: Newest first, then Bestsellers
-        // from whatever designs are left (colourway SKUs share a base like VT-1499).
-        const res = await apiClient.get('/sarees?limit=50&sort=newest')
-        const newest = uniqueDesigns(onlyRealProducts(res.data?.items)).slice(0, 4)
-        setProducts(newest)
+        // Bestsellers are exactly the products the admin ticked as "Bestseller" in the admin panel
+        // (one card per design — colourway SKUs share a base like VT-1499). Newest Collection
+        // skips those designs so no saree appears twice on the page.
+        const flagged = await apiClient.get('/sarees?bestseller=true&limit=100&sort=rating_desc')
+        const best = uniqueDesigns(onlyRealProducts(flagged.data?.items))
+        setBestsellers(best)
 
-        const top = await apiClient.get('/sarees?limit=50&sort=rating_desc')
-        const rest = uniqueDesigns(onlyRealProducts(top.data?.items), new Set(newest.map(designKey)))
-        setBestsellers(rest)
+        const res = await apiClient.get('/sarees?limit=50&sort=newest')
+        setProducts(uniqueDesigns(onlyRealProducts(res.data?.items), new Set(best.map(designKey))).slice(0, 4))
       } catch (err) {
         console.error(err)
       }
