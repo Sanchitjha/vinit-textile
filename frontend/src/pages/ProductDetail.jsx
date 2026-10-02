@@ -24,6 +24,7 @@ export default function ProductDetail() {
   const [qty, setQty] = useState(1)
   const [added, setAdded] = useState(false)
   const [variants, setVariants] = useState([])
+  const [recent, setRecent] = useState([])
   const [pincode, setPincode] = useState('')
   const [deliveryMsg, setDeliveryMsg] = useState('')
 
@@ -67,6 +68,28 @@ export default function ProductDetail() {
     fetchProduct()
   }, [id])
 
+  // Remember the last few products viewed ("Previously Visited") — kept per browser.
+  useEffect(() => {
+    if (!product) return
+    const pid = product.id || product._id
+    try {
+      const stored = JSON.parse(localStorage.getItem('vt_recent') || '[]')
+      const others = stored.filter((p) => p.id !== pid)
+      setRecent(others.slice(0, 4))
+      const entry = {
+        id: pid,
+        name: product.name,
+        price: product.price,
+        compareAtPrice: product.compareAtPrice,
+        images: (product.images || []).slice(0, 1),
+        sku: product.sku,
+      }
+      localStorage.setItem('vt_recent', JSON.stringify([entry, ...others].slice(0, 8)))
+    } catch {
+      setRecent([])
+    }
+  }, [product])
+
   if (loading) {
     return (
       <div className="py-20 text-center">
@@ -88,6 +111,18 @@ export default function ProductDetail() {
       </section>
     )
   }
+
+  const detailRows = [
+    ['Product Category', categoryMeta?.name],
+    ['Fabric', product.fabric],
+    ['Work', product.pattern],
+    ['Colour', product.color],
+    ['Weave', product.weave],
+    ['Border', product.borderType],
+    ['Occasion', (product.occasion || []).join(', ')],
+    ['Material Care', product.careInstructions || 'Dry clean only'],
+    ['Product Code', product.sku],
+  ].filter(([, v]) => v)
 
   const discount = product.mrp ? Math.round(100 - (product.price / product.mrp) * 100) : 0
 
@@ -170,7 +205,7 @@ export default function ProductDetail() {
             {[...Array(5)].map((_, i) => (
               <StarIcon key={i} className="text-brown" />
             ))}
-            <span className="text-[11px] uppercase tracking-widest text-brown-light">(24 REVIEWS)</span>
+            <span className="text-[11px] uppercase tracking-widest text-brown-light">({product.reviewCount || 0} REVIEWS)</span>
           </div>
 
           <div className="mt-6 flex items-baseline gap-4">
@@ -186,11 +221,6 @@ export default function ProductDetail() {
               <span className="text-[10px] uppercase tracking-widest font-semibold text-brown">{discount}% off</span>
             )}
           </div>
-
-          <p className="mt-8 max-w-md text-sm leading-relaxed text-brown-light">
-            Handcrafted with care, this piece blends heritage-inspired design with a contemporary
-            silhouette — finished with fine detailing so every thread tells a story.
-          </p>
 
           <div className="mt-10 flex items-center gap-6">
             <div>
@@ -313,20 +343,80 @@ export default function ProductDetail() {
             </p>
           )}
 
-          <dl className="mt-12 space-y-4 border-t border-brown/10 pt-8 text-[13px]">
-            <div className="flex justify-between">
-              <dt className="text-brown-light uppercase tracking-widest text-[10px] font-semibold">Fabric</dt>
-              <dd className="text-brown font-medium">Pure silk blend</dd>
-            </div>
-            <div className="flex justify-between">
-              <dt className="text-brown-light uppercase tracking-widest text-[10px] font-semibold">Work</dt>
-              <dd className="text-brown font-medium">Zari &amp; thread embroidery</dd>
-            </div>
-            <div className="flex justify-between">
-              <dt className="text-brown-light uppercase tracking-widest text-[10px] font-semibold">Care</dt>
-              <dd className="text-brown font-medium">Dry clean only</dd>
-            </div>
-          </dl>
+          <div className="mt-12 border-t border-brown/10">
+            <Accordion title="Details" defaultOpen>
+              <p className="text-[13px] leading-relaxed text-brown-light">{product.description}</p>
+              <p className="mt-3 text-[11px] leading-relaxed text-brown-light/80">
+                Disclaimer: the blouse worn by the model may be for modelling purposes only — the saree comes with an
+                unstitched blouse piece. Colour may vary slightly due to photographic lighting or your screen settings.
+              </p>
+              <p className="mt-5 text-[12px] font-semibold text-brown">Size &amp; Fit</p>
+              <p className="text-[13px] text-brown-light">
+                Saree: {product.sareeLength || 5.5} Mtrs; Blouse: {product.blouseLength || 0.8} Mtrs
+              </p>
+              <dl className="mt-5 grid grid-cols-2 gap-x-6 gap-y-4 text-[13px]">
+                {detailRows.map(([label, value]) => (
+                  <div key={label}>
+                    <dt className="text-[12px] font-semibold text-brown">{label}</dt>
+                    <dd className="text-brown-light">{value}</dd>
+                  </div>
+                ))}
+              </dl>
+            </Accordion>
+
+            <Accordion title="Offers">
+              <ul className="space-y-3 text-[13px] text-brown-light">
+                <li>
+                  Use <strong className="text-maroon">WELCOME5</strong> — extra 5% off on your order
+                </li>
+                <li>
+                  Use <strong className="text-maroon">VINIT10</strong> — extra 10% off
+                </li>
+                <li>
+                  Use <strong className="text-maroon">FLASH5</strong> — extra 5% off on min. ₹2,490
+                </li>
+                <li>
+                  Use <strong className="text-maroon">FESTIVE15</strong> — festival special, extra 15% off
+                </li>
+                <li>Free shipping on orders above ₹1,999</li>
+              </ul>
+            </Accordion>
+
+            <Accordion title="Return Policy">
+              <div className="space-y-3 text-[13px] leading-relaxed text-brown-light">
+                <p>
+                  <strong className="text-brown">7-day easy returns &amp; exchange.</strong> Raise a request within 7 days
+                  of delivery — the saree must be unused, unwashed and in its original packaging with all tags intact.
+                </p>
+                <p>
+                  Write to <a className="underline" href="mailto:vinittextiles21@gmail.com">vinittextiles21@gmail.com</a> or
+                  WhatsApp +91 97126 39342 with your order ID and photos. We arrange a doorstep pickup where available.
+                </p>
+                <p>
+                  Refunds: prepaid orders are credited to the original payment source in 3–5 working days after quality
+                  check; COD orders by bank transfer in 5–7 working days.
+                </p>
+                <p>
+                  <Link to="/returns-policy" className="underline">
+                    Read the full returns policy
+                  </Link>
+                </p>
+              </div>
+            </Accordion>
+
+            <Accordion title="Support">
+              <ul className="space-y-2 text-[13px] text-brown-light">
+                <li>Address: 8001-8004, The Rajhans Fabrizo Market, BRTS Road, Near Polaris Textile City, Magob, Surat, Gujarat 395012</li>
+                <li>Call / WhatsApp: <strong className="text-brown">+91 97126 39342</strong> (Mon–Sat, 10 AM – 7:30 PM)</li>
+                <li>Email: vinittextiles21@gmail.com</li>
+                <li>
+                  <Link to="/contact" className="underline">
+                    Contact us
+                  </Link>
+                </li>
+              </ul>
+            </Accordion>
+          </div>
         </div>
       </div>
 
@@ -340,6 +430,37 @@ export default function ProductDetail() {
           </div>
         </div>
       )}
+
+      {recent.length > 0 && (
+        <div className="mt-24">
+          <h2 className="font-display text-center text-3xl text-brown">Previously Visited</h2>
+          <div className="mt-10 grid grid-cols-2 gap-x-8 gap-y-16 sm:grid-cols-4">
+            {recent.map((item) => (
+              <ProductCard key={item.id || item._id} product={item} />
+            ))}
+          </div>
+        </div>
+      )}
     </section>
+  )
+}
+
+function Accordion({ title, defaultOpen = false, children }) {
+  const [open, setOpen] = useState(defaultOpen)
+  return (
+    <div className="border-b border-brown/10">
+      <button
+        type="button"
+        onClick={() => setOpen((o) => !o)}
+        aria-expanded={open}
+        className="flex w-full items-center justify-between py-4 text-left text-[11px] font-semibold uppercase tracking-[0.2em] text-brown"
+      >
+        {title}
+        <span aria-hidden="true" className="text-lg font-light leading-none">
+          {open ? '−' : '+'}
+        </span>
+      </button>
+      {open && <div className="pb-6">{children}</div>}
+    </div>
   )
 }
