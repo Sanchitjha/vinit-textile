@@ -48,7 +48,6 @@ export default function Cart() {
                     >
                       {item.product.name}
                     </Link>
-                    <p className="mt-2 text-[11px] uppercase tracking-widest text-brown-light">Size: {item.size}</p>
                   </div>
                   <p className="text-sm font-medium text-brown">
                     ₹{(item.product.price * item.qty).toLocaleString('en-IN')}
