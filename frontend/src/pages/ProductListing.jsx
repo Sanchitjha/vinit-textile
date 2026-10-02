@@ -1,36 +1,139 @@
 import { useEffect, useMemo, useState } from 'react'
 import { Link, useParams } from 'react-router-dom'
-import ProductCard from '../components/ui/ProductCard'
+import SareeCard from '../components/ui/SareeCard'
+import { CloseIcon, ChevronDownIcon } from '../components/icons/Icons'
 import { onlyRealProducts } from '../utils/catalogue'
 import { apiClient } from '../api/client'
 import Seo from '../components/seo/Seo'
 import { SITE_URL } from '../lib/seoConfig'
 
-const filterGroups = [
-  { title: 'Price', options: ['Under ₹2,000', '₹2,000 – ₹5,000', '₹5,000 – ₹10,000', 'Above ₹10,000'] },
-  { title: 'Fabric', options: ['Silk', 'Cotton', 'Georgette', 'Velvet', 'Net'] },
-  { title: 'Color', options: ['Red', 'Maroon', 'Green', 'Mustard', 'Ivory'] },
+const PRICE_RANGES = [
+  { id: 'u1500', label: 'Under ₹1,500', test: (p) => p < 1500 },
+  { id: '1500-2000', label: '₹1,500 – ₹2,000', test: (p) => p >= 1500 && p < 2000 },
+  { id: '2000+', label: '₹2,000 & above', test: (p) => p >= 2000 },
 ]
 
-const sortOptions = ['Featured', 'Price: Low to High', 'Price: High to Low', 'Newest']
+const SORTS = [
+  { id: 'featured', label: 'Featured' },
+  { id: 'rating', label: 'Top Rated' },
+  { id: 'price-asc', label: 'Price: Low to High' },
+  { id: 'price-desc', label: 'Price: High to Low' },
+  { id: 'newest', label: 'Newest' },
+]
+
+const COLOR_DOTS = {
+  Red: '#C62828', Blue: '#2F6DB5', Green: '#5E8C3A', Yellow: '#F2B705', Orange: '#E67E22', Purple: '#7E57C2',
+  Pink: '#E91E8C', Brown: '#8D5A3B', White: '#F5F0E6', Beige: '#D9C7A5', Grey: '#9E9E9E', Maroon: '#6B1020',
+  Multicolor: 'linear-gradient(135deg,#C62828,#F2B705,#2F6DB5,#5E8C3A)',
+}
+
+const EMPTY_FILTERS = { price: [], fabric: [], color: [], occasion: [] }
+
+function countBy(list, pick) {
+  const map = new Map()
+  list.forEach((p) => {
+    new Set(pick(p).filter(Boolean)).forEach((v) => map.set(v, (map.get(v) || 0) + 1))
+  })
+  return [...map.entries()].sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0]))
+}
+
+function FilterGroup({ title, children }) {
+  return (
+    <details open className="group border-b border-brown/10 py-5 first:pt-0">
+      <summary className="flex cursor-pointer list-none items-center justify-between font-display text-lg text-brown [&::-webkit-details-marker]:hidden">
+        {title}
+        <ChevronDownIcon className="h-4 w-4 text-brown-light transition-transform group-open:rotate-180" />
+      </summary>
+      <ul className="mt-4 space-y-3 text-[13px]">{children}</ul>
+    </details>
+  )
+}
+
+function FilterOption({ checked, onChange, label, count, dot }) {
+  return (
+    <li>
+      <label className="flex cursor-pointer items-center gap-3 text-brown-light transition-colors hover:text-brown">
+        <input
+          type="checkbox"
+          checked={checked}
+          onChange={onChange}
+          className="h-4 w-4 shrink-0 rounded-none border-brown/30 accent-brown"
+        />
+        {dot && (
+          <span
+            aria-hidden="true"
+            className="h-3.5 w-3.5 shrink-0 rounded-full border border-brown/20"
+            style={{ background: dot }}
+          />
+        )}
+        <span className={checked ? 'font-medium text-brown' : ''}>{label}</span>
+        {count != null && <span className="ml-auto text-[11px] text-brown-light/70">{count}</span>}
+      </label>
+    </li>
+  )
+}
+
+function FilterPanel({ facets, filters, toggle }) {
+  return (
+    <div>
+      <FilterGroup title="Price">
+        {PRICE_RANGES.map((r) => (
+          <FilterOption
+            key={r.id}
+            label={r.label}
+            count={facets.price[r.id]}
+            checked={filters.price.includes(r.id)}
+            onChange={() => toggle('price', r.id)}
+          />
+        ))}
+      </FilterGroup>
+      {facets.fabric.length > 1 && (
+        <FilterGroup title="Fabric">
+          {facets.fabric.map(([name, count]) => (
+            <FilterOption key={name} label={name} count={count} checked={filters.fabric.includes(name)} onChange={() => toggle('fabric', name)} />
+          ))}
+        </FilterGroup>
+      )}
+      {facets.color.length > 1 && (
+        <FilterGroup title="Colour">
+          {facets.color.map(([name, count]) => (
+            <FilterOption
+              key={name}
+              label={name}
+              count={count}
+              dot={COLOR_DOTS[name] || '#ccc'}
+              checked={filters.color.includes(name)}
+              onChange={() => toggle('color', name)}
+            />
+          ))}
+        </FilterGroup>
+      )}
+      {facets.occasion.length > 1 && (
+        <FilterGroup title="Occasion">
+          {facets.occasion.map(([name, count]) => (
+            <FilterOption key={name} label={name} count={count} checked={filters.occasion.includes(name)} onChange={() => toggle('occasion', name)} />
+          ))}
+        </FilterGroup>
+      )}
+    </div>
+  )
+}
 
 export default function ProductListing() {
   const { category } = useParams()
-  const [sort, setSort] = useState(sortOptions[0])
+  const [sort, setSort] = useState('featured')
   const [categories, setCategories] = useState([])
-  const [products, setProducts] = useState([])
+  const [allProducts, setAllProducts] = useState([])
   const [loading, setLoading] = useState(true)
+  const [filters, setFilters] = useState(EMPTY_FILTERS)
+  const [drawerOpen, setDrawerOpen] = useState(false)
 
   useEffect(() => {
     async function fetchData() {
-      setLoading(true)
       try {
-        const [catRes, prodRes] = await Promise.all([
-          apiClient.get('/categories'),
-          apiClient.get(`/sarees?categorySlug=${category}&limit=100`)
-        ])
+        const [catRes, prodRes] = await Promise.all([apiClient.get('/categories'), apiClient.get('/sarees?limit=100')])
         setCategories(catRes.data || [])
-        setProducts(onlyRealProducts(prodRes.data?.items))
+        setAllProducts(onlyRealProducts(prodRes.data?.items))
       } catch (err) {
         console.error(err)
       } finally {
@@ -38,16 +141,71 @@ export default function ProductListing() {
       }
     }
     fetchData()
+  }, [])
+
+  useEffect(() => {
+    setFilters(EMPTY_FILTERS)
+    setDrawerOpen(false)
   }, [category])
+
+  useEffect(() => {
+    document.body.style.overflow = drawerOpen ? 'hidden' : ''
+    return () => {
+      document.body.style.overflow = ''
+    }
+  }, [drawerOpen])
 
   const meta = categories.find((c) => c.slug === category) ?? { name: category, slug: category }
 
+  const inCategory = useMemo(
+    () => allProducts.filter((p) => (p.category?.slug || p.category) === category),
+    [allProducts, category]
+  )
+
+  const visibleCategories = useMemo(() => {
+    const counts = {}
+    allProducts.forEach((p) => {
+      const slug = p.category?.slug || p.category
+      counts[slug] = (counts[slug] || 0) + 1
+    })
+    return categories.filter((c) => counts[c.slug] > 0 || c.slug === category).map((c) => ({ ...c, count: counts[c.slug] || 0 }))
+  }, [categories, allProducts, category])
+
+  const facets = useMemo(
+    () => ({
+      price: Object.fromEntries(PRICE_RANGES.map((r) => [r.id, inCategory.filter((p) => r.test(p.price)).length])),
+      fabric: countBy(inCategory, (p) => [p.fabric]),
+      color: countBy(inCategory, (p) => (p.colors?.length ? p.colors : [p.color])),
+      occasion: countBy(inCategory, (p) => p.occasion || []),
+    }),
+    [inCategory]
+  )
+
   const items = useMemo(() => {
-    const list = [...products]
-    if (sort === 'Price: Low to High') list.sort((a, b) => a.price - b.price)
-    if (sort === 'Price: High to Low') list.sort((a, b) => b.price - a.price)
+    const priceTests = PRICE_RANGES.filter((r) => filters.price.includes(r.id))
+    const list = inCategory.filter((p) => {
+      if (priceTests.length && !priceTests.some((r) => r.test(p.price))) return false
+      if (filters.fabric.length && !filters.fabric.includes(p.fabric)) return false
+      if (filters.color.length && !(p.colors?.length ? p.colors : [p.color]).some((c) => filters.color.includes(c))) return false
+      if (filters.occasion.length && !(p.occasion || []).some((o) => filters.occasion.includes(o))) return false
+      return true
+    })
+    if (sort === 'price-asc') list.sort((a, b) => a.price - b.price)
+    else if (sort === 'price-desc') list.sort((a, b) => b.price - a.price)
+    else if (sort === 'rating') list.sort((a, b) => (b.ratings || 0) - (a.ratings || 0))
+    else if (sort === 'newest') list.sort((a, b) => new Date(b.createdAt || 0) - new Date(a.createdAt || 0))
     return list
-  }, [products, sort])
+  }, [inCategory, filters, sort])
+
+  const toggle = (group, value) =>
+    setFilters((f) => ({
+      ...f,
+      [group]: f[group].includes(value) ? f[group].filter((v) => v !== value) : [...f[group], value],
+    }))
+
+  const labelFor = (group, value) => (group === 'price' ? PRICE_RANGES.find((r) => r.id === value)?.label : value)
+  const activeChips = Object.entries(filters).flatMap(([group, values]) => values.map((v) => ({ group, value: v })))
+  const clearAll = () => setFilters(EMPTY_FILTERS)
 
   const breadcrumbJsonLd = {
     '@context': 'https://schema.org',
@@ -59,7 +217,7 @@ export default function ProductListing() {
   }
 
   return (
-    <section className="container-ambika py-16">
+    <section className="container-ambika py-10 sm:py-14">
       <Seo
         title={meta.name}
         description={`Shop ${meta.name} at Vinit Textiles — premium sarees crafted for every celebration, direct from our Surat manufacturing hub.`}
@@ -72,95 +230,150 @@ export default function ProductListing() {
         / <span className="text-brown">{meta.name}</span>
       </nav>
 
-      <div className="mt-8 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+      <div className="mt-6 flex flex-col gap-1 sm:flex-row sm:items-end sm:justify-between">
         <h1 className="font-display text-4xl text-brown sm:text-5xl">{meta.name}</h1>
-        <p className="text-xs uppercase tracking-widest text-brown-light">{items.length} PRODUCTS</p>
+        <p className="text-xs uppercase tracking-widest text-brown-light">
+          {loading ? 'Loading…' : `${items.length} ${items.length === 1 ? 'product' : 'products'}`}
+        </p>
       </div>
 
+      {visibleCategories.length > 1 && (
+        <div className="no-scrollbar -mx-4 mt-6 flex gap-2 overflow-x-auto px-4 pb-1 sm:mx-0 sm:flex-wrap sm:px-0">
+          {visibleCategories.map((cat) => (
+            <Link
+              key={cat.slug}
+              to={`/shop/${cat.slug}`}
+              className={`shrink-0 rounded-full border px-4 py-2 text-[11px] font-medium uppercase tracking-wider transition-colors ${
+                cat.slug === category
+                  ? 'border-brown bg-brown text-ivory'
+                  : 'border-brown/20 text-brown hover:border-brown'
+              }`}
+            >
+              {cat.name} <span className="opacity-60">({cat.count})</span>
+            </Link>
+          ))}
+        </div>
+      )}
+
       <div className="mt-8 flex flex-col gap-10 lg:flex-row">
-        <aside className="w-full shrink-0 lg:w-64">
-          <div className="flex gap-2 overflow-x-auto pb-4 lg:hidden">
-            {categories.map((cat) => (
-              <Link
-                key={cat.slug}
-                to={`/shop/${cat.slug}`}
-                className={`shrink-0 border px-4 py-2 text-xs font-medium uppercase tracking-wide ${
-                  cat.slug === meta.slug
-                    ? 'border-brown bg-brown text-ivory'
-                    : 'border-cream-dark text-brown'
-                }`}
-              >
-                {cat.name}
-              </Link>
-            ))}
-          </div>
-
-          <div className="hidden space-y-12 lg:block">
-            <div>
-              <h2 className="font-display text-xl text-brown">Categories</h2>
-              <ul className="mt-5 space-y-3 text-[13px]">
-                {categories.map((cat) => (
-                  <li key={cat.slug}>
-                    <Link
-                      to={`/shop/${cat.slug}`}
-                      className={`${
-                        cat.slug === meta.slug ? 'font-medium text-brown' : 'text-brown-light hover:text-brown'
-                      }`}
-                    >
-                      {cat.name}
-                    </Link>
-                  </li>
-                ))}
-              </ul>
+        <aside className="hidden w-60 shrink-0 lg:block">
+          <div className="sticky top-28 max-h-[calc(100vh-8rem)] overflow-y-auto pr-3 no-scrollbar">
+            <div className="mb-5 flex items-center justify-between">
+              <h2 className="text-[11px] font-semibold uppercase tracking-[0.2em] text-brown">Filters</h2>
+              {activeChips.length > 0 && (
+                <button type="button" onClick={clearAll} className="text-[11px] uppercase tracking-widest text-maroon underline">
+                  Clear all
+                </button>
+              )}
             </div>
-
-            {filterGroups.map((group) => (
-              <div key={group.title}>
-                <h2 className="font-display text-xl text-brown">{group.title}</h2>
-                <ul className="mt-5 space-y-3 text-[13px]">
-                  {group.options.map((option) => (
-                    <li key={option}>
-                      <label className="flex cursor-pointer items-center gap-3 text-brown-light hover:text-brown transition-colors">
-                        <input type="checkbox" className="h-4 w-4 rounded-none border-brown/20 accent-brown bg-transparent" />
-                        {option}
-                      </label>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            ))}
+            <FilterPanel facets={facets} filters={filters} toggle={toggle} />
           </div>
         </aside>
 
-        <div className="flex-1">
-          <div className="mb-10 flex justify-end">
+        <div className="min-w-0 flex-1">
+          <div className="flex items-center justify-between gap-4 border-y border-brown/10 py-3">
+            <button
+              type="button"
+              onClick={() => setDrawerOpen(true)}
+              className="flex items-center gap-2 text-[11px] font-semibold uppercase tracking-widest text-brown lg:hidden"
+            >
+              Filters{activeChips.length > 0 && <span className="rounded-full bg-brown px-1.5 text-[10px] text-ivory">{activeChips.length}</span>}
+            </button>
+            <span className="hidden text-[11px] uppercase tracking-widest text-brown-light lg:block">
+              Showing {items.length} of {inCategory.length}
+            </span>
             <label className="flex items-center gap-3 text-[10px] uppercase tracking-widest text-brown-light">
-              SORT BY
+              Sort by
               <select
                 value={sort}
-                onChange={(event) => setSort(event.target.value)}
-                className="border-b border-brown/20 bg-transparent py-1 pr-6 text-[11px] font-medium text-brown uppercase tracking-widest focus:border-brown focus:outline-none appearance-none"
+                onChange={(e) => setSort(e.target.value)}
+                className="cursor-pointer border-b border-brown/20 bg-transparent py-1 pr-2 text-[11px] font-medium uppercase tracking-widest text-brown focus:border-brown focus:outline-none"
               >
-                {sortOptions.map((option) => (
-                  <option key={option} value={option}>
-                    {option}
+                {SORTS.map((s) => (
+                  <option key={s.id} value={s.id}>
+                    {s.label}
                   </option>
                 ))}
               </select>
             </label>
           </div>
 
-          {items.length === 0 ? (
-            <p className="text-sm text-brown-light">No products found in this category yet.</p>
-          ) : (
-            <div className="grid grid-cols-2 gap-x-8 gap-y-16 sm:grid-cols-3">
-              {items.map((product) => (
-                <ProductCard key={product.id} product={product} />
+          {activeChips.length > 0 && (
+            <div className="mt-4 flex flex-wrap items-center gap-2">
+              {activeChips.map(({ group, value }) => (
+                <button
+                  key={`${group}-${value}`}
+                  type="button"
+                  onClick={() => toggle(group, value)}
+                  className="flex items-center gap-1.5 rounded-full bg-cream-dark/60 px-3 py-1 text-[11px] text-brown hover:bg-cream-dark"
+                >
+                  {labelFor(group, value)} <CloseIcon width={10} height={10} />
+                </button>
               ))}
+              <button type="button" onClick={clearAll} className="text-[11px] uppercase tracking-widest text-maroon underline">
+                Clear all
+              </button>
             </div>
           )}
+
+          <div className="mt-6">
+            {loading ? (
+              <div className="grid grid-cols-2 gap-x-3 gap-y-8 md:grid-cols-3 xl:grid-cols-4">
+                {Array.from({ length: 8 }).map((_, i) => (
+                  <div key={i} className="animate-pulse">
+                    <div className="aspect-[3/4.1] w-full bg-cream-dark/50" />
+                    <div className="mt-3 h-3 w-4/5 bg-cream-dark/50" />
+                    <div className="mt-2 h-3 w-1/3 bg-cream-dark/50" />
+                  </div>
+                ))}
+              </div>
+            ) : items.length === 0 ? (
+              <div className="py-20 text-center">
+                <p className="font-display text-2xl text-brown">No sarees match these filters</p>
+                <p className="mt-2 text-sm text-brown-light">
+                  {inCategory.length === 0 ? 'This category has no products yet.' : 'Try removing a filter to see more.'}
+                </p>
+                {activeChips.length > 0 && (
+                  <button type="button" onClick={clearAll} className="mt-6 border border-brown px-6 py-2.5 text-[11px] font-semibold uppercase tracking-widest text-brown hover:bg-brown hover:text-ivory">
+                    Clear all filters
+                  </button>
+                )}
+              </div>
+            ) : (
+              <div className="grid grid-cols-2 gap-x-3 gap-y-8 md:grid-cols-3 xl:grid-cols-4">
+                {items.map((product) => (
+                  <SareeCard key={product.id || product._id} product={product} bestseller={Boolean(product.isFeatured)} />
+                ))}
+              </div>
+            )}
+          </div>
         </div>
       </div>
+
+      {drawerOpen && (
+        <div className="fixed inset-0 z-50 lg:hidden" role="dialog" aria-modal="true" aria-label="Filters">
+          <button type="button" aria-label="Close filters" className="absolute inset-0 bg-black/50" onClick={() => setDrawerOpen(false)} />
+          <div className="absolute inset-x-0 bottom-0 flex max-h-[85vh] flex-col rounded-t-2xl bg-ivory">
+            <div className="flex items-center justify-between border-b border-brown/10 px-5 py-4">
+              <h2 className="text-[12px] font-semibold uppercase tracking-[0.2em] text-brown">Filters</h2>
+              <button type="button" aria-label="Close" onClick={() => setDrawerOpen(false)} className="text-brown">
+                <CloseIcon width={18} height={18} />
+              </button>
+            </div>
+            <div className="flex-1 overflow-y-auto px-5 py-5">
+              <FilterPanel facets={facets} filters={filters} toggle={toggle} />
+            </div>
+            <div className="flex gap-3 border-t border-brown/10 px-5 py-4">
+              <button type="button" onClick={clearAll} className="flex-1 border border-brown/30 py-3 text-[11px] font-semibold uppercase tracking-widest text-brown">
+                Clear all
+              </button>
+              <button type="button" onClick={() => setDrawerOpen(false)} className="flex-1 bg-brown py-3 text-[11px] font-semibold uppercase tracking-widest text-ivory">
+                Show {items.length} results
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </section>
   )
 }

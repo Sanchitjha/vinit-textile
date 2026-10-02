@@ -9,7 +9,6 @@ import Banner from '../components/home/Banner'
 import ProductGrid from '../components/home/ProductGrid'
 import SplitFeature from '../components/home/SplitFeature'
 import LookbookStrip from '../components/home/LookbookStrip'
-import EntireCollectionGrid from '../components/home/EntireCollectionGrid'
 import BestsellersGrid from '../components/home/BestsellersGrid'
 import Newsletter from '../components/home/Newsletter'
 import { apiClient } from '../api/client'
@@ -76,7 +75,6 @@ export default function Home() {
       <Hero />
       <AnnouncementTicker />
       <TopCategories />
-      <BestsellersGrid items={bestsellers} />
       <ShopByOccasion />
 
       <Banner
@@ -138,7 +136,7 @@ export default function Home() {
       />
 
       <LookbookStrip />
-      <EntireCollectionGrid />
+      <BestsellersGrid items={bestsellers} to="/shop/saree" />
       <Newsletter />
     </>
   )
