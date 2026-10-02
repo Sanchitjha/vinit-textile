@@ -12,7 +12,7 @@
 // guard keeps rows like that out of customer-facing listings too.
 export function isRealProduct(product) {
   const sku = (product?.sku || '').trim()
-  if (!/^VT-/i.test(sku)) return false
+  if (!/^VT[A-Z]*-/i.test(sku)) return false
   const images = Array.isArray(product?.images) ? product.images : []
   return images.length > 0 && images.every((img) => /^\/product-images\//i.test(img || ''))
 }
@@ -24,7 +24,7 @@ export function onlyRealProducts(list) {
 // Colourway / alternate-photo SKUs share a base ("VT-1499", "VT-1499-BLUE", "VT-1499-V2" are one design).
 export function designKey(product) {
   const sku = (product?.sku || '').toUpperCase()
-  return sku.match(/^VT-\d+/)?.[0] || sku || String(product?.id || product?._id || '')
+  return sku.match(/^VT[A-Z]*-\d+/)?.[0] || sku || String(product?.id || product?._id || '')
 }
 
 // One entry per design — the base SKU when it is in the list, otherwise the first variant.

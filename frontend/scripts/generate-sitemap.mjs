@@ -63,7 +63,7 @@ async function main() {
       total = data.total ?? items.length
       for (const item of items) {
         const id = item.id || item._id
-        if (id && /^VT-/i.test(item.sku || '')) productIds.push(id)
+        if (id && /^VT[A-Z]*-/i.test(item.sku || "")) productIds.push(id)
       }
       if (items.length < limit) break
       page += 1
