@@ -26,6 +26,9 @@ import Blog from './pages/Blog'
 import PrivacyPolicy from './pages/PrivacyPolicy'
 import TermsConditions from './pages/TermsConditions'
 import NotFound from './pages/NotFound'
+import CategoriesPage from './pages/CategoriesPage'
+import AccountMenu from './pages/AccountMenu'
+import MobileTabBar from './components/layout/MobileTabBar'
 
 // Admin imports — lazy-loaded so recharts and the admin screens (never seen by
 // customers) aren't in the bundle every shopper downloads on the storefront.
@@ -60,7 +63,7 @@ export default function App() {
   return (
     <CartProvider>
       <ScrollToTop />
-      <div className="flex min-h-screen flex-col">
+      <div className={`flex min-h-screen flex-col ${isAdminRoute ? '' : 'pb-20 md:pb-0'}`}>
         {!isAdminRoute && <Header />}
         <main className="flex-1">
           <Routes>
@@ -72,6 +75,8 @@ export default function App() {
             <Route path="/search" element={<SearchResults />} />
             <Route path="/cart" element={<Cart />} />
             <Route path="/account" element={<Account />} />
+            <Route path="/categories" element={<CategoriesPage />} />
+            <Route path="/me" element={<AccountMenu />} />
             <Route path="/about" element={<About />} />
             <Route path="/contact" element={<Contact />} />
             <Route path="/size-chart" element={<SizeChart />} />
@@ -116,6 +121,7 @@ export default function App() {
         </main>
         {!isAdminRoute && <Footer />}
       </div>
+      {!isAdminRoute && <MobileTabBar />}
       {!isAdminRoute && <AuthModal />}
     </CartProvider>
   )
