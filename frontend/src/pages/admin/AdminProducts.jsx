@@ -22,6 +22,7 @@ export default function AdminProducts() {
     sku: '',
     fabric: '',
     color: '',
+    isBestseller: false,
   })
 
   const fetchData = async () => {
@@ -82,7 +83,7 @@ export default function AdminProducts() {
       
       await apiClient.post('/sarees', payload)
       setIsFormOpen(false)
-      setFormData({ name: '', description: '', category: '', price: 0, stock: 0, sku: '', fabric: '', color: '' })
+      setFormData({ name: '', description: '', category: '', price: 0, stock: 0, sku: '', fabric: '', color: '', isBestseller: false })
       setSelectedFiles([])
       setPreviewUrls([])
       fetchData()
@@ -90,6 +91,18 @@ export default function AdminProducts() {
       alert(err.message)
     } finally {
       setIsUploading(false)
+    }
+  }
+
+  // Tick/untick "Bestseller": saved straight away, and the homepage Bestsellers section follows it.
+  const toggleBestseller = async (prod) => {
+    const next = !prod.isBestseller
+    setProducts((list) => list.map((p) => (p._id === prod._id ? { ...p, isBestseller: next } : p)))
+    try {
+      await apiClient.patch(`/sarees/${prod._id}`, { isBestseller: next })
+    } catch (err) {
+      setProducts((list) => list.map((p) => (p._id === prod._id ? { ...p, isBestseller: !next } : p)))
+      alert(err.message)
     }
   }
 
@@ -157,6 +170,17 @@ export default function AdminProducts() {
             <label className="block text-sm font-medium mb-1">Color</label>
             <input required className="w-full glass-input p-2.5 rounded-xl" value={formData.color} onChange={e => setFormData({...formData, color: e.target.value})} />
           </div>
+          <div className="col-span-2">
+            <label className="flex items-center gap-3 text-sm font-medium cursor-pointer">
+              <input
+                type="checkbox"
+                className="h-4 w-4 accent-brown"
+                checked={formData.isBestseller}
+                onChange={e => setFormData({...formData, isBestseller: e.target.checked})}
+              />
+              Show in Bestsellers on the homepage
+            </label>
+          </div>
           <div className="col-span-2 mt-2">
             <label className="block text-sm font-medium mb-2">Product Images</label>
             <div className="glass-panel border-dashed border-2 p-8 rounded-2xl text-center cursor-pointer hover:bg-white/40 dark:hover:bg-white/5 transition-colors relative">
@@ -200,6 +224,7 @@ export default function AdminProducts() {
               <th className="p-4 font-medium text-gray-600 dark:text-gray-400">Name</th>
               <th className="p-4 font-medium text-gray-600 dark:text-gray-400">SKU</th>
               <th className="p-4 font-medium text-gray-600 dark:text-gray-400">Price</th>
+              <th className="p-4 font-medium text-gray-600 dark:text-gray-400">Bestseller</th>
               <th className="p-4 font-medium text-gray-600 dark:text-gray-400">Actions</th>
             </tr>
           </thead>
@@ -213,12 +238,24 @@ export default function AdminProducts() {
                 <td className="p-4 text-gray-500">{prod.sku}</td>
                 <td className="p-4">₹{prod.price}</td>
                 <td className="p-4">
+                  <button
+                    type="button"
+                    role="switch"
+                    aria-checked={Boolean(prod.isBestseller)}
+                    aria-label={`Show ${prod.name} in Bestsellers`}
+                    onClick={() => toggleBestseller(prod)}
+                    className={`relative h-6 w-11 rounded-full transition-colors ${prod.isBestseller ? 'bg-green-600' : 'bg-gray-300 dark:bg-gray-600'}`}
+                  >
+                    <span className={`absolute top-0.5 h-5 w-5 rounded-full bg-white shadow transition-all ${prod.isBestseller ? 'left-[22px]' : 'left-0.5'}`} />
+                  </button>
+                </td>
+                <td className="p-4">
                   <button onClick={() => handleDelete(prod._id)} className="text-red-500 hover:underline">Delete</button>
                 </td>
               </tr>
             ))}
             {products.length === 0 && (
-              <tr><td colSpan="5" className="p-4 text-center text-gray-500">No products found.</td></tr>
+              <tr><td colSpan="6" className="p-4 text-center text-gray-500">No products found.</td></tr>
             )}
           </tbody>
         </table>
