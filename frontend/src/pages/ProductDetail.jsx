@@ -9,6 +9,7 @@ import { useAuth } from '../context/AuthContext'
 import { apiClient } from '../api/client'
 import { toneFor } from '../data/products'
 import Seo from '../components/seo/Seo'
+import { onlyRealProducts, uniqueDesigns, designKey } from '../utils/catalogue'
 import { SITE_URL, absoluteUrl } from '../lib/seoConfig'
 
 export default function ProductDetail() {
@@ -38,26 +39,26 @@ export default function ProductDetail() {
 
         if (fetchedProduct) {
           const categoryId = fetchedProduct.category?._id || fetchedProduct.category?.id || fetchedProduct.category
-          const [catRes, relatedRes] = await Promise.all([
+          const [catRes, allRes] = await Promise.all([
             apiClient.get(`/categories/${categoryId}`),
-            apiClient.get(`/sarees?category=${categoryId}&limit=4`)
-          ]).catch(() => [{data: null}, {data: {items: []}}])
+            apiClient.get('/sarees?limit=100'),
+          ]).catch(() => [{ data: null }, { data: { items: [] } }])
           setCategoryMeta(catRes.data)
-          setRelated(relatedRes.data?.items?.filter(p => p.id !== fetchedProduct.id) || [])
 
-          // Other colourways share the base SKU (VT-1499, VT-1499-BLUE, ...)
-          const base = (fetchedProduct.sku || '').toUpperCase().match(/^VT-\d+/)?.[0]
-          if (base) {
-            apiClient.get('/sarees?limit=100').then((all) => {
-              const group = (all.data?.items || []).filter((p) => {
-                const sku = (p.sku || '').toUpperCase()
-                return sku === base || sku.startsWith(base + '-')
-              })
-              setVariants(group.length > 1 ? group : [])
-            }).catch(() => setVariants([]))
-          } else {
-            setVariants([])
-          }
+          const all = onlyRealProducts(allRes.data?.items)
+          const thisDesign = designKey(fetchedProduct)
+
+          // Other colourways of this saree share its base SKU (VT-1499, VT-1499-BLUE, ...)
+          const group = all.filter((p) => designKey(p) === thisDesign)
+          setVariants(group.length > 1 ? group : [])
+
+          // "You may also like": other designs only (never this saree or its colourways),
+          // each design once — same category first, then the rest to fill four.
+          const sameCategory = all.filter((p) => (p.category?._id || p.category) === categoryId)
+          const skip = new Set([thisDesign])
+          const first = uniqueDesigns(sameCategory, skip)
+          first.forEach((p) => skip.add(designKey(p)))
+          setRelated([...first, ...uniqueDesigns(all, skip)].slice(0, 4))
         }
       } catch (err) {
         console.error(err)
@@ -74,7 +75,7 @@ export default function ProductDetail() {
     const pid = product.id || product._id
     try {
       const stored = JSON.parse(localStorage.getItem('vt_recent') || '[]')
-      const others = stored.filter((p) => p.id !== pid)
+      const others = uniqueDesigns(stored.filter((p) => p.id !== pid && designKey(p) !== designKey(product)))
       setRecent(others.slice(0, 4))
       const entry = {
         id: pid,
