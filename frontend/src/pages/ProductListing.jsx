@@ -10,7 +10,6 @@ const filterGroups = [
   { title: 'Price', options: ['Under ₹2,000', '₹2,000 – ₹5,000', '₹5,000 – ₹10,000', 'Above ₹10,000'] },
   { title: 'Fabric', options: ['Silk', 'Cotton', 'Georgette', 'Velvet', 'Net'] },
   { title: 'Color', options: ['Red', 'Maroon', 'Green', 'Mustard', 'Ivory'] },
-  { title: 'Size', options: ['XS', 'S', 'M', 'L', 'XL'] },
 ]
 
 const sortOptions = ['Featured', 'Price: Low to High', 'Price: High to Low', 'Newest']
