@@ -6,7 +6,7 @@ import Button from '../ui/Button'
 const RESEND_COOLDOWN_S = 30
 
 export default function AuthModal() {
-  const { authModalOpen, closeAuthModal, sendOtp, verifyOtp } = useAuth()
+  const { authModalOpen, closeAuthModal, sendOtp, verifyOtp, user } = useAuth()
 
   // step: 'email' -> enter address, 'code' -> enter the 6-digit code we emailed
   const [step, setStep] = useState('email')
@@ -17,7 +17,7 @@ export default function AuthModal() {
   const [cooldown, setCooldown] = useState(0)
 
   useEffect(() => {
-    if (!authModalOpen) {
+    if (!authModalOpen || user) {
       // Reset once the close animation would be done, so reopening always starts fresh.
       const timeout = setTimeout(() => {
         setStep('email')
@@ -28,7 +28,7 @@ export default function AuthModal() {
       }, 200)
       return () => clearTimeout(timeout)
     }
-  }, [authModalOpen])
+  }, [authModalOpen, user])
 
   useEffect(() => {
     if (cooldown <= 0) return
@@ -36,7 +36,7 @@ export default function AuthModal() {
     return () => clearInterval(timer)
   }, [cooldown])
 
-  if (!authModalOpen) return null
+  if (!authModalOpen || user) return null
 
   const requestCode = async (event) => {
     event?.preventDefault()

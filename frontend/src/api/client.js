@@ -39,7 +39,38 @@ async function refreshAccessToken() {
 }
 
 async function fetchWithAuth(url, options = {}, retried = false) {
-  const token = localStorage.getItem('accessToken');
+  let token = localStorage.getItem('accessToken');
+
+  // If no accessToken is stored yet, but a Clerk session is active in the window, sync once
+  // (Only for customer storefront flows, not when accessing admin panel)
+  const storedUserRaw = localStorage.getItem('user');
+  let isAdminSession = false;
+  try {
+    isAdminSession = storedUserRaw && JSON.parse(storedUserRaw)?.role === 'ADMIN';
+  } catch {}
+
+  const isAdminPath = typeof window !== 'undefined' && window.location.pathname.startsWith('/admin');
+
+  if (!token && !isAdminSession && !isAdminPath && window.Clerk?.user?.primaryEmailAddress?.emailAddress && !url.startsWith('/auth/')) {
+    try {
+      const syncRes = await fetch(`${BASE_URL}/auth/clerk-sync`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          email: window.Clerk.user.primaryEmailAddress.emailAddress,
+          name: window.Clerk.user.fullName || window.Clerk.user.firstName,
+          phone: window.Clerk.user.primaryPhoneNumber?.phoneNumber,
+        }),
+      });
+      const syncData = await syncRes.json();
+      if (syncData?.data?.accessToken) {
+        token = syncData.data.accessToken;
+        localStorage.setItem('accessToken', token);
+      }
+    } catch {
+      // Proceed without token if sync fails
+    }
+  }
 
   const headers = {
     'Content-Type': 'application/json',
@@ -60,15 +91,35 @@ async function fetchWithAuth(url, options = {}, retried = false) {
     data = null;
   }
 
-  // Access token expired (15 min TTL) — rotate it once via the refresh cookie
-  // and retry the original request, so an admin session doesn't die mid-task.
-  const isAuthCall = url.startsWith('/auth/refresh') || url.startsWith('/auth/login');
+  // Access token expired (15 min TTL) — rotate it once or re-sync with Clerk for shoppers
+  const isAuthCall = url.startsWith('/auth/refresh') || url.startsWith('/auth/login') || url.startsWith('/auth/clerk-sync');
   if (response.status === 401 && !retried && !isAuthCall) {
+    if (!isAdminSession && !isAdminPath && window.Clerk?.user?.primaryEmailAddress?.emailAddress) {
+      try {
+        const syncRes = await fetch(`${BASE_URL}/auth/clerk-sync`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            email: window.Clerk.user.primaryEmailAddress.emailAddress,
+            name: window.Clerk.user.fullName || window.Clerk.user.firstName,
+            phone: window.Clerk.user.primaryPhoneNumber?.phoneNumber,
+          }),
+        });
+        const syncData = await syncRes.json();
+        if (syncData?.data?.accessToken) {
+          localStorage.setItem('accessToken', syncData.data.accessToken);
+          return fetchWithAuth(url, options, true);
+        }
+      } catch {
+        // Fall through to standard refresh
+      }
+    }
     try {
       await refreshAccessToken();
       return fetchWithAuth(url, options, true);
     } catch (e) {
       localStorage.removeItem('accessToken');
+      localStorage.removeItem('user');
       // fall through and let the 401 surface
     }
   }

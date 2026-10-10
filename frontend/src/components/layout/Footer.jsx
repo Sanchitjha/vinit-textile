@@ -2,9 +2,10 @@ import { Link } from 'react-router-dom'
 import { FacebookIcon, InstagramIcon, PinterestIcon, YouTubeIcon } from '../icons/Icons'
 
 const customerServiceLinks = [
+  { label: 'MY ORDERS', to: '/orders' },
+  { label: 'TRACK YOUR ORDER', to: '/track-order' },
   { label: 'SIZE CHART', to: '/size-chart' },
   { label: 'SHIPPING & DELIVERY', to: '/shipping-delivery' },
-  { label: 'TRACK YOUR ORDER', to: '/track-order' },
   { label: 'CUSTOMER REVIEWS', to: '/reviews' },
   { label: 'RETURNS', to: '/returns' },
   { label: 'CONTACT US', to: '/contact' },

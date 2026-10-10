@@ -4,6 +4,7 @@ import Button from '../components/ui/Button'
 import { MinusIcon, PlusIcon } from '../components/icons/Icons'
 import { toneFor } from '../data/products'
 import { useCart } from '../context/CartContext'
+import { useAuth } from '../context/AuthContext'
 import Seo from '../components/seo/Seo'
 import { thumbUrl, fallbackToOriginal } from '../utils/catalogue'
 import EmptyCart from '../components/cart/EmptyCart'
@@ -12,6 +13,7 @@ const FREE_SHIPPING_THRESHOLD = 1999
 
 export default function Cart() {
   const { items, subtotal, updateQty, removeFromCart } = useCart()
+  const { isCustomerLoggedIn, openAuthModal } = useAuth()
 
   const shipping = subtotal === 0 || subtotal >= FREE_SHIPPING_THRESHOLD ? 0 : 99
   const total = subtotal + shipping
@@ -110,9 +112,20 @@ export default function Cart() {
               <dd className="text-brown">₹{total.toLocaleString('en-IN')}</dd>
             </div>
           </dl>
-          <Button variant="primary" className="mt-8 w-full">
-            Checkout
-          </Button>
+          {isCustomerLoggedIn ? (
+            <Button to="/checkout" variant="primary" className="mt-8 w-full">
+              Proceed to Checkout
+            </Button>
+          ) : (
+            <Button
+              type="button"
+              onClick={() => openAuthModal('login')}
+              variant="primary"
+              className="mt-8 w-full"
+            >
+              Sign In to Checkout
+            </Button>
+          )}
           <Link
             to="/shop/saree"
             className="mt-6 block text-center text-[10px] uppercase tracking-widest font-medium text-brown hover:text-brown-light transition-colors"

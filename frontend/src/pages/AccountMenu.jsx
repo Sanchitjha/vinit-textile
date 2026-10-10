@@ -4,11 +4,11 @@ import Seo from '../components/seo/Seo'
 import { useAuth } from '../context/AuthContext'
 
 export default function AccountMenu() {
-  const { user, openAuthModal, logout } = useAuth()
-  const firstName = user?.name?.split(' ')[0]
+  const { user, isCustomerLoggedIn, openAuthModal, logout } = useAuth()
+  const firstName = isCustomerLoggedIn ? (user?.name?.split(' ')[0] || 'Customer') : null
 
   const links = [
-    { icon: Package, title: 'Orders', sub: 'Track your orders here', to: user ? '/account' : '/track-order' },
+    ...(isCustomerLoggedIn ? [{ icon: Package, title: 'My Orders', sub: 'Track orders, delivery status & invoices', to: '/orders' }] : []),
     { icon: Phone, title: 'Contact Us', sub: 'Get help and support', to: '/contact' },
     { icon: Ruler, title: 'Size Chart', sub: 'Saree & blouse measurements', to: '/size-chart' },
     { icon: CircleHelp, title: 'FAQ', sub: 'Frequently asked questions', to: '/faqs' },
@@ -30,14 +30,17 @@ export default function AccountMenu() {
         </span>
         <h1 className="font-display text-2xl text-brown md:text-xl">Welcome, {firstName || 'Guest'}!</h1>
         <p className="mt-2 text-sm text-brown-light md:text-[13px]">
-          {user ? user.email : 'Login to access all features and track your orders'}
+          {isCustomerLoggedIn ? user?.email : 'Login to access all features and track your orders'}
         </p>
-        {user ? (
-          <div className="mt-5 flex gap-3 md:flex-col">
-            <Link to="/account" className="flex-1 rounded-lg bg-maroon py-3.5 text-[13px] font-semibold uppercase tracking-widest text-ivory md:py-3">
-              My Account
+        {isCustomerLoggedIn ? (
+          <div className="mt-5 flex flex-col gap-2.5">
+            <Link to="/orders" className="w-full rounded-lg bg-maroon py-3 text-[13px] font-semibold uppercase tracking-wider text-ivory shadow-xs hover:bg-maroon/90 transition-colors">
+              My Orders
             </Link>
-            <button type="button" onClick={logout} className="rounded-lg border border-brown/30 px-5 py-3 text-[12px] font-semibold uppercase tracking-widest text-brown">
+            <Link to="/account" className="w-full rounded-lg border border-brown/30 bg-white py-2.5 text-[12px] font-semibold uppercase tracking-wider text-brown hover:bg-cream transition-colors">
+              Profile & Addresses
+            </Link>
+            <button type="button" onClick={logout} className="w-full rounded-lg border border-rose-200 py-2 text-[12px] font-semibold uppercase tracking-wider text-rose-700 hover:bg-rose-50 transition-colors">
               Log out
             </button>
           </div>

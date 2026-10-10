@@ -1,6 +1,8 @@
 import { useState, useEffect, useCallback } from 'react'
 import { Link, useLocation } from 'react-router-dom'
-import { BagIcon, CloseIcon, HeartIcon, SearchIcon, UserIcon, MandalaMotifIcon } from '../icons/Icons'
+import { SignInButton, SignUpButton, Show, UserButton } from '@clerk/react'
+import { Package, Truck, UserRound } from 'lucide-react'
+import { BagIcon, CloseIcon, HeartIcon, SearchIcon, MandalaMotifIcon } from '../icons/Icons'
 import { useCart } from '../../context/CartContext'
 import { useAuth } from '../../context/AuthContext'
 import SearchOverlay from './SearchOverlay'
@@ -115,9 +117,6 @@ export default function Header() {
     setMenuOpen(false)
   }
 
-  const initials = user?.name
-    ? user.name.split(' ').map((n) => n[0]).join('').substring(0, 2).toUpperCase()
-    : 'U'
 
   return (
     <header
@@ -177,8 +176,8 @@ export default function Header() {
           </span>
         </button>
 
-        {/* Right: wishlist, cart, account */}
-        <div className="flex items-center gap-4 text-ivory sm:gap-5">
+        {/* Right: wishlist, cart, account auth controls */}
+        <div className="flex items-center gap-2.5 text-ivory sm:gap-3.5">
           <Link to="/account" aria-label="Wishlist" className="hidden transition-colors hover:text-gold sm:block">
             <HeartIcon />
           </Link>
@@ -190,17 +189,64 @@ export default function Header() {
               </span>
             )}
           </Link>
-          {user ? (
-            <Link to="/me" aria-label="Account" className="transition-opacity hover:opacity-80">
-              <div className="flex h-7 w-7 items-center justify-center rounded-full bg-gold text-[11px] font-semibold tracking-tight text-maroon">
-                {initials}
-              </div>
-            </Link>
-          ) : (
-            <Link to="/me" aria-label="Account" className="transition-colors hover:text-gold">
-              <UserIcon />
-            </Link>
-          )}
+          <Show when="signed-out">
+            <div className="flex items-center gap-2">
+              <SignInButton mode="modal">
+                <button
+                  type="button"
+                  className="rounded-full px-2.5 py-1 text-xs font-semibold uppercase tracking-wider text-ivory hover:text-gold transition-colors"
+                >
+                  Sign In
+                </button>
+              </SignInButton>
+              <SignUpButton mode="modal">
+                <button
+                  type="button"
+                  className="hidden sm:inline-flex items-center justify-center rounded-full bg-gold px-3.5 py-1 text-xs font-bold uppercase tracking-wider text-maroon hover:bg-gold-light transition-colors shadow-xs"
+                >
+                  Sign Up
+                </button>
+              </SignUpButton>
+            </div>
+          </Show>
+          <Show when="signed-in">
+            <div className="flex items-center gap-2 sm:gap-3">
+              <Link
+                to="/orders"
+                aria-label="My Orders"
+                className="hidden items-center gap-1.5 rounded-full px-2.5 py-1 text-xs font-semibold uppercase tracking-wider text-ivory hover:text-gold hover:bg-white/10 transition-all sm:flex"
+                title="My Orders"
+              >
+                <Package size={17} />
+                <span className="hidden md:inline">Orders</span>
+              </Link>
+              <UserButton
+                appearance={{
+                  elements: {
+                    avatarBox: 'w-7 h-7 ring-2 ring-gold/80 hover:ring-gold transition-all',
+                  },
+                }}
+              >
+                <UserButton.MenuItems>
+                  <UserButton.Link
+                    label="My Orders"
+                    labelIcon={<Package size={15} />}
+                    href="/orders"
+                  />
+                  <UserButton.Link
+                    label="Track Order"
+                    labelIcon={<Truck size={15} />}
+                    href="/track-order"
+                  />
+                  <UserButton.Link
+                    label="My Profile"
+                    labelIcon={<UserRound size={15} />}
+                    href="/account"
+                  />
+                </UserButton.MenuItems>
+              </UserButton>
+            </div>
+          </Show>
         </div>
       </div>
 

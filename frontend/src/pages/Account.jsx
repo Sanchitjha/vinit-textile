@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { Link, Navigate } from 'react-router-dom'
+import { Link, Navigate, useSearchParams } from 'react-router-dom'
 import Placeholder from '../components/ui/Placeholder'
 import Button from '../components/ui/Button'
 import { toneFor } from '../data/products'
@@ -7,25 +7,20 @@ import { useCart } from '../context/CartContext'
 import { useAuth } from '../context/AuthContext'
 import { apiClient } from '../api/client'
 import Seo from '../components/seo/Seo'
+import OrdersList from '../components/orders/OrdersList'
 
 const tabs = ['Profile', 'My Orders', 'Addresses', 'Wishlist']
 
 export default function Account() {
-  const [active, setActive] = useState(tabs[0])
-  const [orders, setOrders] = useState([])
-  const [loadingOrders, setLoadingOrders] = useState(false)
+  const [searchParams] = useSearchParams()
+  const initialTab = searchParams.get('tab')
+  const defaultTab = ['orders', 'my-orders', 'my orders'].includes((initialTab || '').toLowerCase())
+    ? 'My Orders'
+    : tabs[0]
+
+  const [active, setActive] = useState(defaultTab)
   const { items } = useCart()
   const { user, loading, logout } = useAuth()
-
-  useEffect(() => {
-    if (user) {
-      setLoadingOrders(true)
-      apiClient.get('/orders')
-        .then(res => setOrders(res.data.items || []))
-        .catch(err => console.error('Failed to load orders', err))
-        .finally(() => setLoadingOrders(false))
-    }
-  }, [user])
 
   if (loading) return <div className="py-20 text-center">Loading...</div>
   if (!user) return <Navigate to="/login" replace />
@@ -118,23 +113,13 @@ export default function Account() {
 
           {active === 'My Orders' && (
             <div>
-              <h2 className="font-display text-2xl text-maroon">My Orders</h2>
-              {loadingOrders ? (
-                <p className="mt-4 text-sm text-stone">Loading orders...</p>
-              ) : orders.length === 0 ? (
-                <p className="mt-4 text-sm text-stone">You have no orders yet.</p>
-              ) : (
-                <div className="mt-6 divide-y divide-cream-dark border-y border-cream-dark">
-                  {orders.map((order) => (
-                    <div key={order.id} className="flex flex-wrap items-center justify-between gap-2 py-4 text-sm">
-                      <span className="font-medium text-maroon font-mono">#{order.id.slice(-6).toUpperCase()}</span>
-                      <span className="text-stone">{new Date(order.createdAt).toLocaleDateString()}</span>
-                      <span className="text-brown font-medium">{order.orderStatus}</span>
-                      <span className="font-semibold text-brown">₹{order.totalAmount?.toLocaleString('en-IN') || 0}</span>
-                    </div>
-                  ))}
+              <div className="mb-6 flex items-center justify-between border-b border-cream-dark pb-3">
+                <div>
+                  <h2 className="font-display text-2xl text-maroon">My Orders</h2>
+                  <p className="text-xs text-brown-light mt-0.5">Track packages, view delivery status and past saree purchases</p>
                 </div>
-              )}
+              </div>
+              <OrdersList />
             </div>
           )}
 

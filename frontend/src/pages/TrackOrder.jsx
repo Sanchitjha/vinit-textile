@@ -1,28 +1,26 @@
-import { useState } from 'react'
-import { Link } from 'react-router-dom'
-import { TruckIcon, ShieldCheckIcon, WhatsAppIcon } from '../components/icons/Icons'
+import { useState, useEffect } from 'react'
+import { Link, useSearchParams } from 'react-router-dom'
+import { WhatsAppIcon } from '../components/icons/Icons'
 import Seo from '../components/seo/Seo'
 
 export default function TrackOrder() {
-  const [orderQuery, setOrderQuery] = useState('')
+  const [searchParams] = useSearchParams()
+  const initialId = searchParams.get('orderId') || ''
+  const [orderQuery, setOrderQuery] = useState(initialId)
   const [trackingData, setTrackingData] = useState(null)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
 
-  const handleTrack = (e) => {
-    e.preventDefault()
-    if (!orderQuery.trim()) {
-      setError('Please enter your Order ID or Courier Tracking Number')
-      return
-    }
+  const performTracking = (query) => {
+    if (!query || !query.trim()) return
     setError('')
     setLoading(true)
 
-    // Simulate real-time tracker
     setTimeout(() => {
       setLoading(false)
+      const cleanId = query.trim().toUpperCase()
       setTrackingData({
-        orderId: orderQuery.toUpperCase().startsWith('VT-') ? orderQuery.toUpperCase() : `VT-${orderQuery.toUpperCase()}`,
+        orderId: cleanId.startsWith('VT-') ? cleanId : `VT-${cleanId}`,
         carrier: 'Delhivery Express / Bluedart',
         awb: '98451278910',
         status: 'In Transit',
@@ -38,7 +36,22 @@ export default function TrackOrder() {
           { title: 'Delivered to Doorstep', date: 'Estimated 2–3 Days', completed: false },
         ],
       })
-    }, 600)
+    }, 500)
+  }
+
+  useEffect(() => {
+    if (initialId) {
+      performTracking(initialId)
+    }
+  }, [initialId])
+
+  const handleTrack = (e) => {
+    e.preventDefault()
+    if (!orderQuery.trim()) {
+      setError('Please enter your Order ID or Courier Tracking Number')
+      return
+    }
+    performTracking(orderQuery)
   }
 
   return (

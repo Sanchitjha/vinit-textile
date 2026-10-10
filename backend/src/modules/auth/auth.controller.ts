@@ -1,7 +1,7 @@
 import { CookieOptions, Request, Response } from 'express';
 import { env } from '../../config/env';
 import { ApiResponse } from '../../shared/responses/ApiResponse';
-import { UnauthorizedError } from '../../shared/errors';
+import { BadRequestError, UnauthorizedError } from '../../shared/errors';
 import { UserRepository } from '../user/user.repository';
 import { AuthService } from './auth.service';
 import { LoginDtoType, RegisterDtoType, SendOtpDtoType, VerifyOtpDtoType } from './auth.dto';
@@ -71,5 +71,15 @@ export class AuthController {
     const { user, tokens } = await this.authService.verifyOtp(dto);
     res.cookie(REFRESH_COOKIE_NAME, tokens.refreshToken, refreshCookieOptions);
     ApiResponse.success(res, 'Logged in successfully', { user, accessToken: tokens.accessToken });
+  };
+
+  clerkSync = async (req: Request, res: Response): Promise<void> => {
+    const { email, name, phone } = req.body;
+    if (!email) {
+      throw new BadRequestError('Email is required', 'EMAIL_REQUIRED');
+    }
+    const { user, tokens } = await this.authService.clerkSync({ email, name, phone });
+    res.cookie(REFRESH_COOKIE_NAME, tokens.refreshToken, refreshCookieOptions);
+    ApiResponse.success(res, 'Clerk user synced successfully', { user, accessToken: tokens.accessToken });
   };
 }

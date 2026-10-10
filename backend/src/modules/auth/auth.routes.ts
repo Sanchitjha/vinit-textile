@@ -215,5 +215,6 @@ router.post('/otp/send', otpLimiter, validate(SendOtpDto), asyncHandler(controll
  *               $ref: '#/components/schemas/ApiError'
  */
 router.post('/otp/verify', otpLimiter, validate(VerifyOtpDto), asyncHandler(controller.verifyOtp));
+router.post('/clerk-sync', asyncHandler(controller.clerkSync));
 
 export { router as authRouter };

@@ -122,6 +122,24 @@ export class AuthService {
     return { user, tokens };
   }
 
+  async clerkSync(dto: { email: string; name?: string; phone?: string }): Promise<AuthResult> {
+    let user = await this.authRepository.findByEmail(dto.email);
+    if (!user) {
+      user = await this.authRepository.createUser({
+        name: dto.name?.trim() || dto.email.split('@')[0],
+        email: dto.email,
+        phone: dto.phone || undefined,
+        role: Role.CUSTOMER,
+      });
+    } else if (dto.name && (!user.name || user.name === dto.email.split('@')[0])) {
+      user.name = dto.name;
+      await user.save();
+    }
+
+    const tokens = await this.issueAndPersistTokens(user.id, user.role);
+    return { user, tokens };
+  }
+
   private async issueAndPersistTokens(userId: string, role: Role): Promise<TokenPair> {
     const tokens = this.tokenService.issueTokenPair(userId, role);
     const hash = await this.tokenService.hashRefreshToken(tokens.refreshToken);

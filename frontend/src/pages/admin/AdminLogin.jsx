@@ -1,8 +1,7 @@
 import { useState } from 'react'
-import { useNavigate, Navigate } from 'react-router-dom'
+import { useNavigate, Navigate, Link } from 'react-router-dom'
 import { useAuth } from '../../context/AuthContext'
-import Button from '../../components/ui/Button'
-import { ShieldCheckIcon } from '../../components/icons/Icons'
+import { Sparkles, ShieldCheck, ArrowRight, Lock, Mail, Loader2 } from 'lucide-react'
 
 export default function AdminLogin() {
   const navigate = useNavigate()
@@ -11,7 +10,17 @@ export default function AdminLogin() {
   const [error, setError] = useState('')
   const [submitting, setSubmitting] = useState(false)
 
-  if (loading) return <div className="flex h-screen items-center justify-center font-serif text-lg">Loading...</div>
+  if (loading) {
+    return (
+      <div className="flex h-screen items-center justify-center bg-[#080C14] text-white">
+        <div className="flex flex-col items-center gap-3">
+          <div className="w-10 h-10 border-3 border-purple-500 border-t-transparent rounded-full animate-spin" />
+          <p className="text-sm text-slate-400">Loading Vinit Textiles Portal...</p>
+        </div>
+      </div>
+    )
+  }
+
   if (user && user.role === 'ADMIN') {
     return <Navigate to="/admin" replace />
   }
@@ -24,10 +33,10 @@ export default function AdminLogin() {
     setSubmitting(true)
     try {
       const loggedInUser = await login(form.email, form.password)
-      if (loggedInUser.role !== 'ADMIN') {
+      if (loggedInUser?.role !== 'ADMIN') {
         setError('You are not authorized as an Admin.')
       } else {
-        navigate('/admin')
+        navigate('/admin', { replace: true })
       }
     } catch (err) {
       setError(err.message || 'Login failed')
@@ -37,80 +46,116 @@ export default function AdminLogin() {
   }
 
   return (
-    <div className="min-h-screen bg-[#FAF7F2] flex flex-col justify-center py-12 sm:px-6 lg:px-8">
-      <div className="sm:mx-auto sm:w-full sm:max-w-md text-center">
-        <div className="w-14 h-14 mx-auto rounded-full bg-[#FFEAE5] text-[#C44331] flex items-center justify-center mb-3 shadow-xs">
-          <ShieldCheckIcon className="w-7 h-7" />
-        </div>
-        <p className="text-xs font-bold uppercase tracking-[0.25em] text-[#C44331]">Vinit Textiles</p>
-        <h2 className="mt-1 text-center text-3xl font-serif font-bold text-[#4A1D1B]">
-          Admin Portal Login
-        </h2>
-        <p className="mt-1 text-xs text-[#7A615C]">
-          Manage your sarees, inventory, categories, and customer orders
-        </p>
-      </div>
+    <div className="min-h-screen bg-[#080C14] text-slate-100 flex flex-col justify-center items-center px-4 relative overflow-hidden font-sans">
+      {/* Background ambient glowing orbs */}
+      <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-purple-600/15 rounded-full blur-3xl pointer-events-none" />
+      <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-indigo-600/15 rounded-full blur-3xl pointer-events-none" />
 
-      <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md px-4">
-        <div className="bg-white py-8 px-6 shadow-sm rounded-2xl border border-[#EDE4DE] sm:px-10">
-          {/* Quick Credentials Info Box */}
-          <div className="mb-6 rounded-xl bg-[#FFF4F0] border border-[#FADCD5] p-3.5 text-xs text-[#6C5551]">
-            <p className="font-bold text-[#4A1D1B] mb-1 flex items-center gap-1.5">
-              <span>🔑</span> Default Admin Access Credentials:
-            </p>
-            <p className="font-mono text-[11px] text-[#801B1A]">
-              Email: <strong>admin@vinittextiles.com</strong><br />
-              Password: <strong>admin123</strong>
+      <div className="w-full max-w-md relative z-10 space-y-6">
+        {/* Brand header */}
+        <div className="text-center space-y-2">
+          <div className="w-14 h-14 mx-auto rounded-2xl bg-gradient-to-tr from-purple-600 to-indigo-600 p-0.5 shadow-[0_0_25px_rgba(147,51,234,0.5)] flex items-center justify-center text-white mb-3">
+            <div className="w-full h-full rounded-[14px] bg-[#0B0F19]/40 flex items-center justify-center">
+              <Sparkles size={26} className="text-white" />
+            </div>
+          </div>
+          <div className="flex items-center justify-center gap-2">
+            <h1 className="text-2xl font-bold tracking-tight text-white">Vinit Textiles</h1>
+            <span className="text-[10px] font-extrabold uppercase px-1.5 py-0.5 rounded bg-purple-500/20 text-purple-400 border border-purple-500/30 tracking-wider">
+              PORTAL
+            </span>
+          </div>
+          <p className="text-xs text-slate-400">
+            Operations & Admin Console Authentication
+          </p>
+        </div>
+
+        {/* Card */}
+        <div className="bg-[#0E1424] border border-[#1C273E] p-8 rounded-3xl shadow-2xl space-y-5">
+          {/* Quick info credentials */}
+          <div className="bg-[#121B2F] border border-[#1F2E4C] rounded-2xl p-3.5 text-xs text-slate-300">
+            <div className="flex items-center justify-between mb-1.5">
+              <span className="font-semibold text-purple-300 flex items-center gap-1.5">
+                <ShieldCheck size={14} /> Default Admin Credentials
+              </span>
+              <button
+                type="button"
+                onClick={() => setForm({ email: 'admin@vinittextiles.com', password: 'admin123' })}
+                className="text-[10px] text-purple-400 hover:text-purple-300 underline font-medium"
+              >
+                Auto-fill
+              </button>
+            </div>
+            <p className="font-mono text-[11px] text-slate-400">
+              admin@vinittextiles.com / admin123
             </p>
           </div>
 
-          <form className="space-y-5" onSubmit={handleSubmit}>
+          <form className="space-y-4" onSubmit={handleSubmit}>
             <div>
-              <label className="block text-xs font-bold uppercase tracking-wider text-[#4A1D1B]">
+              <label className="block text-xs font-semibold text-slate-300 mb-1.5">
                 Email Address
               </label>
-              <div className="mt-1">
+              <div className="relative">
+                <Mail size={15} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-500" />
                 <input
                   type="email"
                   required
                   value={form.email}
                   onChange={update('email')}
-                  className="appearance-none block w-full px-3.5 py-2.5 border border-[#D9CBC3] rounded-lg shadow-2xs placeholder-gray-400 focus:outline-hidden focus:border-[#801B1A] sm:text-sm bg-[#FAF7F2]"
+                  placeholder="admin@vinittextiles.com"
+                  className="w-full pl-9 pr-4 py-2.5 bg-[#080C14] border border-[#1C273E] rounded-xl text-xs text-white placeholder-slate-500 outline-none focus:border-purple-500 transition-colors"
                 />
               </div>
             </div>
 
             <div>
-              <label className="block text-xs font-bold uppercase tracking-wider text-[#4A1D1B]">
+              <label className="block text-xs font-semibold text-slate-300 mb-1.5">
                 Password
               </label>
-              <div className="mt-1">
+              <div className="relative">
+                <Lock size={15} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-500" />
                 <input
                   type="password"
                   required
                   value={form.password}
                   onChange={update('password')}
-                  className="appearance-none block w-full px-3.5 py-2.5 border border-[#D9CBC3] rounded-lg shadow-2xs placeholder-gray-400 focus:outline-hidden focus:border-[#801B1A] sm:text-sm bg-[#FAF7F2]"
+                  placeholder="••••••••"
+                  className="w-full pl-9 pr-4 py-2.5 bg-[#080C14] border border-[#1C273E] rounded-xl text-xs text-white placeholder-slate-500 outline-none focus:border-purple-500 transition-colors"
                 />
               </div>
             </div>
 
             {error && (
-              <div className="rounded-lg bg-red-50 p-2.5 text-xs text-red-600 font-medium">
+              <div className="rounded-xl bg-rose-500/15 border border-rose-500/30 p-3 text-xs text-rose-300 font-medium">
                 {error}
               </div>
             )}
 
-            <div>
-              <button
-                type="submit"
-                disabled={submitting}
-                className="w-full rounded-lg bg-[#801B1A] py-3 text-xs font-bold uppercase tracking-widest text-white hover:bg-[#681312] transition-colors shadow-xs disabled:opacity-50"
-              >
-                {submitting ? 'Authenticating...' : 'Sign In To Admin Portal'}
-              </button>
-            </div>
+            <button
+              type="submit"
+              disabled={submitting}
+              className="w-full bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 text-white font-semibold py-3 rounded-xl text-xs flex items-center justify-center gap-2 shadow-[0_0_20px_rgba(124,58,237,0.35)] transition-all hover:scale-[1.01] active:scale-[0.99] disabled:opacity-50"
+            >
+              {submitting ? (
+                <>
+                  <Loader2 size={16} className="animate-spin" />
+                  <span>Authenticating...</span>
+                </>
+              ) : (
+                <>
+                  <span>Sign In To Admin Console</span>
+                  <ArrowRight size={15} />
+                </>
+              )}
+            </button>
           </form>
+        </div>
+
+        <div className="text-center">
+          <Link to="/" className="text-xs text-slate-500 hover:text-slate-300 transition-colors">
+            ← Return to Live Storefront
+          </Link>
         </div>
       </div>
     </div>

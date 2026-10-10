@@ -12,6 +12,7 @@ import ProductDetail from './pages/ProductDetail'
 import SearchResults from './pages/SearchResults'
 import Cart from './pages/Cart'
 import Account from './pages/Account'
+import MyOrders from './pages/MyOrders'
 import About from './pages/About'
 import Contact from './pages/Contact'
 import SizeChart from './pages/SizeChart'
@@ -29,6 +30,8 @@ import NotFound from './pages/NotFound'
 import CategoriesPage from './pages/CategoriesPage'
 import AccountMenu from './pages/AccountMenu'
 import MobileTabBar from './components/layout/MobileTabBar'
+import Checkout from './pages/Checkout'
+import OrderSuccess from './pages/OrderSuccess'
 
 // Admin imports — lazy-loaded so recharts and the admin screens (never seen by
 // customers) aren't in the bundle every shopper downloads on the storefront.
@@ -74,7 +77,11 @@ export default function App() {
             <Route path="/product/:id" element={<ProductDetail />} />
             <Route path="/search" element={<SearchResults />} />
             <Route path="/cart" element={<Cart />} />
+            <Route path="/checkout" element={<Checkout />} />
+            <Route path="/order-success/:id" element={<OrderSuccess />} />
             <Route path="/account" element={<Account />} />
+            <Route path="/orders" element={<MyOrders />} />
+            <Route path="/my-orders" element={<MyOrders />} />
             <Route path="/categories" element={<CategoriesPage />} />
             <Route path="/me" element={<AccountMenu />} />
             <Route path="/about" element={<About />} />

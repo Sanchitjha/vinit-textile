@@ -48,6 +48,9 @@ function reducer(state, action) {
       const { [action.payload.key]: _removed, ...rest } = state.lines
       return { lines: rest }
     }
+    case 'CLEAR': {
+      return { lines: {} }
+    }
     default:
       return state
   }
@@ -72,6 +75,7 @@ export function CartProvider({ children }) {
       addToCart: (product, size, qty = 1) => dispatch({ type: 'ADD', payload: { product, size, qty } }),
       updateQty: (key, qty) => dispatch({ type: 'UPDATE_QTY', payload: { key, qty } }),
       removeFromCart: (key) => dispatch({ type: 'REMOVE', payload: { key } }),
+      clearCart: () => dispatch({ type: 'CLEAR' }),
     }
   }, [state])
 

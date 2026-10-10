@@ -87,7 +87,7 @@ export default function ProductCard({ product }) {
       </div>
       <div className="mt-4 flex flex-col items-center space-y-1 text-center">
         <span className="text-[10px] uppercase tracking-widest text-brown-light">Saree</span>
-        <h3 className="font-display text-lg text-brown transition-colors group-hover:text-maroon">
+        <h3 className="font-display text-lg sm:text-xl font-medium text-brown transition-colors group-hover:text-maroon">
           {product.name}
         </h3>
         <p className="text-sm pt-1">

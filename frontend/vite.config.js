@@ -19,6 +19,11 @@ export default defineConfig({
         target: 'http://localhost:5000',
         changeOrigin: true,
       },
+      '/__clerk': {
+        target: 'https://clerk.vinit-textiles.vercel.app',
+        changeOrigin: true,
+        secure: true,
+      },
     },
   },
 })

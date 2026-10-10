@@ -1,3 +1,4 @@
+import { env } from '../../config/env';
 import { BadRequestError, NotFoundError } from '../../shared/errors';
 import { OrderStatus } from '../../shared/constants/orderStatus.constant';
 import { PaymentMethod, PaymentStatus } from '../../shared/constants/paymentStatus.constant';
@@ -23,6 +24,16 @@ export class PaymentService {
     }
     if (order.paymentStatus === PaymentStatus.PAID) {
       throw new BadRequestError('Order is already paid', 'ORDER_ALREADY_PAID');
+    }
+
+    const existingPayment = await this.paymentRepository.findLatestByOrder(order.id);
+    if (existingPayment && existingPayment.status === 'CREATED' && existingPayment.providerOrderId) {
+      return {
+        providerOrderId: existingPayment.providerOrderId,
+        amount: existingPayment.amount,
+        currency: existingPayment.currency,
+        keyId: env.razorpay.keyId,
+      };
     }
 
     const result = await this.paymentProvider.createPayment({

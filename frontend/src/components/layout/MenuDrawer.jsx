@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom'
 import { CloseIcon } from '../icons/Icons'
 import { thumbUrl, fallbackToOriginal } from '../../utils/catalogue'
 import { loadCatalogue, buildMenuSections, shopLink } from '../../utils/menuTiles'
+import { useAuth } from '../../context/AuthContext'
 
 function Tile({ tile, onClose }) {
   return (
@@ -39,6 +40,7 @@ function Section({ title, tiles, onClose }) {
 }
 
 export default function MenuDrawer({ open, onClose }) {
+  const { isCustomerLoggedIn } = useAuth()
   const [products, setProducts] = useState([])
   const [loaded, setLoaded] = useState(false)
 
@@ -80,9 +82,10 @@ export default function MenuDrawer({ open, onClose }) {
     { label: 'Silk Sarees', to: '/shop/silk-saree' },
   ]
   const infoLinks = [
+    ...(isCustomerLoggedIn ? [{ label: 'My Orders', to: '/orders' }] : []),
+    { label: 'Track Order', to: '/track-order' },
     { label: 'About Us', to: '/about' },
     { label: 'Contact', to: '/contact' },
-    { label: 'Track Order', to: '/track-order' },
     { label: 'Returns', to: '/returns-policy' },
     { label: 'FAQs', to: '/faqs' },
     { label: 'Size Chart', to: '/size-chart' },
