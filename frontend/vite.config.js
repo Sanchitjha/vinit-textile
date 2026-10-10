@@ -1,4 +1,4 @@
-import { defineConfig } from 'vite'
+import { defineConfig, loadEnv } from 'vite'
 import react from '@vitejs/plugin-react'
 import tailwindcss from '@tailwindcss/vite'
 
@@ -8,22 +8,31 @@ import tailwindcss from '@tailwindcss/vite'
 // staging area (gitignored) and are converted with optimize-images.cjs.
 
 // https://vite.dev/config/
-export default defineConfig({
-  plugins: [
-    react(),
-    tailwindcss(),
-  ],
-  server: {
-    proxy: {
-      '/api': {
-        target: 'http://localhost:5000',
-        changeOrigin: true,
-      },
-      '/__clerk': {
-        target: 'https://clerk.vinit-textiles.vercel.app',
-        changeOrigin: true,
-        secure: true,
+export default defineConfig(({ mode }) => {
+  const env = loadEnv(mode, process.cwd(), '')
+
+  return {
+    plugins: [
+      react(),
+      tailwindcss(),
+    ],
+    server: {
+      proxy: {
+        '/api': {
+          target: 'http://localhost:5000',
+          changeOrigin: true,
+        },
+        '/__clerk': {
+          target: 'https://frontend-api.clerk.dev',
+          changeOrigin: true,
+          secure: true,
+          rewrite: (path) => path.replace(/^\/__clerk/, ''),
+          headers: {
+            'Clerk-Proxy-Url': 'https://vinit-textiles.vercel.app/__clerk',
+            ...(env.CLERK_SECRET_KEY ? { 'Clerk-Secret-Key': env.CLERK_SECRET_KEY } : {}),
+          },
+        },
       },
     },
-  },
+  }
 })

@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
+import { SignInButton, SignUpButton } from '@clerk/react'
 import { useCart } from '../context/CartContext'
 import { useAuth } from '../context/AuthContext'
 import { apiClient } from '../api/client'
@@ -155,14 +156,24 @@ export default function Checkout() {
             </div>
 
             <div className="mt-8 space-y-3">
-              <Button
-                type="button"
-                onClick={() => openAuthModal('login')}
-                variant="primary"
-                className="w-full justify-center py-3.5"
-              >
-                Sign In to Proceed
-              </Button>
+              <SignInButton mode="modal">
+                <Button
+                  type="button"
+                  variant="primary"
+                  className="w-full justify-center py-3.5"
+                >
+                  Sign In to Proceed
+                </Button>
+              </SignInButton>
+              <SignUpButton mode="modal">
+                <Button
+                  type="button"
+                  variant="dark"
+                  className="w-full justify-center py-3"
+                >
+                  Create Account (Sign Up)
+                </Button>
+              </SignUpButton>
               <Link
                 to="/cart"
                 className="block w-full py-2.5 text-center text-xs uppercase tracking-widest font-medium text-brown hover:text-maroon transition-colors"

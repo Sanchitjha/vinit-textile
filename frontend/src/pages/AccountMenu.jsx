@@ -1,4 +1,5 @@
 import { Link } from 'react-router-dom'
+import { SignInButton, SignUpButton } from '@clerk/react'
 import { ChevronRight, CircleHelp, FileText, Phone, Package, Ruler, ShieldCheck, Star, Store, Truck, Undo2, UserRound } from 'lucide-react'
 import Seo from '../components/seo/Seo'
 import { useAuth } from '../context/AuthContext'
@@ -45,13 +46,24 @@ export default function AccountMenu() {
             </button>
           </div>
         ) : (
-          <button
-            type="button"
-            onClick={() => openAuthModal('login')}
-            className="mt-5 w-full rounded-lg bg-maroon py-3.5 text-[14px] font-semibold text-ivory transition-colors hover:bg-maroon/90 md:py-3"
-          >
-            Login Now
-          </button>
+          <div className="mt-5 flex flex-col gap-2.5">
+            <SignInButton mode="modal">
+              <button
+                type="button"
+                className="w-full rounded-lg bg-maroon py-3 text-[13px] font-semibold uppercase tracking-wider text-ivory transition-colors hover:bg-maroon/90 cursor-pointer shadow-xs"
+              >
+                Sign In
+              </button>
+            </SignInButton>
+            <SignUpButton mode="modal">
+              <button
+                type="button"
+                className="w-full rounded-lg bg-gold py-2.5 text-[13px] font-bold uppercase tracking-wider text-maroon transition-colors hover:bg-gold-light cursor-pointer shadow-xs"
+              >
+                Create Account (Sign Up)
+              </button>
+            </SignUpButton>
+          </div>
         )}
       </div>
 

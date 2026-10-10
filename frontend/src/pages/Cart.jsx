@@ -1,4 +1,5 @@
 import { Link } from 'react-router-dom'
+import { SignInButton, SignUpButton } from '@clerk/react'
 import Placeholder from '../components/ui/Placeholder'
 import Button from '../components/ui/Button'
 import { MinusIcon, PlusIcon } from '../components/icons/Icons'
@@ -117,14 +118,25 @@ export default function Cart() {
               Proceed to Checkout
             </Button>
           ) : (
-            <Button
-              type="button"
-              onClick={() => openAuthModal('login')}
-              variant="primary"
-              className="mt-8 w-full"
-            >
-              Sign In to Checkout
-            </Button>
+            <div className="mt-8 space-y-2.5">
+              <SignInButton mode="modal">
+                <Button
+                  type="button"
+                  variant="primary"
+                  className="w-full"
+                >
+                  Sign In to Checkout
+                </Button>
+              </SignInButton>
+              <SignUpButton mode="modal">
+                <button
+                  type="button"
+                  className="w-full text-center text-xs font-semibold text-maroon hover:underline tracking-wider uppercase py-1 cursor-pointer"
+                >
+                  New Customer? Create Account (Sign Up)
+                </button>
+              </SignUpButton>
+            </div>
           )}
           <Link
             to="/shop/saree"

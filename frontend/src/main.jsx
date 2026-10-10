@@ -18,7 +18,7 @@ createRoot(document.getElementById('root')).render(
   <StrictMode>
     <ClerkProvider
       publishableKey={PUBLISHABLE_KEY}
-      proxyUrl={PROXY_URL || undefined}
+      proxyUrl={PUBLISHABLE_KEY.startsWith('pk_live_') && PROXY_URL ? PROXY_URL : undefined}
       afterSignOutUrl="/"
     >
       <HelmetProvider>

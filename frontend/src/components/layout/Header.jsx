@@ -190,11 +190,11 @@ export default function Header() {
             )}
           </Link>
           <Show when="signed-out">
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-1.5 sm:gap-2">
               <SignInButton mode="modal">
                 <button
                   type="button"
-                  className="rounded-full px-2.5 py-1 text-xs font-semibold uppercase tracking-wider text-ivory hover:text-gold transition-colors"
+                  className="rounded-full px-2 sm:px-2.5 py-1 text-xs font-semibold uppercase tracking-wider text-ivory hover:text-gold transition-colors"
                 >
                   Sign In
                 </button>
@@ -202,7 +202,7 @@ export default function Header() {
               <SignUpButton mode="modal">
                 <button
                   type="button"
-                  className="hidden sm:inline-flex items-center justify-center rounded-full bg-gold px-3.5 py-1 text-xs font-bold uppercase tracking-wider text-maroon hover:bg-gold-light transition-colors shadow-xs"
+                  className="inline-flex items-center justify-center rounded-full bg-gold px-3 sm:px-3.5 py-1 text-xs font-bold uppercase tracking-wider text-maroon hover:bg-gold-light transition-colors shadow-xs"
                 >
                   Sign Up
                 </button>

@@ -21,15 +21,19 @@ export function AuthProvider({ children }) {
 
   const openAuthModal = (mode) => {
     if (isSignedIn) return;
-    if (openSignIn) {
-      if (mode === 'signup') {
-        openSignUp?.();
-      } else {
-        openSignIn?.();
+    try {
+      if (mode === 'signup' && typeof openSignUp === 'function') {
+        openSignUp({});
+        return;
       }
-    } else {
-      setAuthModalOpen(true);
+      if (typeof openSignIn === 'function') {
+        openSignIn({});
+        return;
+      }
+    } catch (err) {
+      console.warn('Clerk modal trigger error, falling back to auth modal:', err);
     }
+    setAuthModalOpen(true);
   };
 
   const closeAuthModal = () => setAuthModalOpen(false);

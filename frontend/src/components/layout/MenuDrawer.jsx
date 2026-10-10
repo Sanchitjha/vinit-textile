@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from 'react'
 import { Link } from 'react-router-dom'
+import { SignInButton, SignUpButton } from '@clerk/react'
 import { CloseIcon } from '../icons/Icons'
 import { thumbUrl, fallbackToOriginal } from '../../utils/catalogue'
 import { loadCatalogue, buildMenuSections, shopLink } from '../../utils/menuTiles'
@@ -128,7 +129,30 @@ export default function MenuDrawer({ open, onClose }) {
             sections.map((s) => <Section key={s.title} title={s.title} tiles={s.tiles} onClose={onClose} />)
           )}
 
-          <div className="mt-8 flex flex-wrap gap-x-5 gap-y-2 border-t border-brown/10 pt-5 text-[12px] text-brown-light">
+          {!isCustomerLoggedIn && (
+            <div className="mt-8 flex gap-2 border-t border-brown/10 pt-5">
+              <SignInButton mode="modal">
+                <button
+                  type="button"
+                  onClick={onClose}
+                  className="flex-1 rounded-full border border-maroon py-2 text-center text-xs font-semibold uppercase tracking-wider text-maroon hover:bg-maroon hover:text-ivory transition-colors cursor-pointer"
+                >
+                  Sign In
+                </button>
+              </SignInButton>
+              <SignUpButton mode="modal">
+                <button
+                  type="button"
+                  onClick={onClose}
+                  className="flex-1 rounded-full bg-gold py-2 text-center text-xs font-bold uppercase tracking-wider text-maroon hover:bg-gold-light transition-colors cursor-pointer shadow-xs"
+                >
+                  Sign Up
+                </button>
+              </SignUpButton>
+            </div>
+          )}
+
+          <div className="mt-5 flex flex-wrap gap-x-5 gap-y-2 border-t border-brown/10 pt-4 text-[12px] text-brown-light">
             {infoLinks.map((l) => (
               <Link key={l.label} to={l.to} onClick={onClose} className="hover:text-maroon hover:underline">
                 {l.label}
