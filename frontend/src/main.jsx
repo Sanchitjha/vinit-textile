@@ -8,17 +8,21 @@ import './index.css'
 import App from './App.jsx'
 
 const PUBLISHABLE_KEY = import.meta.env.VITE_CLERK_PUBLISHABLE_KEY
-const PROXY_URL = import.meta.env.VITE_CLERK_PROXY_URL
+const PROXY_URL =
+  import.meta.env.VITE_CLERK_PROXY_URL ||
+  (typeof window !== 'undefined' ? `${window.location.origin}/__clerk` : undefined)
 
 if (!PUBLISHABLE_KEY) {
   throw new Error('Missing Publishable Key')
 }
 
+const resolvedProxyUrl = PUBLISHABLE_KEY?.startsWith('pk_live_') ? PROXY_URL : undefined
+
 createRoot(document.getElementById('root')).render(
   <StrictMode>
     <ClerkProvider
       publishableKey={PUBLISHABLE_KEY}
-      proxyUrl={PUBLISHABLE_KEY.startsWith('pk_live_') && PROXY_URL ? PROXY_URL : undefined}
+      proxyUrl={resolvedProxyUrl}
       afterSignOutUrl="/"
     >
       <HelmetProvider>
