@@ -16,6 +16,11 @@ import { router as apiRouter } from './routes';
 export function createApp(): Application {
   const app = express();
 
+  // Trust the first reverse proxy hop (Render, Vercel, Cloudflare, etc.).
+  // This allows Express to read client IP from 'X-Forwarded-For' and prevents
+  // express-rate-limit from throwing ERR_ERL_UNEXPECTED_X_FORWARDED_FOR.
+  app.set('trust proxy', 1);
+
   app.use(
     helmet({
       contentSecurityPolicy: {
