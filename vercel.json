@@ -3,6 +3,7 @@
   "outputDirectory": "frontend/dist",
   "rewrites": [
     { "source": "/api/(.*)", "destination": "https://vinit-textile.onrender.com/api/$1" },
+    { "source": "/__clerk/(.*)", "destination": "https://frontend-api.clerk.dev/$1" },
     { "source": "/(.*)", "destination": "/index.html" }
   ]
 }
