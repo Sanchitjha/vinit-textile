@@ -13,8 +13,6 @@ if (!PUBLISHABLE_KEY) {
   throw new Error('Missing Publishable Key')
 }
 
-const resolvedProxyUrl = PUBLISHABLE_KEY?.startsWith('pk_live_') ? PROXY_URL : undefined
-
 createRoot(document.getElementById('root')).render(
   <StrictMode>
     <ClerkProvider
