@@ -4,6 +4,7 @@ import SareeCard from '../components/ui/SareeCard'
 import { CloseIcon, ChevronDownIcon } from '../components/icons/Icons'
 import { onlyRealProducts, uniqueDesigns, designKey } from '../utils/catalogue'
 import { apiClient } from '../api/client'
+import { products as fallbackProducts } from '../data/products'
 import Seo from '../components/seo/Seo'
 import { SITE_URL } from '../lib/seoConfig'
 
@@ -40,17 +41,14 @@ function readQuery(search) {
   return { filters, sort }
 }
 
-// Counts are per design (colourway SKUs of one saree count once).
 function countBy(list, pick) {
   const map = new Map()
   list.forEach((p) => {
-    const key = designKey(p)
     pick(p).filter(Boolean).forEach((v) => {
-      if (!map.has(v)) map.set(v, new Set())
-      map.get(v).add(key)
+      map.set(v, (map.get(v) || 0) + 1)
     })
   })
-  return [...map.entries()].map(([v, keys]) => [v, keys.size]).sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0]))
+  return [...map.entries()].sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0]))
 }
 
 function FilterGroup({ title, children }) {
@@ -148,11 +146,32 @@ export default function ProductListing() {
   useEffect(() => {
     async function fetchData() {
       try {
-        const [catRes, prodRes] = await Promise.all([apiClient.get('/categories'), apiClient.get('/sarees?limit=100')])
-        setCategories(catRes.data || [])
-        setAllProducts(onlyRealProducts(prodRes.data?.items))
+        const [catRes, prodRes] = await Promise.all([
+          apiClient.get('/categories').catch(() => ({ data: [] })),
+          apiClient.get('/sarees?limit=100').catch(() => ({ data: { items: [] } })),
+        ])
+        const apiItems = onlyRealProducts(prodRes.data?.items)
+        const apiSkuSet = new Set(apiItems.map((p) => (p.sku || '').toUpperCase()))
+        const missingFromApi = fallbackProducts.filter((p) => !apiSkuSet.has((p.sku || '').toUpperCase()))
+        const merged = [...apiItems, ...missingFromApi]
+
+        setCategories(
+          catRes.data?.length
+            ? catRes.data
+            : [
+                { slug: 'saree', name: 'All Sarees' },
+                { slug: 'silk-saree', name: 'Silk Sarees' },
+                { slug: 'organza-saree', name: 'Organza Sarees' },
+                { slug: 'cotton-saree', name: 'Cotton Sarees' },
+                { slug: 'georgette-saree', name: 'Georgette Sarees' },
+                { slug: 'partywear', name: 'Partywear Sarees' },
+                { slug: 'bridal-saree', name: 'Bridal Sarees' },
+              ]
+        )
+        setAllProducts(merged.length ? merged : fallbackProducts)
       } catch (err) {
         console.error(err)
+        setAllProducts(fallbackProducts)
       } finally {
         setLoading(false)
       }
@@ -174,30 +193,32 @@ export default function ProductListing() {
     }
   }, [drawerOpen])
 
-  const meta =
-    category === 'all'
-      ? { name: 'All Sarees', slug: 'all' }
-      : categories.find((c) => c.slug === category) ?? { name: category, slug: category }
+  const isAll = !category || category === 'all' || category === 'saree'
 
-  const inCategory = useMemo(
-    () => (category === 'all' ? allProducts : allProducts.filter((p) => (p.category?.slug || p.category) === category)),
-    [allProducts, category]
-  )
+  const meta = isAll
+    ? { name: 'All Sarees', slug: 'all' }
+    : categories.find((c) => c.slug === category) ?? { name: category, slug: category }
+
+  const inCategory = useMemo(() => {
+    if (isAll) return allProducts
+    return allProducts.filter((p) => {
+      const c = p.category?.slug || p.category
+      return c === category
+    })
+  }, [allProducts, isAll, category])
 
   const visibleCategories = useMemo(() => {
     const counts = {}
     categories.forEach((c) => {
-      counts[c.slug] = uniqueDesigns(allProducts.filter((p) => (p.category?.slug || p.category) === c.slug)).length
+      counts[c.slug] = allProducts.filter((p) => (p.category?.slug || p.category) === c.slug).length
     })
-    const all = { slug: 'all', name: 'All Sarees', count: uniqueDesigns(allProducts).length }
+    const all = { slug: 'all', name: 'All Sarees', count: allProducts.length }
     return [all, ...categories.filter((c) => counts[c.slug] > 0 || c.slug === category).map((c) => ({ ...c, count: counts[c.slug] || 0 }))]
   }, [categories, allProducts, category])
 
-  const totalDesigns = useMemo(() => uniqueDesigns(inCategory).length, [inCategory])
-
   const facets = useMemo(
     () => ({
-      price: Object.fromEntries(PRICE_RANGES.map((r) => [r.id, uniqueDesigns(inCategory.filter((p) => r.test(p.price))).length])),
+      price: Object.fromEntries(PRICE_RANGES.map((r) => [r.id, inCategory.filter((p) => r.test(p.price)).length])),
       fabric: countBy(inCategory, (p) => [p.fabric]),
       color: countBy(inCategory, (p) => (p.colors?.length ? p.colors : [p.color])),
       occasion: countBy(inCategory, (p) => p.occasion || []),
@@ -214,13 +235,12 @@ export default function ProductListing() {
       if (filters.occasion.length && !(p.occasion || []).some((o) => filters.occasion.includes(o))) return false
       return true
     })
-    // one card per design: the base SKU if it matches the filters, otherwise the first matching colourway
-    const designs = uniqueDesigns(list)
-    if (sort === 'price-asc') designs.sort((a, b) => a.price - b.price)
-    else if (sort === 'price-desc') designs.sort((a, b) => b.price - a.price)
-    else if (sort === 'rating') designs.sort((a, b) => (b.ratings || 0) - (a.ratings || 0))
-    else if (sort === 'newest') designs.sort((a, b) => new Date(b.createdAt || 0) - new Date(a.createdAt || 0))
-    return designs
+    const sorted = [...list]
+    if (sort === 'price-asc') sorted.sort((a, b) => a.price - b.price)
+    else if (sort === 'price-desc') sorted.sort((a, b) => b.price - a.price)
+    else if (sort === 'rating') sorted.sort((a, b) => (b.ratings || 0) - (a.ratings || 0))
+    else if (sort === 'newest') sorted.sort((a, b) => new Date(b.createdAt || 0) - new Date(a.createdAt || 0))
+    return sorted
   }, [inCategory, filters, sort])
 
   const toggle = (group, value) =>
