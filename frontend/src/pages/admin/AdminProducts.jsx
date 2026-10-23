@@ -21,6 +21,15 @@ import {
   ChevronDown
 } from 'lucide-react'
 
+const FALLBACK_CATEGORIES = [
+  { _id: '6a9e70a77fbd7f56ac65b4cf', id: '6a9e70a77fbd7f56ac65b4cf', name: 'Silk Saree' },
+  { _id: '6a9e70a77fbd7f56ac65b4d0', id: '6a9e70a77fbd7f56ac65b4d0', name: 'Bridal Saree' },
+  { _id: '6a9e70a77fbd7f56ac65b4d1', id: '6a9e70a77fbd7f56ac65b4d1', name: 'Partywear Saree' },
+  { _id: '6a9e70a77fbd7f56ac65b4ce', id: '6a9e70a77fbd7f56ac65b4ce', name: 'Saree' },
+  { _id: '6a9e70a77fbd7f56ac65b4d2', id: '6a9e70a77fbd7f56ac65b4d2', name: 'Kurti' },
+  { _id: '6a9e70a77fbd7f56ac65b4d3', id: '6a9e70a77fbd7f56ac65b4d3', name: 'Lehenga' }
+]
+
 export default function AdminProducts() {
   const { isDarkMode } = useAdminTheme()
   const [searchParams, setSearchParams] = useSearchParams()
@@ -37,6 +46,7 @@ export default function AdminProducts() {
 
   // Add Modal State
   const [isAddOpen, setIsAddOpen] = useState(false)
+  const [addError, setAddError] = useState(null)
   const [addForm, setAddForm] = useState({
     name: '',
     description: '',
@@ -51,10 +61,13 @@ export default function AdminProducts() {
   })
   const [addSelectedFiles, setAddSelectedFiles] = useState([])
   const [addPreviewUrls, setAddPreviewUrls] = useState([])
+  const [addCustomUrl, setAddCustomUrl] = useState('')
+  const [addCustomUrls, setAddCustomUrls] = useState([])
   const [isAddSubmitting, setIsAddSubmitting] = useState(false)
 
   // Edit Modal State
   const [editingProduct, setEditingProduct] = useState(null)
+  const [editError, setEditError] = useState(null)
   const [editForm, setEditForm] = useState({
     name: '',
     description: '',
@@ -72,10 +85,21 @@ export default function AdminProducts() {
   const [editNewPreviewUrls, setEditNewPreviewUrls] = useState([])
   const [isEditSubmitting, setIsEditSubmitting] = useState(false)
 
+  const openAddModal = () => {
+    const activeCats = categories.length > 0 ? categories : FALLBACK_CATEGORIES
+    const defaultCat = activeCats[0]._id || activeCats[0].id
+    setAddForm(prev => ({
+      ...prev,
+      category: prev.category || defaultCat
+    }))
+    setAddError(null)
+    setIsAddOpen(true)
+  }
+
   // Check if opened with ?action=new
   useEffect(() => {
     if (searchParams.get('action') === 'new') {
-      setIsAddOpen(true)
+      openAddModal()
       searchParams.delete('action')
       setSearchParams(searchParams, { replace: true })
     }
@@ -95,9 +119,11 @@ export default function AdminProducts() {
       ])
       const items = prodRes.data?.items || (Array.isArray(prodRes.data) ? prodRes.data : [])
       setProducts(items)
-      setCategories(catRes.data || [])
+      const fetchedCats = catRes.data?.categories || catRes.data || []
+      setCategories(Array.isArray(fetchedCats) && fetchedCats.length > 0 ? fetchedCats : FALLBACK_CATEGORIES)
     } catch (err) {
       setError(err.message || 'Failed to load products')
+      setCategories(FALLBACK_CATEGORIES)
     } finally {
       setLoading(false)
     }
@@ -121,6 +147,7 @@ export default function AdminProducts() {
     setAddSelectedFiles(prev => [...prev, ...files])
     const newPreviews = files.map(f => URL.createObjectURL(f))
     setAddPreviewUrls(prev => [...prev, ...newPreviews])
+    setAddError(null)
   }
 
   const removeAddImage = (index) => {
@@ -131,31 +158,59 @@ export default function AdminProducts() {
 
   const handleAddSubmit = async (e) => {
     e.preventDefault()
-    if (addSelectedFiles.length === 0) {
-      alert('Please upload at least one image for the product.')
+    setAddError(null)
+
+    if (!addForm.name.trim()) {
+      setAddError('Product title is required')
+      return
+    }
+
+    const effectiveCategory = addForm.category || (categories[0]?._id || categories[0]?.id || FALLBACK_CATEGORIES[0]._id)
+    if (!effectiveCategory) {
+      setAddError('Please select a valid product category')
+      return
+    }
+
+    if (!addForm.price || Number(addForm.price) <= 0) {
+      setAddError('Please enter a valid price (greater than ₹0)')
+      return
+    }
+
+    const totalImagesCount = addSelectedFiles.length + addCustomUrls.length
+    if (totalImagesCount === 0) {
+      setAddError('Please upload at least one image or provide an image URL.')
       return
     }
 
     try {
       setIsAddSubmitting(true)
-      const uploadPromises = addSelectedFiles.map(file => uploadFileToS3(file))
-      const uploadedUrls = await Promise.all(uploadPromises)
+      let uploadedUrls = []
+      if (addSelectedFiles.length > 0) {
+        const uploadPromises = addSelectedFiles.map(file => uploadFileToS3(file))
+        uploadedUrls = await Promise.all(uploadPromises)
+      }
+
+      const allImages = [...uploadedUrls, ...addCustomUrls.filter(Boolean)]
 
       const payload = {
         name: addForm.name.trim(),
-        description: addForm.description.trim(),
-        category: addForm.category,
+        description: addForm.description.trim() || `${addForm.name.trim()} - Premium Saree collection`,
+        category: effectiveCategory,
         price: Number(addForm.price),
         compareAtPrice: addForm.compareAtPrice ? Number(addForm.compareAtPrice) : undefined,
-        stock: Number(addForm.stock),
-        sku: addForm.sku.trim().toUpperCase(),
-        fabric: addForm.fabric.trim(),
-        color: addForm.color.trim(),
+        stock: Number(addForm.stock || 0),
+        sku: (addForm.sku.trim() || `VT-${Date.now().toString().slice(-4)}`).toUpperCase(),
+        fabric: addForm.fabric.trim() || 'Silk',
+        color: addForm.color.trim() || 'Multicolor',
         isBestseller: Boolean(addForm.isBestseller),
-        images: uploadedUrls
+        images: allImages
       }
 
-      await apiClient.post('/sarees', payload)
+      const res = await apiClient.post('/sarees', payload)
+      if (!res?.success && res?.data?.success === false) {
+        throw new Error(res?.message || res?.data?.message || 'Failed to create product')
+      }
+
       setIsAddOpen(false)
       setAddForm({
         name: '', description: '', category: '', price: '', compareAtPrice: '',
@@ -163,10 +218,16 @@ export default function AdminProducts() {
       })
       setAddSelectedFiles([])
       setAddPreviewUrls([])
+      setAddCustomUrls([])
+      setAddCustomUrl('')
+      setAddError(null)
       fetchData()
       showToast('Product created successfully!')
     } catch (err) {
-      alert(err.message || 'Failed to create product')
+      console.error('Failed to create product:', err)
+      const msg = err.data?.message || err.message || 'Failed to create product'
+      setAddError(msg)
+      alert(msg)
     } finally {
       setIsAddSubmitting(false)
     }
@@ -259,7 +320,10 @@ export default function AdminProducts() {
       fetchData()
       showToast(`Product "${editForm.name}" updated successfully!`)
     } catch (err) {
-      alert(err.message || 'Failed to update product')
+      console.error('Failed to update product:', err)
+      const msg = err.data?.message || err.message || 'Failed to update product'
+      setEditError(msg)
+      alert(msg)
     } finally {
       setIsEditSubmitting(false)
     }
@@ -343,7 +407,7 @@ export default function AdminProducts() {
         </div>
 
         <button
-          onClick={() => setIsAddOpen(true)}
+          onClick={openAddModal}
           className="bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 text-white text-xs font-semibold px-4 py-2.5 rounded-xl shadow-[0_0_20px_rgba(124,58,237,0.35)] flex items-center gap-2 transition-all hover:scale-[1.02] active:scale-[0.98]"
         >
           <Plus size={16} />
@@ -1020,6 +1084,13 @@ export default function AdminProducts() {
             </div>
 
             <form onSubmit={handleAddSubmit} className="p-6 space-y-5 max-h-[75vh] overflow-y-auto">
+              {addError && (
+                <div className="p-3.5 rounded-xl bg-rose-500/15 border border-rose-500/30 text-rose-400 text-xs flex items-center gap-2.5">
+                  <AlertCircle size={16} className="shrink-0" />
+                  <span>{addError}</span>
+                </div>
+              )}
+
               <div>
                 <label className={`block text-xs font-semibold mb-1.5 ${isDarkMode ? 'text-slate-300' : 'text-slate-700'}`}>
                   Product Title *
@@ -1072,7 +1143,7 @@ export default function AdminProducts() {
                     }`}
                   >
                     <option value="">Select Category</option>
-                    {categories.map((c) => (
+                    {(categories.length > 0 ? categories : FALLBACK_CATEGORIES).map((c) => (
                       <option key={c._id || c.id} value={c._id || c.id}>
                         {c.name}
                       </option>
@@ -1214,10 +1285,16 @@ export default function AdminProducts() {
 
               {/* Upload Images */}
               <div>
-                <label className={`block text-xs font-semibold mb-1.5 ${isDarkMode ? 'text-slate-300' : 'text-slate-700'}`}>
-                  Upload Product Images *
-                </label>
-                <div className={`border-2 border-dashed rounded-2xl p-6 text-center relative cursor-pointer transition-colors ${
+                <div className="flex items-center justify-between mb-1.5">
+                  <label className={`block text-xs font-semibold ${isDarkMode ? 'text-slate-300' : 'text-slate-700'}`}>
+                    Product Images * ({addSelectedFiles.length + addCustomUrls.length})
+                  </label>
+                  <span className={`text-[10px] ${isDarkMode ? 'text-slate-400' : 'text-slate-500'}`}>
+                    Upload file or paste image URL
+                  </span>
+                </div>
+
+                <div className={`border-2 border-dashed rounded-2xl p-5 text-center relative cursor-pointer transition-colors ${
                   isDarkMode 
                     ? 'border-[#1C273E] hover:border-purple-500/50 hover:bg-slate-800/20' 
                     : 'border-slate-300 hover:border-purple-500 hover:bg-slate-50'
@@ -1229,13 +1306,70 @@ export default function AdminProducts() {
                     onChange={handleAddFileSelect}
                     className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
                   />
-                  <UploadCloud size={28} className="mx-auto text-purple-400 mb-2" />
+                  <UploadCloud size={24} className="mx-auto text-purple-400 mb-1.5" />
                   <p className={`text-xs font-medium ${isDarkMode ? 'text-slate-300' : 'text-slate-700'}`}>
                     Click or drag high-res saree images
                   </p>
                   <p className={`text-[10px] mt-0.5 ${isDarkMode ? 'text-slate-500' : 'text-slate-400'}`}>
-                    Multiple files supported (PNG, JPG, WEBP)
+                    Supports PNG, JPG, WEBP
                   </p>
+                </div>
+
+                {/* Direct Image URL input */}
+                <div className="mt-3">
+                  <div className="flex gap-2">
+                    <input
+                      type="text"
+                      placeholder="Or paste image URL (e.g. /product-images/... or https://...)"
+                      value={addCustomUrl}
+                      onChange={(e) => setAddCustomUrl(e.target.value)}
+                      onKeyDown={(e) => {
+                        if (e.key === 'Enter') {
+                          e.preventDefault()
+                          if (addCustomUrl.trim()) {
+                            setAddCustomUrls(prev => [...prev, addCustomUrl.trim()])
+                            setAddCustomUrl('')
+                            setAddError(null)
+                          }
+                        }
+                      }}
+                      className={`flex-1 px-3.5 py-2 rounded-xl border text-xs outline-none transition-colors ${
+                        isDarkMode 
+                          ? 'bg-[#080C14] border-[#1C273E] text-white focus:border-purple-500' 
+                          : 'bg-slate-50 border-slate-200 text-slate-900 focus:border-purple-500'
+                      }`}
+                    />
+                    <button
+                      type="button"
+                      onClick={() => {
+                        if (addCustomUrl.trim()) {
+                          setAddCustomUrls(prev => [...prev, addCustomUrl.trim()])
+                          setAddCustomUrl('')
+                          setAddError(null)
+                        }
+                      }}
+                      className="px-3.5 py-2 rounded-xl text-xs font-semibold bg-purple-600 hover:bg-purple-500 text-white transition-colors cursor-pointer shrink-0"
+                    >
+                      + Add URL
+                    </button>
+                  </div>
+
+                  {addCustomUrls.length > 0 && (
+                    <div className="flex flex-wrap gap-2 mt-2">
+                      {addCustomUrls.map((url, i) => (
+                        <div key={i} className="flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-purple-950/40 border border-purple-500/30 text-[11px] text-purple-200">
+                          <span className="truncate max-w-[220px]">{url}</span>
+                          <button
+                            type="button"
+                            onClick={() => setAddCustomUrls(prev => prev.filter((_, idx) => idx !== i))}
+                            className="text-purple-400 hover:text-white cursor-pointer ml-1"
+                          >
+                            <X size={12} />
+                          </button>
+                        </div>
+                      ))}
+                    </div>
+                  )}
                 </div>
 
                 {addPreviewUrls.length > 0 && (
@@ -1246,7 +1380,7 @@ export default function AdminProducts() {
                         <button
                           type="button"
                           onClick={() => removeAddImage(i)}
-                          className="absolute top-1 right-1 bg-red-600 text-white p-1 rounded-full text-xs shadow-md"
+                          className="absolute top-1 right-1 bg-red-600 text-white p-1 rounded-full text-xs shadow-md cursor-pointer"
                         >
                           <X size={12} />
                         </button>

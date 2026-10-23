@@ -1,8 +1,9 @@
 import { useEffect, useState } from 'react'
 import { Link, useSearchParams } from 'react-router-dom'
 import ProductCard from '../components/ui/ProductCard'
-import { onlyRealProducts, uniqueDesigns } from '../utils/catalogue'
+import { onlyRealProducts } from '../utils/catalogue'
 import { apiClient } from '../api/client'
+import { products as fallbackProducts } from '../data/products'
 import Seo from '../components/seo/Seo'
 
 export default function SearchResults() {
@@ -23,8 +24,19 @@ export default function SearchResults() {
       setLoading(true)
       setError(null)
       try {
-        const res = await apiClient.get(`/sarees?search=${encodeURIComponent(q)}`)
-        if (!cancelled) setProducts(uniqueDesigns(onlyRealProducts(res.data?.items)))
+        const res = await apiClient.get(`/sarees?search=${encodeURIComponent(q)}`).catch(() => ({ data: { items: [] } }))
+        const apiItems = onlyRealProducts(res.data?.items)
+        const lowerQ = q.toLowerCase()
+        const localMatches = fallbackProducts.filter(
+          (p) =>
+            p.name?.toLowerCase().includes(lowerQ) ||
+            p.sku?.toLowerCase().includes(lowerQ) ||
+            p.fabric?.toLowerCase().includes(lowerQ) ||
+            p.color?.toLowerCase().includes(lowerQ)
+        )
+        const apiSkuSet = new Set(apiItems.map((p) => (p.sku || '').toUpperCase()))
+        const merged = [...apiItems, ...localMatches.filter((p) => !apiSkuSet.has((p.sku || '').toUpperCase()))]
+        if (!cancelled) setProducts(merged)
       } catch (err) {
         if (!cancelled) setError(err.message)
       } finally {

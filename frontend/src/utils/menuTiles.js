@@ -1,5 +1,6 @@
 import { apiClient } from '../api/client'
 import { onlyRealProducts, uniqueDesigns } from './catalogue'
+import { products as fallbackProducts } from '../data/products'
 
 // Fetched once per page load, then reused by the menu drawer and the mobile Category page.
 let catalogueRequest = null
@@ -7,10 +8,14 @@ export function loadCatalogue() {
   if (!catalogueRequest) {
     catalogueRequest = apiClient
       .get('/sarees?limit=100')
-      .then((res) => onlyRealProducts(res.data?.items))
+      .then((res) => {
+        const apiItems = onlyRealProducts(res.data?.items)
+        const apiSkuSet = new Set(apiItems.map((p) => (p.sku || '').toUpperCase()))
+        const merged = [...apiItems, ...fallbackProducts.filter((p) => !apiSkuSet.has((p.sku || '').toUpperCase()))]
+        return merged.length ? merged : fallbackProducts
+      })
       .catch(() => {
-        catalogueRequest = null
-        return []
+        return fallbackProducts
       })
   }
   return catalogueRequest
