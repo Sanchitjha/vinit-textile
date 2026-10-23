@@ -7,7 +7,7 @@ import { HeartIcon, MinusIcon, PlusIcon, StarIcon } from '../components/icons/Ic
 import { useCart } from '../context/CartContext'
 import { useAuth } from '../context/AuthContext'
 import { apiClient } from '../api/client'
-import { toneFor } from '../data/products'
+import { toneFor, getProductById, products as fallbackProducts } from '../data/products'
 import Seo from '../components/seo/Seo'
 import { onlyRealProducts, uniqueDesigns, designKey } from '../utils/catalogue'
 import { SITE_URL, absoluteUrl } from '../lib/seoConfig'
@@ -33,19 +33,27 @@ export default function ProductDetail() {
     async function fetchProduct() {
       setLoading(true)
       try {
-        const res = await apiClient.get(`/sarees/${id}`).catch(() => apiClient.get(`/sarees/slug/${id}`))
-        const fetchedProduct = res.data
+        let fetchedProduct = null
+        try {
+          const res = await apiClient.get(`/sarees/${id}`).catch(() => apiClient.get(`/sarees/slug/${id}`))
+          fetchedProduct = res?.data
+        } catch {}
+        if (!fetchedProduct) {
+          fetchedProduct = getProductById(id)
+        }
         setProduct(fetchedProduct)
 
         if (fetchedProduct) {
           const categoryId = fetchedProduct.category?._id || fetchedProduct.category?.id || fetchedProduct.category
           const [catRes, allRes] = await Promise.all([
-            apiClient.get(`/categories/${categoryId}`),
-            apiClient.get('/sarees?limit=100'),
-          ]).catch(() => [{ data: null }, { data: { items: [] } }])
-          setCategoryMeta(catRes.data)
+            apiClient.get(`/categories/${categoryId}`).catch(() => ({ data: null })),
+            apiClient.get('/sarees?limit=100').catch(() => ({ data: { items: [] } })),
+          ])
+          setCategoryMeta(catRes?.data)
 
-          const all = onlyRealProducts(allRes.data?.items)
+          const apiItems = onlyRealProducts(allRes?.data?.items)
+          const apiSkuSet = new Set(apiItems.map((p) => (p.sku || '').toUpperCase()))
+          const all = [...apiItems, ...fallbackProducts.filter((p) => !apiSkuSet.has((p.sku || '').toUpperCase()))]
           const thisDesign = designKey(fetchedProduct)
 
           // Other colourways of this saree share its base SKU (VT-1499, VT-1499-BLUE, ...)
