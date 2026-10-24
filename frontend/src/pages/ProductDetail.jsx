@@ -17,8 +17,9 @@ export default function ProductDetail() {
   const navigate = useNavigate()
   const { addToCart } = useCart()
   const { user, openAuthModal } = useAuth()
-  const [product, setProduct] = useState(null)
-  const [loading, setLoading] = useState(true)
+  const localInitial = getProductById(id)
+  const [product, setProduct] = useState(localInitial)
+  const [loading, setLoading] = useState(!localInitial)
   const [related, setRelated] = useState([])
   const [categoryMeta, setCategoryMeta] = useState(null)
 
@@ -30,8 +31,25 @@ export default function ProductDetail() {
   const [deliveryMsg, setDeliveryMsg] = useState('')
 
   useEffect(() => {
+    const immediate = getProductById(id)
+    if (immediate) {
+      setProduct(immediate)
+      setLoading(false)
+      const thisDesign = designKey(immediate)
+      const group = fallbackProducts.filter((p) => designKey(p) === thisDesign)
+      setVariants(group.length > 1 ? group : [])
+      const categoryId = immediate.category?._id || immediate.category?.id || immediate.category
+      const sameCategory = fallbackProducts.filter((p) => (p.category?._id || p.category) === categoryId)
+      const skip = new Set([thisDesign])
+      const first = uniqueDesigns(sameCategory, skip)
+      first.forEach((p) => skip.add(designKey(p)))
+      setRelated([...first, ...uniqueDesigns(fallbackProducts, skip)].slice(0, 4))
+    }
+
     async function fetchProduct() {
-      setLoading(true)
+      if (!immediate) {
+        setLoading(true)
+      }
       try {
         let fetchedProduct = null
         try {
@@ -41,9 +59,9 @@ export default function ProductDetail() {
         if (!fetchedProduct) {
           fetchedProduct = getProductById(id)
         }
-        setProduct(fetchedProduct)
-
         if (fetchedProduct) {
+          setProduct(fetchedProduct)
+
           const categoryId = fetchedProduct.category?._id || fetchedProduct.category?.id || fetchedProduct.category
           const [catRes, allRes] = await Promise.all([
             apiClient.get(`/categories/${categoryId}`).catch(() => ({ data: null })),
@@ -56,12 +74,9 @@ export default function ProductDetail() {
           const all = [...apiItems, ...fallbackProducts.filter((p) => !apiSkuSet.has((p.sku || '').toUpperCase()))]
           const thisDesign = designKey(fetchedProduct)
 
-          // Other colourways of this saree share its base SKU (VT-1499, VT-1499-BLUE, ...)
           const group = all.filter((p) => designKey(p) === thisDesign)
           setVariants(group.length > 1 ? group : [])
 
-          // "You may also like": other designs only (never this saree or its colourways),
-          // each design once — same category first, then the rest to fill four.
           const sameCategory = all.filter((p) => (p.category?._id || p.category) === categoryId)
           const skip = new Set([thisDesign])
           const first = uniqueDesigns(sameCategory, skip)
@@ -69,7 +84,7 @@ export default function ProductDetail() {
           setRelated([...first, ...uniqueDesigns(all, skip)].slice(0, 4))
         }
       } catch (err) {
-        console.error(err)
+        console.error('Background product sync:', err)
       } finally {
         setLoading(false)
       }
