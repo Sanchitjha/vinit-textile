@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import Hero from '../components/home/Hero'
 import { onlyRealProducts, uniqueDesigns, designKey } from '../utils/catalogue'
 import AnnouncementTicker from '../components/layout/AnnouncementTicker'
