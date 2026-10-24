@@ -22,12 +22,15 @@ import {
 } from 'lucide-react'
 
 const FALLBACK_CATEGORIES = [
-  { _id: '6a9e70a77fbd7f56ac65b4cf', id: '6a9e70a77fbd7f56ac65b4cf', name: 'Silk Saree' },
-  { _id: '6a9e70a77fbd7f56ac65b4d0', id: '6a9e70a77fbd7f56ac65b4d0', name: 'Bridal Saree' },
-  { _id: '6a9e70a77fbd7f56ac65b4d1', id: '6a9e70a77fbd7f56ac65b4d1', name: 'Partywear Saree' },
-  { _id: '6a9e70a77fbd7f56ac65b4ce', id: '6a9e70a77fbd7f56ac65b4ce', name: 'Saree' },
-  { _id: '6a9e70a77fbd7f56ac65b4d2', id: '6a9e70a77fbd7f56ac65b4d2', name: 'Kurti' },
-  { _id: '6a9e70a77fbd7f56ac65b4d3', id: '6a9e70a77fbd7f56ac65b4d3', name: 'Lehenga' }
+  { _id: 'silk-saree', id: 'silk-saree', slug: 'silk-saree', name: 'Silk Saree' },
+  { _id: 'bridal-saree', id: 'bridal-saree', slug: 'bridal-saree', name: 'Bridal Saree' },
+  { _id: 'partywear', id: 'partywear', slug: 'partywear', name: 'Partywear Saree' },
+  { _id: 'saree', id: 'saree', slug: 'saree', name: 'All Sarees' },
+  { _id: 'organza-saree', id: 'organza-saree', slug: 'organza-saree', name: 'Organza Saree' },
+  { _id: 'cotton-saree', id: 'cotton-saree', slug: 'cotton-saree', name: 'Cotton Saree' },
+  { _id: 'georgette-saree', id: 'georgette-saree', slug: 'georgette-saree', name: 'Georgette Saree' },
+  { _id: 'kurti', id: 'kurti', slug: 'kurti', name: 'Kurti' },
+  { _id: 'lehenga', id: 'lehenga', slug: 'lehenga', name: 'Lehenga' }
 ]
 
 export default function AdminProducts() {
@@ -227,7 +230,6 @@ export default function AdminProducts() {
       console.error('Failed to create product:', err)
       const msg = err.data?.message || err.message || 'Failed to create product'
       setAddError(msg)
-      alert(msg)
     } finally {
       setIsAddSubmitting(false)
     }

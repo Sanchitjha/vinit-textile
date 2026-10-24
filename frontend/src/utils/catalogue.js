@@ -43,8 +43,13 @@ export function uniqueDesigns(list, skip = new Set()) {
 // Small (480px) card/menu thumbnail for a product's first photo — see scripts/make-thumbs.mjs.
 // Products without a generated thumbnail (e.g. newly uploaded) fall back to the full photo via onError.
 export function thumbUrl(src) {
-  const m = (src || '').match(/^\/product-images\/categories\/[^/]+\/([^/]+)\/(\d+)\.webp$/i)
-  return m ? `/product-images/thumbs/${m[1]}-${m[2]}.webp` : src
+  if (!src || typeof src !== 'string') return src
+  const m = src.match(/^\/product-images\/categories\/[^/]+\/([^/]+)\/(\d+)\.webp$/i)
+  if (m) {
+    const num = m[2].padStart(2, '0')
+    return `/product-images/thumbs/${m[1]}-${num}.webp`
+  }
+  return src
 }
 
 export const fallbackToOriginal = (src) => (e) => {

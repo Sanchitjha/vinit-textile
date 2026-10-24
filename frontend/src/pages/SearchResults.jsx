@@ -19,28 +19,28 @@ export default function SearchResults() {
       setLoading(false)
       return undefined
     }
+
+    const lowerQ = q.toLowerCase()
+    const localMatches = fallbackProducts.filter(
+      (p) =>
+        p.name?.toLowerCase().includes(lowerQ) ||
+        p.sku?.toLowerCase().includes(lowerQ) ||
+        p.fabric?.toLowerCase().includes(lowerQ) ||
+        p.color?.toLowerCase().includes(lowerQ)
+    )
+    setProducts(localMatches)
+    setLoading(false)
+
     let cancelled = false
     async function run() {
-      setLoading(true)
-      setError(null)
       try {
         const res = await apiClient.get(`/sarees?search=${encodeURIComponent(q)}`).catch(() => ({ data: { items: [] } }))
         const apiItems = onlyRealProducts(res.data?.items)
-        const lowerQ = q.toLowerCase()
-        const localMatches = fallbackProducts.filter(
-          (p) =>
-            p.name?.toLowerCase().includes(lowerQ) ||
-            p.sku?.toLowerCase().includes(lowerQ) ||
-            p.fabric?.toLowerCase().includes(lowerQ) ||
-            p.color?.toLowerCase().includes(lowerQ)
-        )
         const apiSkuSet = new Set(apiItems.map((p) => (p.sku || '').toUpperCase()))
         const merged = [...apiItems, ...localMatches.filter((p) => !apiSkuSet.has((p.sku || '').toUpperCase()))]
         if (!cancelled) setProducts(merged)
       } catch (err) {
-        if (!cancelled) setError(err.message)
-      } finally {
-        if (!cancelled) setLoading(false)
+        if (!cancelled) console.error('Background search sync error:', err)
       }
     }
     run()

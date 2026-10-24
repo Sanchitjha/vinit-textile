@@ -4,7 +4,7 @@ import { apiClient } from '../api/client';
  * Converts a file to an optimized base64 data URL.
  * Automatically downscales images > 1200px to keep payload size lightweight.
  */
-export const fileToOptimizedDataUrl = (file, maxDimension = 1200, quality = 0.85) => {
+export const fileToOptimizedDataUrl = (file, maxDimension = 900, quality = 0.75) => {
   return new Promise((resolve) => {
     if (typeof window === 'undefined') {
       resolve('');

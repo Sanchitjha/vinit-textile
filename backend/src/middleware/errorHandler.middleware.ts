@@ -22,6 +22,18 @@ export function errorHandler(err: unknown, _req: Request, res: Response, _next: 
     return;
   }
 
+  const errAny = err as any;
+
+  if (errAny?.type === 'entity.too.large' || errAny?.status === 413) {
+    ApiResponse.error(res, 413, 'Image payload too large. Please use smaller images.', 'PAYLOAD_TOO_LARGE');
+    return;
+  }
+
+  if (errAny?.name === 'CastError') {
+    ApiResponse.error(res, 400, `Invalid ID format for ${errAny.path || 'field'}`, 'INVALID_ID');
+    return;
+  }
+
   const maybeMongoError = err as MongoDuplicateKeyError;
   if (maybeMongoError?.code === 11000) {
     const field = Object.keys(maybeMongoError.keyValue ?? {})[0] ?? 'field';
@@ -30,5 +42,6 @@ export function errorHandler(err: unknown, _req: Request, res: Response, _next: 
   }
 
   logger.error('Unhandled error', err);
-  ApiResponse.error(res, 500, 'Internal server error', 'INTERNAL_ERROR');
+  const errMsg = err instanceof Error ? err.message : 'Internal server error';
+  ApiResponse.error(res, 500, errMsg, 'INTERNAL_ERROR');
 }

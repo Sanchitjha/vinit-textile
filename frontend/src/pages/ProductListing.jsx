@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from 'react'
-import { Link, useLocation, useParams } from 'react-router-dom'
+import { Link, useLocation, useNavigate, useParams } from 'react-router-dom'
 import SareeCard from '../components/ui/SareeCard'
 import { CloseIcon, ChevronDownIcon } from '../components/icons/Icons'
 import { onlyRealProducts, uniqueDesigns, designKey } from '../utils/catalogue'
@@ -133,13 +133,25 @@ function FilterPanel({ facets, filters, toggle }) {
   )
 }
 
+const DEFAULT_CATEGORIES = [
+  { slug: 'saree', name: 'All Sarees' },
+  { slug: 'silk-saree', name: 'Silk Sarees' },
+  { slug: 'organza-saree', name: 'Organza Sarees' },
+  { slug: 'cotton-saree', name: 'Cotton Sarees' },
+  { slug: 'georgette-saree', name: 'Georgette Sarees' },
+  { slug: 'partywear', name: 'Partywear Sarees' },
+  { slug: 'bridal-saree', name: 'Bridal Sarees' },
+]
+
 export default function ProductListing() {
   const { category } = useParams()
-  const { search } = useLocation()
+  const location = useLocation()
+  const navigate = useNavigate()
+  const { search } = location
   const [sort, setSort] = useState('featured')
-  const [categories, setCategories] = useState([])
-  const [allProducts, setAllProducts] = useState([])
-  const [loading, setLoading] = useState(true)
+  const [categories, setCategories] = useState(DEFAULT_CATEGORIES)
+  const [allProducts, setAllProducts] = useState(fallbackProducts)
+  const [loading, setLoading] = useState(false)
   const [filters, setFilters] = useState(EMPTY_FILTERS)
   const [drawerOpen, setDrawerOpen] = useState(false)
 
@@ -155,25 +167,14 @@ export default function ProductListing() {
         const missingFromApi = fallbackProducts.filter((p) => !apiSkuSet.has((p.sku || '').toUpperCase()))
         const merged = [...apiItems, ...missingFromApi]
 
-        setCategories(
-          catRes.data?.length
-            ? catRes.data
-            : [
-                { slug: 'saree', name: 'All Sarees' },
-                { slug: 'silk-saree', name: 'Silk Sarees' },
-                { slug: 'organza-saree', name: 'Organza Sarees' },
-                { slug: 'cotton-saree', name: 'Cotton Sarees' },
-                { slug: 'georgette-saree', name: 'Georgette Sarees' },
-                { slug: 'partywear', name: 'Partywear Sarees' },
-                { slug: 'bridal-saree', name: 'Bridal Sarees' },
-              ]
-        )
-        setAllProducts(merged.length ? merged : fallbackProducts)
+        if (catRes.data?.length) {
+          setCategories(catRes.data)
+        }
+        if (merged.length) {
+          setAllProducts(merged)
+        }
       } catch (err) {
-        console.error(err)
-        setAllProducts(fallbackProducts)
-      } finally {
-        setLoading(false)
+        console.error('Background catalog sync:', err)
       }
     }
     fetchData()
@@ -213,7 +214,11 @@ export default function ProductListing() {
       counts[c.slug] = allProducts.filter((p) => (p.category?.slug || p.category) === c.slug).length
     })
     const all = { slug: 'all', name: 'All Sarees', count: allProducts.length }
-    return [all, ...categories.filter((c) => counts[c.slug] > 0 || c.slug === category).map((c) => ({ ...c, count: counts[c.slug] || 0 }))]
+    const validCats = categories
+      .filter((c) => c.slug !== 'all' && c.slug !== 'saree')
+      .filter((c) => counts[c.slug] > 0 || c.slug === category)
+      .map((c) => ({ ...c, count: counts[c.slug] || 0 }))
+    return [all, ...validCats]
   }, [categories, allProducts, category])
 
   const facets = useMemo(
@@ -243,6 +248,8 @@ export default function ProductListing() {
     return sorted
   }, [inCategory, filters, sort])
 
+  const totalDesigns = inCategory.length
+
   const toggle = (group, value) =>
     setFilters((f) => ({
       ...f,
@@ -251,7 +258,12 @@ export default function ProductListing() {
 
   const labelFor = (group, value) => (group === 'price' ? PRICE_RANGES.find((r) => r.id === value)?.label : value)
   const activeChips = Object.entries(filters).flatMap(([group, values]) => values.map((v) => ({ group, value: v })))
-  const clearAll = () => setFilters(EMPTY_FILTERS)
+  const clearAll = () => {
+    setFilters(EMPTY_FILTERS)
+    if (search) {
+      navigate(location.pathname, { replace: true })
+    }
+  }
 
   const breadcrumbJsonLd = {
     '@context': 'https://schema.org',
@@ -285,19 +297,22 @@ export default function ProductListing() {
 
       {visibleCategories.length > 1 && (
         <div className="no-scrollbar -mx-4 mt-6 flex gap-2 overflow-x-auto px-4 pb-1 sm:mx-0 sm:flex-wrap sm:px-0">
-          {visibleCategories.map((cat) => (
-            <Link
-              key={cat.slug}
-              to={`/shop/${cat.slug}`}
-              className={`shrink-0 rounded-full border px-4 py-2 text-[11px] font-medium uppercase tracking-wider transition-colors ${
-                cat.slug === category
-                  ? 'border-brown bg-brown text-ivory'
-                  : 'border-brown/20 text-brown hover:border-brown'
-              }`}
-            >
-              {cat.name} <span className="opacity-60">({cat.count})</span>
-            </Link>
-          ))}
+          {visibleCategories.map((cat) => {
+            const isSelected = (cat.slug === 'all' && isAll) || cat.slug === category
+            return (
+              <Link
+                key={cat.slug}
+                to={cat.slug === 'all' ? '/shop/saree' : `/shop/${cat.slug}`}
+                className={`shrink-0 rounded-full border px-4 py-2 text-[11px] font-medium uppercase tracking-wider transition-colors ${
+                  isSelected
+                    ? 'border-brown bg-brown text-ivory'
+                    : 'border-brown/20 text-brown hover:border-brown'
+                }`}
+              >
+                {cat.name} <span className="opacity-60">({cat.count})</span>
+              </Link>
+            )
+          })}
         </div>
       )}
 

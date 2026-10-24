@@ -73,6 +73,7 @@ export default function App() {
             <Route path="/" element={<Home />} />
             <Route path="/login" element={<Login />} />
             <Route path="/signup" element={<SignUp />} />
+            <Route path="/shop" element={<ProductListing />} />
             <Route path="/shop/:category" element={<ProductListing />} />
             <Route path="/product/:id" element={<ProductDetail />} />
             <Route path="/search" element={<SearchResults />} />

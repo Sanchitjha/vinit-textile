@@ -1,3 +1,4 @@
+import mongoose from 'mongoose';
 import { BadRequestError, ConflictError, NotFoundError } from '../../shared/errors';
 import { CategoryRepository } from '../category/category.repository';
 import { PaginatedResult, buildPaginationMeta } from '../../shared/responses/Paginated';
@@ -59,8 +60,12 @@ export class SareeService {
   }
 
   async create(dto: CreateSareeDtoType): Promise<ISareeDocument> {
-    await this.assertCategoryExists(dto.category);
-    if (dto.subCategory) await this.assertCategoryExists(dto.subCategory);
+    const cat = await this.assertCategoryExists(dto.category);
+    dto.category = cat.id || cat._id?.toString() || dto.category;
+    if (dto.subCategory) {
+      const subCat = await this.assertCategoryExists(dto.subCategory);
+      dto.subCategory = subCat.id || subCat._id?.toString() || dto.subCategory;
+    }
 
     const existingSku = await this.sareeRepository.findBySku(dto.sku);
     if (existingSku) throw new ConflictError('SKU already exists', 'SKU_EXISTS');
@@ -78,8 +83,14 @@ export class SareeService {
   async update(id: string, dto: UpdateSareeDtoType): Promise<ISareeDocument> {
     const saree = await this.getById(id);
 
-    if (dto.category) await this.assertCategoryExists(dto.category);
-    if (dto.subCategory) await this.assertCategoryExists(dto.subCategory);
+    if (dto.category) {
+      const cat = await this.assertCategoryExists(dto.category);
+      dto.category = cat.id || cat._id?.toString() || dto.category;
+    }
+    if (dto.subCategory) {
+      const subCat = await this.assertCategoryExists(dto.subCategory);
+      dto.subCategory = subCat.id || subCat._id?.toString() || dto.subCategory;
+    }
 
     if (dto.sku && dto.sku.toUpperCase() !== saree.sku) {
       const existingSku = await this.sareeRepository.findBySku(dto.sku);
@@ -122,9 +133,26 @@ export class SareeService {
     return this.sareeRepository.findLowStock(threshold);
   }
 
-  private async assertCategoryExists(categoryId: string): Promise<void> {
-    const category = await this.categoryRepository.findById(categoryId);
-    if (!category) throw new NotFoundError('Category not found', 'CATEGORY_NOT_FOUND');
+  private async assertCategoryExists(categoryId: string): Promise<any> {
+    let category: any = null;
+    if (mongoose.Types.ObjectId.isValid(categoryId)) {
+      category = await this.categoryRepository.findById(categoryId);
+    }
+    if (!category) {
+      category = await this.categoryRepository.findBySlug(categoryId);
+    }
+    if (!category) {
+      category = await this.categoryRepository.findByName(categoryId);
+    }
+    if (!category) {
+      const slug = slugify(categoryId);
+      category = await this.categoryRepository.create({
+        name: categoryId.replace(/[-_]/g, ' ').replace(/\b\w/g, (c) => c.toUpperCase()),
+        slug,
+        isActive: true,
+      });
+    }
+    return category;
   }
 
   private async generateUniqueSlug(name: string, excludeId?: string): Promise<string> {

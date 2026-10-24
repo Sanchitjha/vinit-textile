@@ -14,29 +14,41 @@ import Newsletter from '../components/home/Newsletter'
 import { apiClient } from '../api/client'
 import Seo from '../components/seo/Seo'
 import { SITE_URL, SITE_NAME } from '../lib/seoConfig'
+import { products as fallbackProducts } from '../data/products'
 
 export default function Home() {
-  const [products, setProducts] = useState([])
-  const [bestsellers, setBestsellers] = useState([])
+  const initialBestsellers = useMemo(() => {
+    return uniqueDesigns(fallbackProducts.filter((p) => p.isBestseller || p.isFeatured))
+  }, [])
+  const initialNewest = useMemo(() => {
+    const bestKeys = new Set(initialBestsellers.map(designKey))
+    return uniqueDesigns(fallbackProducts, bestKeys).slice(0, 4)
+  }, [initialBestsellers])
+
+  const [products, setProducts] = useState(initialNewest)
+  const [bestsellers, setBestsellers] = useState(initialBestsellers)
 
   useEffect(() => {
     async function fetchProducts() {
       try {
-        // Bestsellers are exactly the products the admin ticked as "Bestseller" in the admin panel
-        // (one card per design — colourway SKUs share a base like VT-1499). Newest Collection
-        // skips those designs so no saree appears twice on the page.
         const flagged = await apiClient.get('/sarees?bestseller=true&limit=100&sort=rating_desc')
         const best = uniqueDesigns(onlyRealProducts(flagged.data?.items))
-        setBestsellers(best)
+        if (best.length) {
+          setBestsellers(best)
+        }
 
         const res = await apiClient.get('/sarees?limit=50&sort=newest')
-        setProducts(uniqueDesigns(onlyRealProducts(res.data?.items), new Set(best.map(designKey))).slice(0, 4))
+        const activeBest = best.length ? best : initialBestsellers
+        const newest = uniqueDesigns(onlyRealProducts(res.data?.items), new Set(activeBest.map(designKey))).slice(0, 4)
+        if (newest.length) {
+          setProducts(newest)
+        }
       } catch (err) {
-        console.error(err)
+        console.error('Background home sync:', err)
       }
     }
     fetchProducts()
-  }, [])
+  }, [initialBestsellers])
 
   const organizationJsonLd = {
     '@context': 'https://schema.org',
