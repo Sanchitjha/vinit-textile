@@ -22,6 +22,6 @@ frontend/public/images/products/*
 # multi-MB originals stay in the repo-root product-images/ staging area above
 # and are converted with frontend/optimize-images.cjs. Block raw formats here
 # so a stray .png/.jpg drop can never bloat the build again.
-frontend/public/product-images/**/*.png
-frontend/public/product-images/**/*.jpg
-frontend/public/product-images/**/*.jpeg
+# frontend/public/product-images/**/*.png
+# frontend/public/product-images/**/*.jpg
+# frontend/public/product-images/**/*.jpeg
