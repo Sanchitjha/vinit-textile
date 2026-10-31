@@ -29,6 +29,45 @@ export default function ProductDetail() {
   const [recent, setRecent] = useState([])
   const [pincode, setPincode] = useState('')
   const [deliveryMsg, setDeliveryMsg] = useState('')
+  const [deliveryTone, setDeliveryTone] = useState('')
+  const [deliveryBusy, setDeliveryBusy] = useState(false)
+
+  // Real Delhivery serviceability via our backend; falls back to the general policy text if it is unavailable.
+  const GENERIC_ETA = 'Dispatched in 24–48 hrs from Surat. Delivery in 3–4 days (metros) or 5–7 days (rest of India).'
+  const checkDelivery = async (e) => {
+    e.preventDefault()
+    if (!/^[1-9]\d{5}$/.test(pincode)) {
+      setDeliveryTone('bad')
+      setDeliveryMsg('Please enter a valid 6-digit pincode.')
+      return
+    }
+    setDeliveryBusy(true)
+    setDeliveryTone('')
+    setDeliveryMsg('')
+    try {
+      const res = await apiClient.get(`/shipping/serviceability/${pincode}`)
+      const r = res.data
+      if (r?.serviceable === true) {
+        const eta = r.transitDays ? `${r.transitDays.min}–${r.transitDays.max} business days` : '3–7 business days'
+        const place = r.city ? ` to ${r.city}` : ''
+        setDeliveryTone('ok')
+        setDeliveryMsg(
+          `We deliver${place}. Dispatched in 24–48 hrs, arrives in about ${eta}. ${
+            r.cod ? 'Cash on delivery available.' : 'Prepaid orders only for this pincode.'
+          }`
+        )
+      } else if (r?.serviceable === false) {
+        setDeliveryTone('bad')
+        setDeliveryMsg(`Sorry, we can't deliver to ${pincode} yet. WhatsApp us on +91 97126 39342 and we'll try to help.`)
+      } else {
+        setDeliveryMsg(GENERIC_ETA)
+      }
+    } catch {
+      setDeliveryMsg(GENERIC_ETA)
+    } finally {
+      setDeliveryBusy(false)
+    }
+  }
 
   useEffect(() => {
     const immediate = getProductById(id)
@@ -330,14 +369,7 @@ export default function ProductDetail() {
             <p className="text-[10px] font-semibold uppercase tracking-widest text-brown">Delivery estimate</p>
             <form
               className="mt-3 flex items-center border border-brown/20"
-              onSubmit={(e) => {
-                e.preventDefault()
-                setDeliveryMsg(
-                  /^[1-9]\d{5}$/.test(pincode)
-                    ? 'Dispatched in 24–48 hrs from Surat. Delivery in 3–4 days (metros) or 5–7 days (rest of India).'
-                    : 'Please enter a valid 6-digit pincode.'
-                )
-              }}
+              onSubmit={checkDelivery}
             >
               <input
                 value={pincode}
@@ -346,11 +378,23 @@ export default function ProductDetail() {
                 placeholder="Enter Pincode"
                 className="min-w-0 flex-1 bg-transparent px-4 py-3 text-[13px] text-brown placeholder:text-brown-light focus:outline-none"
               />
-              <button type="submit" className="px-4 text-[11px] font-semibold uppercase tracking-widest text-maroon hover:underline">
-                Check delivery &gt;
+              <button
+                type="submit"
+                disabled={deliveryBusy}
+                className="px-4 text-[11px] font-semibold uppercase tracking-widest text-maroon hover:underline disabled:opacity-60"
+              >
+                {deliveryBusy ? 'Checking…' : 'Check delivery >'}
               </button>
             </form>
-            {deliveryMsg && <p className="mt-2 text-[12px] text-brown-light">{deliveryMsg}</p>}
+            {deliveryMsg && (
+              <p
+                className={`mt-2 text-[12px] ${
+                  deliveryTone === 'ok' ? 'text-green-700' : deliveryTone === 'bad' ? 'text-red-700' : 'text-brown-light'
+                }`}
+              >
+                {deliveryMsg}
+              </p>
+            )}
           </div>
 
           <div className="mt-6 space-y-1 text-[11px] uppercase tracking-widest text-brown-light">

@@ -28,6 +28,9 @@ const envSchema = z.object({
   AWS_SECRET_ACCESS_KEY: z.string().optional().default(''),
   AWS_S3_BUCKET_NAME: z.string().optional().default(''),
 
+  DELHIVERY_API_TOKEN: z.string().optional().default(''),
+  DELHIVERY_BASE_URL: z.string().optional().default('https://track.delhivery.com'),
+
   RESEND_API_KEY: z.string().optional().default(''),
   RESEND_FROM_EMAIL: z.string().optional().default('Vinit Textiles <onboarding@resend.dev>'),
 });
@@ -81,6 +84,12 @@ export const env = {
     secretAccessKey: parsedEnv.AWS_SECRET_ACCESS_KEY,
     s3BucketName: parsedEnv.AWS_S3_BUCKET_NAME,
     isConfigured: Boolean(parsedEnv.AWS_REGION && parsedEnv.AWS_ACCESS_KEY_ID && parsedEnv.AWS_SECRET_ACCESS_KEY && parsedEnv.AWS_S3_BUCKET_NAME),
+  },
+
+  delhivery: {
+    apiToken: parsedEnv.DELHIVERY_API_TOKEN,
+    baseUrl: parsedEnv.DELHIVERY_BASE_URL.replace(/\/$/, ''),
+    isConfigured: Boolean(parsedEnv.DELHIVERY_API_TOKEN),
   },
 
   resend: {
