@@ -11,6 +11,7 @@ export default function SareeCard({ product, bestseller = false }) {
   const mrp = product.compareAtPrice ?? product.mrp
   const discount = mrp && mrp > product.price ? Math.round(100 - (product.price / mrp) * 100) : 0
   const rating = product.ratings > 0 ? product.ratings : 4.8
+  const soldOut = typeof product.stock === 'number' && product.stock <= 0
 
   return (
     <div className="group">
@@ -21,8 +22,13 @@ export default function SareeCard({ product, bestseller = false }) {
           alt={product.name}
           loading="lazy"
           decoding="async"
-          className="aspect-[3/4.1] w-full object-cover object-top transition-transform duration-700 group-hover:scale-105"
+          className={`aspect-[3/4.1] w-full object-cover object-top transition-transform duration-700 group-hover:scale-105 ${soldOut ? 'opacity-60' : ''}`}
         />
+        {soldOut && (
+          <span className="absolute left-0 top-3 bg-maroon px-2.5 py-1 text-[9px] font-bold uppercase tracking-widest text-ivory sm:text-[10px]">
+            Sold out
+          </span>
+        )}
         <button
           type="button"
           aria-label="Add to wishlist"
@@ -54,13 +60,14 @@ export default function SareeCard({ product, bestseller = false }) {
         </div>
         <button
           type="button"
-          aria-label={added ? 'Added to bag' : 'Add to bag'}
+          aria-label={soldOut ? 'Sold out' : added ? 'Added to bag' : 'Add to bag'}
+          disabled={soldOut}
           onClick={() => {
             addToCart(product, undefined, 1)
             setAdded(true)
             setTimeout(() => setAdded(false), 1500)
           }}
-          className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-[#E53935] text-white transition-colors hover:bg-[#C62828]"
+          className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-[#E53935] text-white transition-colors hover:bg-[#C62828] disabled:cursor-not-allowed disabled:bg-stone disabled:opacity-50 disabled:hover:bg-stone"
         >
           {added ? <span className="text-sm font-bold">✓</span> : <BagIcon width={17} height={17} />}
         </button>

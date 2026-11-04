@@ -188,6 +188,7 @@ export default function ProductDetail() {
   ].filter(([, v]) => v)
 
   const discount = product.mrp ? Math.round(100 - (product.price / product.mrp) * 100) : 0
+  const soldOut = typeof product.stock === 'number' && product.stock <= 0
 
   const productJsonLd = {
     '@context': 'https://schema.org',
@@ -334,10 +335,17 @@ export default function ProductDetail() {
             </div>
           )}
 
-          <div className="mt-10 flex flex-col gap-4 sm:flex-row">
+          {soldOut && (
+            <p className="mt-8 border border-maroon/30 bg-maroon/5 px-4 py-3 text-[12px] font-semibold uppercase tracking-widest text-maroon">
+              Currently out of stock — WhatsApp us on +91 97126 39342 to know when it's back.
+            </p>
+          )}
+
+          <div className={`${soldOut ? 'mt-4' : 'mt-10'} flex flex-col gap-4 sm:flex-row`}>
             <Button
               variant="dark"
-              className="sm:flex-1"
+              className="sm:flex-1 disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:bg-maroon"
+              disabled={soldOut}
               onClick={() => {
                 addToCart(product, undefined, qty)
                 if (user) {
@@ -351,13 +359,14 @@ export default function ProductDetail() {
             </Button>
             <Button
               variant="primary"
-              className="sm:flex-1"
+              className="sm:flex-1 disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:bg-brown"
+              disabled={soldOut}
               onClick={() => {
                 addToCart(product, undefined, qty)
                 setAdded(true)
               }}
             >
-              ADD TO CART
+              {soldOut ? 'SOLD OUT' : 'ADD TO CART'}
             </Button>
           </div>
 

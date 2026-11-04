@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo } from 'react'
+import { useState, useEffect, useMemo, useRef } from 'react'
 import { useSearchParams } from 'react-router-dom'
 import { apiClient } from '../../api/client'
 import { uploadFileToS3 } from '../../utils/s3Upload'
@@ -331,6 +331,41 @@ export default function AdminProducts() {
     }
   }
 
+  // --- IN STOCK / OUT OF STOCK TOGGLE ---
+  // Stock is a unit count, so "out of stock" means 0. We remember the last count (per session)
+  // so switching back on restores it; otherwise ask how many units are available.
+  const lastStock = useRef({})
+  const toggleStock = async (prod) => {
+    const prodId = prod._id || prod.id
+    const wasOut = !(prod.stock > 0)
+    let nextStock = 0
+    if (wasOut) {
+      const remembered = lastStock.current[prodId]
+      if (remembered > 0) {
+        nextStock = remembered
+      } else {
+        const answer = window.prompt(`How many units of "${prod.name}" are in stock?`, '10')
+        if (answer === null) return
+        nextStock = Math.floor(Number(answer))
+        if (!Number.isFinite(nextStock) || nextStock <= 0) {
+          alert('Please enter a number greater than 0.')
+          return
+        }
+      }
+    } else {
+      lastStock.current[prodId] = prod.stock
+    }
+    const prevStock = prod.stock
+    setProducts(list => list.map(p => ((p._id || p.id) === prodId ? { ...p, stock: nextStock } : p)))
+    try {
+      await apiClient.patch(`/sarees/${prodId}`, { stock: nextStock })
+      showToast(wasOut ? `${prod.name} is back in stock (${nextStock} units)` : `${prod.name} marked out of stock`)
+    } catch (err) {
+      setProducts(list => list.map(p => ((p._id || p.id) === prodId ? { ...p, stock: prevStock } : p)))
+      alert(err.message)
+    }
+  }
+
   // --- BESTSELLER TOGGLE ---
   const toggleBestseller = async (prod) => {
     const prodId = prod._id || prod.id
@@ -621,15 +656,36 @@ export default function AdminProducts() {
 
                     {/* Stock */}
                     <td className="py-3.5 px-4">
-                      <span className={`px-2 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider inline-flex items-center gap-1 ${
-                        isOut
-                          ? 'bg-rose-500/15 text-rose-400 border border-rose-500/30'
-                          : isLow
-                            ? 'bg-amber-500/15 text-amber-400 border border-amber-500/30'
-                            : 'bg-emerald-500/15 text-emerald-400 border border-emerald-500/30'
-                      }`}>
-                        {isOut ? 'Out of stock' : `${prod.stock} in stock`}
-                      </span>
+                      <div className="flex items-center gap-2.5">
+                        <button
+                          type="button"
+                          role="switch"
+                          aria-checked={!isOut}
+                          aria-label={isOut ? `Mark ${prod.name} in stock` : `Mark ${prod.name} out of stock`}
+                          title={isOut ? 'Mark as in stock' : 'Mark as out of stock'}
+                          onClick={() => toggleStock(prod)}
+                          className={`relative inline-flex h-5 w-9 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none ${
+                            isOut
+                              ? isDarkMode ? 'bg-slate-700' : 'bg-slate-300'
+                              : 'bg-emerald-500 shadow-[0_0_10px_rgba(16,185,129,0.4)]'
+                          }`}
+                        >
+                          <span
+                            className={`pointer-events-none inline-block h-4 w-4 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out ${
+                              isOut ? 'translate-x-0' : 'translate-x-4'
+                            }`}
+                          />
+                        </button>
+                        <span className={`px-2 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider inline-flex items-center gap-1 ${
+                          isOut
+                            ? 'bg-rose-500/15 text-rose-400 border border-rose-500/30'
+                            : isLow
+                              ? 'bg-amber-500/15 text-amber-400 border border-amber-500/30'
+                              : 'bg-emerald-500/15 text-emerald-400 border border-emerald-500/30'
+                        }`}>
+                          {isOut ? 'Out of stock' : `${prod.stock} in stock`}
+                        </span>
+                      </div>
                     </td>
 
                     {/* Bestseller Toggle Switch */}
