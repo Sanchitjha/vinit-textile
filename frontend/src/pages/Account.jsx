@@ -1,13 +1,14 @@
 import { useState, useEffect } from 'react'
 import { Link, Navigate, useSearchParams } from 'react-router-dom'
 import Placeholder from '../components/ui/Placeholder'
-import Button from '../components/ui/Button'
 import { toneFor } from '../data/products'
 import { useCart } from '../context/CartContext'
 import { useAuth } from '../context/AuthContext'
 import { apiClient } from '../api/client'
 import Seo from '../components/seo/Seo'
 import OrdersList from '../components/orders/OrdersList'
+import ProfileTab from '../components/account/ProfileTab'
+import AddressesTab from '../components/account/AddressesTab'
 
 const tabs = ['Profile', 'My Orders', 'Addresses', 'Wishlist']
 
@@ -70,46 +71,7 @@ export default function Account() {
         </aside>
 
         <div className="flex-1 border border-cream-dark bg-ivory p-6 sm:p-8">
-          {active === 'Profile' && (
-            <div>
-              <h2 className="font-display text-2xl text-maroon">Profile Details</h2>
-              <div className="mt-6 grid gap-5 sm:grid-cols-2">
-                <label className="block">
-                  <span className="text-xs font-semibold uppercase tracking-wide text-brown">Full Name</span>
-                  <input
-                    defaultValue={user.name}
-                    className="mt-2 w-full border border-brown/30 bg-transparent px-4 py-3 text-sm text-maroon focus:border-brown focus:outline-none"
-                  />
-                </label>
-                <label className="block">
-                  <span className="text-xs font-semibold uppercase tracking-wide text-brown">Email</span>
-                  <input
-                    defaultValue={user.email}
-                    disabled
-                    className="mt-2 w-full border border-brown/30 bg-transparent/50 px-4 py-3 text-sm text-maroon opacity-70 cursor-not-allowed"
-                  />
-                </label>
-                <label className="block">
-                  <span className="text-xs font-semibold uppercase tracking-wide text-brown">Phone</span>
-                  <input
-                    defaultValue={user.phone || ''}
-                    className="mt-2 w-full border border-brown/30 bg-transparent px-4 py-3 text-sm text-maroon focus:border-brown focus:outline-none"
-                  />
-                </label>
-                <label className="block">
-                  <span className="text-xs font-semibold uppercase tracking-wide text-brown">Member Since</span>
-                  <input
-                    defaultValue={new Date(user.createdAt).toLocaleDateString()}
-                    disabled
-                    className="mt-2 w-full border border-brown/30 bg-transparent/50 px-4 py-3 text-sm text-maroon opacity-70 cursor-not-allowed"
-                  />
-                </label>
-              </div>
-              <Button variant="primary" className="mt-6">
-                Save Changes
-              </Button>
-            </div>
-          )}
+          {active === 'Profile' && <ProfileTab user={user} />}
 
           {active === 'My Orders' && (
             <div>
@@ -123,21 +85,7 @@ export default function Account() {
             </div>
           )}
 
-          {active === 'Addresses' && (
-            <div>
-              <h2 className="font-display text-2xl text-maroon">Saved Addresses</h2>
-              <div className="mt-6 border border-cream-dark p-5 text-sm">
-                <p className="font-semibold text-maroon">Home</p>
-                <p className="mt-1 text-brown/80">
-                  123 Heritage Lane, Navrangpura, Ahmedabad, Gujarat 380009
-                </p>
-                <p className="mt-1 text-brown/80">+91 98765 43210</p>
-              </div>
-              <Button variant="outline" className="mt-5">
-                Add New Address
-              </Button>
-            </div>
-          )}
+          {active === 'Addresses' && <AddressesTab user={user} />}
 
           {active === 'Wishlist' && (
             <div>

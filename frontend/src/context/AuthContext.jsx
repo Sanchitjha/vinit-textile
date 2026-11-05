@@ -1,20 +1,38 @@
 import { createContext, useContext, useState, useEffect, useMemo } from 'react';
+import { useLocation } from 'react-router-dom';
 import { useUser, useClerk } from '@clerk/react';
-import { apiClient, syncClerkSession } from '../api/client';
+import { apiClient, syncClerkSession, sessionKeys, clearSession } from '../api/client';
 
 const AuthContext = createContext();
 
+const readStoredUser = (scope) => {
+  try {
+    const saved = localStorage.getItem(sessionKeys[scope].user);
+    return saved ? JSON.parse(saved) : null;
+  } catch {
+    return null;
+  }
+};
+
+const storeSession = (scope, accessToken, userObj) => {
+  try {
+    if (accessToken) localStorage.setItem(sessionKeys[scope].token, accessToken);
+    if (userObj) localStorage.setItem(sessionKeys[scope].user, JSON.stringify(userObj));
+  } catch {
+    // storage unavailable: the in-memory state still works for this page view
+  }
+};
+
+const sameEmail = (a, b) => Boolean(a && b) && a.toLowerCase() === b.toLowerCase();
+
 export function AuthProvider({ children }) {
-  const [customUser, setCustomUser] = useState(() => {
-    try {
-      const saved = localStorage.getItem('user');
-      return saved ? JSON.parse(saved) : null;
-    } catch {
-      return null;
-    }
-  });
+  // Two separate sessions: the shopper (Clerk, or OTP/password for customers) and the admin (password).
+  // The storefront only ever shows the shopper; /admin only ever shows the admin.
+  const [customUser, setCustomUser] = useState(() => readStoredUser('customer'));
+  const [adminUser, setAdminUser] = useState(() => readStoredUser('admin'));
   const [loading, setLoading] = useState(true);
   const [authModalOpen, setAuthModalOpen] = useState(false);
+  const onAdminPath = useLocation().pathname.startsWith('/admin');
 
   const { isSignedIn, isLoaded: clerkLoaded, user: clerkUser } = useUser();
   const { openSignIn, openSignUp, signOut: clerkSignOut } = useClerk();
@@ -39,66 +57,63 @@ export function AuthProvider({ children }) {
   const closeAuthModal = () => setAuthModalOpen(false);
 
   useEffect(() => {
-    async function loadUser() {
-      const token = localStorage.getItem('accessToken');
-      if (token) {
-        try {
-          const res = await apiClient.get('/auth/me');
-          const userData = res.data?.user || res.data;
-          setCustomUser(userData);
-          localStorage.setItem('user', JSON.stringify(userData));
-        } catch (error) {
-          console.error('Failed to load user', error);
-          localStorage.removeItem('accessToken');
-          localStorage.removeItem('user');
-          setCustomUser(null);
-        }
-      } else {
-        setCustomUser(null);
-        localStorage.removeItem('user');
+    async function loadScope(scope, setUser) {
+      if (!localStorage.getItem(sessionKeys[scope].token)) {
+        setUser(null);
+        clearSession(scope);
+        return;
       }
-      setLoading(false);
+      try {
+        const res = await apiClient.get('/auth/me', { scope });
+        const userData = res.data?.user || res.data;
+        // A token must only ever sit in the session that matches its role
+        if ((userData?.role === 'ADMIN') !== (scope === 'admin')) throw new Error('session role mismatch');
+        setUser(userData);
+        storeSession(scope, null, userData);
+      } catch (error) {
+        console.error('Failed to load user', error);
+        clearSession(scope);
+        setUser(null);
+      }
     }
-    loadUser();
+    Promise.all([loadScope('customer', setCustomUser), loadScope('admin', setAdminUser)]).finally(() =>
+      setLoading(false)
+    );
   }, []);
 
-  // Sync Clerk authenticated user with backend to issue/maintain active accessToken & Mongo User record
+  // Sync the Clerk user with the backend to issue/maintain the shopper's accessToken & Mongo User record
   useEffect(() => {
     async function syncClerkUser() {
       if (!isSignedIn || !clerkUser) return;
-      // Do NOT overwrite an active admin session with Clerk customer sync
-      if (customUser?.role === 'ADMIN') return;
       const email = clerkUser.primaryEmailAddress?.emailAddress;
       if (!email) return;
 
+      if (customUser && !sameEmail(customUser.email, email)) {
+        // A stored shopper session that belongs to someone else must never be used for this Clerk user
+        clearSession('customer');
+      } else if (customUser && localStorage.getItem(sessionKeys.customer.token)) {
+        return; // already synced for this user
+      }
+
       try {
         const synced = await syncClerkSession();
-        if (synced?.accessToken && customUser?.role !== 'ADMIN') {
-          localStorage.setItem('accessToken', synced.accessToken);
-          if (synced.user) {
-            setCustomUser(synced.user);
-            localStorage.setItem('user', JSON.stringify(synced.user));
-          }
+        if (synced?.accessToken) {
+          storeSession('customer', synced.accessToken, synced.user);
+          if (synced.user) setCustomUser(synced.user);
         }
       } catch (err) {
         console.error('Failed to sync Clerk user with backend:', err);
       }
     }
     syncClerkUser();
-  }, [isSignedIn, clerkUser, customUser?.role]);
+  }, [isSignedIn, clerkUser, customUser?.email]);
 
-  // Sync active user: recognize Admin, Clerk authenticated user, or fallback to custom backend user
+  // Active user: on /admin the admin; everywhere else the signed-in shopper (Clerk first, then OTP/password)
   const user = useMemo(() => {
-    // 1. If customUser is ADMIN, admin identity takes absolute precedence!
-    if (customUser?.role === 'ADMIN') {
-      return {
-        ...customUser,
-        id: customUser._id || customUser.id,
-        role: 'ADMIN',
-      };
+    if (onAdminPath) {
+      return adminUser ? { ...adminUser, id: adminUser._id || adminUser.id, role: 'ADMIN' } : null;
     }
 
-    // 2. If signed in via Clerk
     if (isSignedIn && clerkUser) {
       const email = clerkUser.primaryEmailAddress?.emailAddress || '';
       const name =
@@ -106,20 +121,22 @@ export function AuthProvider({ children }) {
         clerkUser.firstName ||
         (email ? email.split('@')[0] : 'User');
       const phone = clerkUser.primaryPhoneNumber?.phoneNumber || '';
+      // Only borrow backend details (saved phone, role) if they belong to this very Clerk user
+      const own = customUser && sameEmail(customUser.email, email) ? customUser : null;
       return {
-        id: customUser?._id || customUser?.id || clerkUser.id,
-        _id: customUser?._id || customUser?.id || clerkUser.id,
-        name: customUser?.name || name,
-        email: customUser?.email || email,
-        phone: customUser?.phone || phone,
-        addresses: customUser?.addresses || [],
+        id: own?._id || own?.id || clerkUser.id,
+        _id: own?._id || own?.id || clerkUser.id,
+        name: own?.name || name,
+        email: own?.email || email,
+        phone: own?.phone || phone,
+        addresses: own?.addresses || [],
         imageUrl: clerkUser.imageUrl,
-        role: customUser?.role || 'CUSTOMER',
+        createdAt: own?.createdAt || clerkUser.createdAt,
+        role: own?.role || 'CUSTOMER',
         isClerk: true,
       };
     }
 
-    // 3. Fallback to custom backend user (if any)
     if (customUser) {
       return {
         ...customUser,
@@ -129,7 +146,7 @@ export function AuthProvider({ children }) {
     }
 
     return null;
-  }, [isSignedIn, clerkUser, customUser]);
+  }, [onAdminPath, adminUser, isSignedIn, clerkUser, customUser]);
 
   // If user is already authenticated, close old OTP auth modal
   useEffect(() => {
@@ -138,32 +155,38 @@ export function AuthProvider({ children }) {
     }
   }, [user, authModalOpen]);
 
+  // Files the session under admin or shopper depending on who actually signed in
+  const applySession = (userObj, accessToken) => {
+    if (!userObj) return;
+    const scope = userObj.role === 'ADMIN' ? 'admin' : 'customer';
+    storeSession(scope, accessToken, userObj);
+    if (scope === 'admin') setAdminUser(userObj);
+    else setCustomUser(userObj);
+  };
+
   const login = async (email, password) => {
     const res = await apiClient.post('/auth/login', { email, password });
-    const accessToken = res.data?.accessToken;
     const userData = res.data?.user || res.data;
-    if (accessToken) {
-      localStorage.setItem('accessToken', accessToken);
-    }
-    if (userData) {
-      localStorage.setItem('user', JSON.stringify(userData));
-      setCustomUser(userData);
-    }
+    applySession(userData, res.data?.accessToken);
     return userData;
   };
 
   const register = async (userData) => {
     const res = await apiClient.post('/auth/register', userData);
-    const accessToken = res.data?.accessToken;
     const userObj = res.data?.user || res.data;
-    if (accessToken) {
-      localStorage.setItem('accessToken', accessToken);
-    }
-    if (userObj) {
-      localStorage.setItem('user', JSON.stringify(userObj));
-      setCustomUser(userObj);
-    }
+    applySession(userObj, res.data?.accessToken);
     return userObj;
+  };
+
+  // Saves name / phone for the signed-in shopper and refreshes what the rest of the site shows
+  const updateProfile = async (fields) => {
+    const res = await apiClient.patch('/users/me', fields, { scope: 'customer' });
+    const updated = res.data?.user || res.data;
+    if (updated && updated.role !== 'ADMIN') {
+      storeSession('customer', null, updated);
+      setCustomUser(updated);
+    }
+    return updated;
   };
 
   const sendOtp = async (email) => {
@@ -172,21 +195,18 @@ export function AuthProvider({ children }) {
 
   const verifyOtp = async (email, code, name) => {
     const res = await apiClient.post('/auth/otp/verify', { email, code, name });
-    const accessToken = res.data?.accessToken;
     const userObj = res.data?.user || res.data;
-    if (accessToken) {
-      localStorage.setItem('accessToken', accessToken);
-    }
-    if (userObj) {
-      localStorage.setItem('user', JSON.stringify(userObj));
-      setCustomUser(userObj);
-    }
+    applySession(userObj, res.data?.accessToken);
     return userObj;
   };
 
   const logout = async () => {
-    localStorage.removeItem('accessToken');
-    localStorage.removeItem('user');
+    if (onAdminPath) {
+      clearSession('admin');
+      setAdminUser(null);
+      return;
+    }
+    clearSession('customer');
     setCustomUser(null);
     if (isSignedIn && clerkSignOut) {
       try {
@@ -197,7 +217,7 @@ export function AuthProvider({ children }) {
     }
   };
 
-  const isCustomerLoggedIn = Boolean(isSignedIn || (user && user.role !== 'ADMIN'));
+  const isCustomerLoggedIn = Boolean(isSignedIn || customUser);
 
   return (
     <AuthContext.Provider
@@ -209,6 +229,7 @@ export function AuthProvider({ children }) {
         login,
         register,
         logout,
+        updateProfile,
         sendOtp,
         verifyOtp,
         authModalOpen: authModalOpen && !user,
