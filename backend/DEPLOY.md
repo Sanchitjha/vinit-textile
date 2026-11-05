@@ -28,15 +28,14 @@ Because of the new JWT secrets, everyone (including the admin) has to sign in ag
 
 ## After the first deploy
 
-- **Rate limits.** `TRUST_PROXY_HOPS=1` is meant to make `req.ip` the real client behind Render. Prove it before the
-  website uses the service (so no visitor is affected): `/auth/refresh` allows 20 requests / 15 min per client.
-  Send 21 requests to `https://<service>.onrender.com/api/v1/auth/refresh` from one machine (the 21st returns 429),
-  then call the same URL from a different network (e.g. a phone on mobile data). That call must NOT be 429. If it is,
-  every visitor shares one bucket: raise `TRUST_PROXY_HOPS` (try 2), redeploy, wait 15 min and repeat.
-  Do the same through `www.vinittextiles.com/api/v1/auth/refresh` right after the website is pointed at the service
-  (Vercel's rewrite adds a hop), using a machine you can afford to rate-limit for 15 minutes.
-- **`NODE_ENV=production`** (Secure cookies, API limit of 1500 requests / 15 min per IP) only after the check above;
-  otherwise all visitors could share one bucket and get 429 errors.
+- **Rate limits and NODE_ENV.** Render's Node runtime sets `NODE_ENV=production` by itself, so the API limit is
+  1500 requests / 15 min and `/auth/*` allows 20 / 15 min **per client**. That only works if `req.ip` is the real visitor,
+  which depends on `TRUST_PROXY_HOPS` (4 here: browser -> Vercel -> Cloudflare -> Render's load balancer -> app).
+  With 1 or 3 the key was a rotating edge address, so visitors would have shared buckets and got 429 errors.
+  Re-check it whenever the proxy chain changes (new CDN, different host): send ~70 requests to
+  `/api/v1/shipping/serviceability/395012` (limit 60 / 15 min) through `www.vinittextiles.com`; the `RateLimit-Remaining`
+  header must count down one by one, the 61st request must return 429, and a burst sent directly to the Render URL
+  must share the same bucket from the same machine.
 - **Razorpay.** Checkout is Cash on Delivery only. Adding `RAZORPAY_KEY_ID`, `RAZORPAY_KEY_SECRET` and
   `RAZORPAY_WEBHOOK_SECRET` switches online payment on by itself. Never set `ALLOW_STUB_PAYMENTS` on a server.
 - **Plan.** The free plan sleeps after ~15 minutes without traffic, so the first request is slow. Use **Starter** for a live store.
