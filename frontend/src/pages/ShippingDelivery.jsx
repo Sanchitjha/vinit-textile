@@ -74,7 +74,7 @@ export default function ShippingDelivery() {
               2. Cash on Delivery (COD)
             </h2>
             <p className="text-xs sm:text-sm text-[#5C4541] leading-relaxed">
-              We offer Cash on Delivery (COD) on eligible pin codes across India up to order values of ₹10,000. For orders above ₹10,000, prepaid payment via UPI, Credit/Debit Card, or Net Banking is required to protect high-value silks during transit.
+              We currently offer Cash on Delivery (COD) on eligible pin codes across India. You can check whether your pin code is covered on any product page before ordering. Online payment via UPI, Credit/Debit Card and Net Banking is coming soon.
             </p>
           </div>
 

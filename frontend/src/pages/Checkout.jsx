@@ -42,8 +42,10 @@ export default function Checkout() {
     isDefault: false,
   })
 
-  // Payment method: 'RAZORPAY' or 'COD'
-  const [paymentMethod, setPaymentMethod] = useState('RAZORPAY')
+  // Payment method: 'RAZORPAY' or 'COD'. Cash on Delivery until the backend reports online payment as enabled
+  // (it is only enabled once Razorpay credentials are configured on the server).
+  const [paymentMethod, setPaymentMethod] = useState('COD')
+  const [onlineEnabled, setOnlineEnabled] = useState(false)
 
   // Coupon state
   const [couponInput, setCouponInput] = useState('')
@@ -102,6 +104,40 @@ export default function Checkout() {
       }))
     }
   }, [user])
+
+  // Which payment methods the server currently offers
+  useEffect(() => {
+    apiClient.get('/payments/methods')
+      .then((res) => setOnlineEnabled(Boolean(res.data?.online)))
+      .catch(() => setOnlineEnabled(false))
+  }, [])
+
+  // Check the delivery pincode with Delhivery so COD is only offered where the courier can collect it
+  const activePincode = String(
+    (isAddingNewAddress || !selectedAddressId
+      ? newAddress.postalCode
+      : addresses.find((a) => (a._id || a.id) === selectedAddressId)?.postalCode) || ''
+  ).trim()
+  const [pinCheck, setPinCheck] = useState(null)
+  useEffect(() => {
+    if (!/^[1-9]\d{5}$/.test(activePincode)) {
+      setPinCheck(null)
+      return undefined
+    }
+    let cancelled = false
+    const timer = setTimeout(() => {
+      apiClient.get(`/shipping/serviceability/${activePincode}`)
+        .then((res) => { if (!cancelled) setPinCheck({ pin: activePincode, ...res.data }) })
+        .catch(() => { if (!cancelled) setPinCheck(null) })
+    }, 400)
+    return () => {
+      cancelled = true
+      clearTimeout(timer)
+    }
+  }, [activePincode])
+  const pinInfo = pinCheck?.pin === activePincode ? pinCheck : null
+  const codBlocked =
+    paymentMethod === 'COD' && !!pinInfo && (pinInfo.serviceable === false || (pinInfo.serviceable === true && !pinInfo.cod))
 
   // Loading state while auth is determining
   if (authLoading) {
@@ -547,7 +583,8 @@ export default function Checkout() {
               </div>
 
               <div className="space-y-4">
-                {/* Razorpay Option */}
+                {/* Razorpay Option (only when the server has Razorpay configured) */}
+                {onlineEnabled && (
                 <label
                   className={`block p-5 rounded-xl border transition-all cursor-pointer ${
                     paymentMethod === 'RAZORPAY'
@@ -583,6 +620,7 @@ export default function Checkout() {
                     </div>
                   </div>
                 </label>
+                )}
 
                 {/* Cash on Delivery Option */}
                 <label
@@ -606,9 +644,27 @@ export default function Checkout() {
                       <p className="text-xs text-[#735D59] mt-1">
                         Pay cash or UPI directly to the courier agent upon doorstep delivery.
                       </p>
+                      {!onlineEnabled && (
+                        <p className="text-[11px] text-[#735D59] mt-1">Online payment is coming soon — for now we accept Cash on Delivery only.</p>
+                      )}
                     </div>
                   </div>
                 </label>
+
+                {/* Delhivery pincode result for the chosen delivery address */}
+                {paymentMethod === 'COD' && pinInfo?.serviceable === true && pinInfo.cod && (
+                  <p className="text-xs font-medium text-green-700">
+                    Cash on Delivery is available{pinInfo.city ? ` for ${pinInfo.city}` : ''}. Estimated delivery {pinInfo.transitDays ? `${pinInfo.transitDays.min}–${pinInfo.transitDays.max}` : '3–7'} business days after dispatch.
+                  </p>
+                )}
+                {codBlocked && (
+                  <p className="rounded-lg border border-red-200 bg-red-50 p-3 text-xs text-red-700">
+                    {pinInfo.serviceable === false
+                      ? `Sorry, we can't deliver to ${activePincode} yet.`
+                      : `Cash on Delivery is not available for ${activePincode} right now.`}{' '}
+                    WhatsApp us on +91 97126 39342 and we'll help you place the order.
+                  </p>
+                )}
               </div>
             </section>
           </div>
@@ -727,7 +783,7 @@ export default function Checkout() {
               {/* Place Order CTA */}
               <button
                 type="button"
-                disabled={isProcessing}
+                disabled={isProcessing || codBlocked}
                 onClick={handlePlaceOrder}
                 className="mt-6 w-full rounded-none bg-maroon py-3.5 text-xs font-bold uppercase tracking-[0.2em] text-ivory hover:bg-brown transition-colors shadow-xs disabled:opacity-60 cursor-pointer flex items-center justify-center gap-2"
               >

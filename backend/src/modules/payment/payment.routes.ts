@@ -10,6 +10,19 @@ import { InitiatePaymentParamsDto, RefundParamsDto, VerifyPaymentDto } from './p
 const router = Router();
 const controller = new PaymentController();
 
+/**
+ * @swagger
+ * /payments/methods:
+ *   get:
+ *     tags: [Payments]
+ *     summary: Which payment methods checkout currently offers (public)
+ *     description: Online payment is only offered when Razorpay credentials are configured; Cash on Delivery is always on.
+ *     responses:
+ *       200:
+ *         description: Available methods
+ */
+router.get('/methods', asyncHandler(controller.methods));
+
 router.use(authenticate);
 
 /**

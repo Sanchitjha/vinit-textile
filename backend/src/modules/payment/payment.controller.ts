@@ -1,10 +1,15 @@
 import { Request, Response } from 'express';
+import { env } from '../../config/env';
 import { ApiResponse } from '../../shared/responses/ApiResponse';
 import { PaymentService } from './payment.service';
 import { VerifyPaymentDtoType } from './payment.dto';
 
 export class PaymentController {
   constructor(private readonly paymentService: PaymentService = new PaymentService()) {}
+
+  methods = async (_req: Request, res: Response): Promise<void> => {
+    ApiResponse.success(res, 'Payment methods', { cod: true, online: env.razorpay.isEnabled });
+  };
 
   initiate = async (req: Request, res: Response): Promise<void> => {
     const result = await this.paymentService.initiate(req.user!.id, req.params.orderId);

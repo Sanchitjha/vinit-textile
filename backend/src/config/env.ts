@@ -74,6 +74,9 @@ export const env = {
     keySecret: parsedEnv.RAZORPAY_KEY_SECRET,
     webhookSecret: parsedEnv.RAZORPAY_WEBHOOK_SECRET,
     isConfigured: Boolean(parsedEnv.RAZORPAY_KEY_ID && parsedEnv.RAZORPAY_KEY_SECRET),
+    // Online payment is only offered with real credentials. The stub gateway (which "verifies" any payment)
+    // is for local development only — in production, no keys means COD only.
+    isEnabled: Boolean(parsedEnv.RAZORPAY_KEY_ID && parsedEnv.RAZORPAY_KEY_SECRET) || parsedEnv.NODE_ENV !== 'production',
   },
 
   business: {

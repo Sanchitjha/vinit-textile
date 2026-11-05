@@ -30,7 +30,7 @@ const faqCategories = [
     items: [
       {
         q: 'What payment options do you support?',
-        a: 'We accept all major payment methods: UPI (Google Pay, PhonePe, Paytm), Credit and Debit Cards (Visa, Mastercard, RuPay), Net Banking across 50+ banks, and Cash on Delivery (COD) on eligible pin codes.',
+        a: 'Right now we accept Cash on Delivery (COD) on eligible pin codes: pay the courier in cash or UPI when your saree arrives. Online payment (UPI, Credit/Debit Cards and Net Banking) is coming soon.',
       },
       {
         q: 'Is Cash on Delivery (COD) available?',

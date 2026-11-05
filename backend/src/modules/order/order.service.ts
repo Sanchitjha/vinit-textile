@@ -9,6 +9,7 @@ import { CartRepository } from '../cart/cart.repository';
 import { CouponService } from '../coupon/coupon.service';
 import { PaymentService } from '../payment/payment.service';
 import { SareeRepository } from '../saree/saree.repository';
+import { ShippingService } from '../shipping/shipping.service';
 import { UserRepository } from '../user/user.repository';
 import { CreateOrderDtoType } from './order.dto';
 import { generateOrderNumber } from './order-number.util';
@@ -24,9 +25,20 @@ export class OrderService {
     private readonly cartRepository: CartRepository = new CartRepository(),
     private readonly couponService: CouponService = new CouponService(),
     private readonly paymentService: PaymentService = new PaymentService(),
+    private readonly shippingService: ShippingService = new ShippingService(),
   ) {}
 
   async createOrder(userId: string, dto: CreateOrderDtoType): Promise<IOrderDocument> {
+    if (dto.paymentMethod === PaymentMethod.RAZORPAY && !env.razorpay.isEnabled) {
+      throw new BadRequestError(
+        'Online payment is not available yet. Please choose Cash on Delivery.',
+        'ONLINE_PAYMENT_UNAVAILABLE',
+      );
+    }
+    if (dto.paymentMethod === PaymentMethod.COD) {
+      await this.assertCodDeliverable(userId, dto.addressId);
+    }
+
     const session = await mongoose.startSession();
     let createdOrder: IOrderDocument | null = null;
 
@@ -192,6 +204,36 @@ export class OrderService {
     const updated = await this.orderRepository.updateStatus(orderId, orderStatus);
     if (!updated) throw new NotFoundError('Order not found', 'ORDER_NOT_FOUND');
     return updated;
+  }
+
+  /**
+   * COD parcels are collected by the courier, so the pincode must be one Delhivery serves with COD.
+   * Runs before the order transaction (it is an external call). If Delhivery is not configured or
+   * unreachable the answer is unknown and the order is allowed through rather than blocked.
+   */
+  private async assertCodDeliverable(userId: string, addressId: string): Promise<void> {
+    const user = await this.userRepository.findById(userId);
+    const address = user?.addresses.find((a) => a._id?.toString() === addressId);
+    if (!address) return; // createOrder reports the missing user / address
+
+    const pincode = String(address.postalCode).trim();
+    if (!/^[1-9]\d{5}$/.test(pincode)) {
+      throw new BadRequestError('Please enter a valid 6-digit PIN code', 'INVALID_PINCODE');
+    }
+
+    const check = await this.shippingService.checkPincode(pincode);
+    if (check.serviceable === false) {
+      throw new BadRequestError(
+        `Sorry, we can't deliver to ${pincode} yet. WhatsApp us on +91 97126 39342 and we'll try to help.`,
+        'PINCODE_NOT_SERVICEABLE',
+      );
+    }
+    if (check.serviceable === true && !check.cod) {
+      throw new BadRequestError(
+        `Cash on delivery is not available for ${pincode} right now. WhatsApp us on +91 97126 39342 and we'll help you place the order.`,
+        'COD_NOT_AVAILABLE',
+      );
+    }
   }
 
   private mergeDuplicateItems(items: CreateOrderDtoType['items']): CreateOrderDtoType['items'] {
