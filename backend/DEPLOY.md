@@ -28,10 +28,13 @@ Because of the new JWT secrets, everyone (including the admin) has to sign in ag
 
 ## After the first deploy
 
-- **Rate limits.** `TRUST_PROXY_HOPS=1` makes `req.ip` the client IP behind Render. Traffic from the website arrives via
-  Vercel's rewrite, so confirm limits are per client before switching on production mode: requests sent through
-  `www.vinittextiles.com/api/...` and directly to the Render URL from the same machine should share one
-  `RateLimit-Remaining` counter. If they do not, raise `TRUST_PROXY_HOPS` (2) and retest.
+- **Rate limits.** `TRUST_PROXY_HOPS=1` is meant to make `req.ip` the real client behind Render. Prove it before the
+  website uses the service (so no visitor is affected): `/auth/refresh` allows 20 requests / 15 min per client.
+  Send 21 requests to `https://<service>.onrender.com/api/v1/auth/refresh` from one machine (the 21st returns 429),
+  then call the same URL from a different network (e.g. a phone on mobile data). That call must NOT be 429. If it is,
+  every visitor shares one bucket: raise `TRUST_PROXY_HOPS` (try 2), redeploy, wait 15 min and repeat.
+  Do the same through `www.vinittextiles.com/api/v1/auth/refresh` right after the website is pointed at the service
+  (Vercel's rewrite adds a hop), using a machine you can afford to rate-limit for 15 minutes.
 - **`NODE_ENV=production`** (Secure cookies, API limit of 1500 requests / 15 min per IP) only after the check above;
   otherwise all visitors could share one bucket and get 429 errors.
 - **Razorpay.** Checkout is Cash on Delivery only. Adding `RAZORPAY_KEY_ID`, `RAZORPAY_KEY_SECRET` and
