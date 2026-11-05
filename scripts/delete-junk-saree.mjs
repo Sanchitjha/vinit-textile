@@ -3,7 +3,7 @@
  *   ADMIN_EMAIL=you@x.com ADMIN_PASS=... node scripts/delete-junk-saree.mjs
  * Add --dry to only print what would be deleted.
  */
-const API = process.env.API_URL || 'https://vinit-textile.onrender.com/api/v1';
+const API = process.env.API_URL || 'https://vinit-textiles-api.onrender.com/api/v1';
 const EMAIL = process.env.ADMIN_EMAIL || 'admin@vinittextiles.com';
 const PASSWORD = process.env.ADMIN_PASS || 'admin123';
 const DRY = process.argv.includes('--dry');

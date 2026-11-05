@@ -22,8 +22,8 @@ The API runs as one Render web service, defined in [`render.yaml`](../render.yam
 
 ## Point the website at it
 
-`frontend/vercel.json` rewrites `/api/*` to the backend. Replace the host in the `destination`
-(`https://vinit-textile.onrender.com/api/$1`) with the new service URL, then redeploy the frontend.
+`frontend/vercel.json` (and the root `vercel.json`) rewrite `/api/*` to the backend. Set the `destination` host to the
+service URL (currently `https://vinit-textiles-api.onrender.com/api/$1`), then redeploy the frontend.
 Because of the new JWT secrets, everyone (including the admin) has to sign in again once.
 
 ## After the first deploy

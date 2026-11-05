@@ -5,7 +5,7 @@ import { writeFile } from 'node:fs/promises'
 import path from 'node:path'
 import { fileURLToPath } from 'node:url'
 
-const API_BASE = process.env.VITE_API_BASE || 'https://vinit-textile.onrender.com/api/v1'
+const API_BASE = process.env.VITE_API_BASE || 'https://vinit-textiles-api.onrender.com/api/v1'
 const SITE_URL = process.env.VITE_SITE_URL || 'https://vinit-textiles.vercel.app'
 
 const STATIC_ROUTES = [

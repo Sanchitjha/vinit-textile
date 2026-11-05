@@ -10,7 +10,7 @@
 import fs from 'fs';
 import path from 'path';
 
-const API = process.env.API_URL || 'https://vinit-textile.onrender.com/api/v1';
+const API = process.env.API_URL || 'https://vinit-textiles-api.onrender.com/api/v1';
 // Pass real working admin credentials:  ADMIN_EMAIL=you@x.com ADMIN_PASS=... node bulk-import.mjs
 const EMAIL = process.env.ADMIN_EMAIL || 'admin@vinittextiles.com';
 const PASSWORD = process.env.ADMIN_PASS || 'admin123';
