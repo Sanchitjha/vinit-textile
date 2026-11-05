@@ -7,7 +7,7 @@ import {
 } from './payment-provider.interface';
 
 /**
- * Used in production while Razorpay credentials are not configured (Cash on Delivery only).
+ * Used while Razorpay credentials are not configured (Cash on Delivery only), unless ALLOW_STUB_PAYMENTS=true.
  * Every call fails, so nothing — not /payments/verify, not an unsigned webhook — can mark an order as paid.
  */
 export class DisabledPaymentService implements IPaymentService {

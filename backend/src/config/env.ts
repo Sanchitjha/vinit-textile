@@ -18,6 +18,9 @@ const envSchema = z.object({
   RAZORPAY_KEY_ID: z.string().optional().default(''),
   RAZORPAY_KEY_SECRET: z.string().optional().default(''),
   RAZORPAY_WEBHOOK_SECRET: z.string().optional().default(''),
+  // Local development only: lets checkout use the stub gateway, which accepts ANY payment as genuine.
+  // Must never be set on a deployed server (independent of NODE_ENV, which is not always set correctly).
+  ALLOW_STUB_PAYMENTS: z.enum(['true', 'false']).optional().default('false'),
 
   LOW_STOCK_THRESHOLD: z.coerce.number().int().nonnegative().default(5),
   FREE_SHIPPING_THRESHOLD: z.coerce.number().nonnegative().default(2000),
@@ -74,9 +77,11 @@ export const env = {
     keySecret: parsedEnv.RAZORPAY_KEY_SECRET,
     webhookSecret: parsedEnv.RAZORPAY_WEBHOOK_SECRET,
     isConfigured: Boolean(parsedEnv.RAZORPAY_KEY_ID && parsedEnv.RAZORPAY_KEY_SECRET),
-    // Online payment is only offered with real credentials. The stub gateway (which "verifies" any payment)
-    // is for local development only — in production, no keys means COD only.
-    isEnabled: Boolean(parsedEnv.RAZORPAY_KEY_ID && parsedEnv.RAZORPAY_KEY_SECRET) || parsedEnv.NODE_ENV !== 'production',
+    allowStub: parsedEnv.ALLOW_STUB_PAYMENTS === 'true',
+    // Online payment is only offered with real credentials (or the explicit local-dev stub flag).
+    // No keys means Cash on Delivery only.
+    isEnabled:
+      Boolean(parsedEnv.RAZORPAY_KEY_ID && parsedEnv.RAZORPAY_KEY_SECRET) || parsedEnv.ALLOW_STUB_PAYMENTS === 'true',
   },
 
   business: {

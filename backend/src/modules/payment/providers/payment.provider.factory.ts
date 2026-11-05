@@ -11,8 +11,8 @@ export function getPaymentProvider(): IPaymentService {
     if (env.razorpay.isConfigured) {
       cachedProvider = new RazorpayPaymentService();
     } else {
-      // The stub accepts any payment as genuine, so it must never run in production.
-      cachedProvider = env.isProduction ? new DisabledPaymentService() : new StubPaymentService();
+      // The stub accepts any payment as genuine, so it only runs when explicitly allowed (local dev).
+      cachedProvider = env.razorpay.allowStub ? new StubPaymentService() : new DisabledPaymentService();
     }
   }
   return cachedProvider;
