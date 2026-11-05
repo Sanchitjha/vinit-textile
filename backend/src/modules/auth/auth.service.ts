@@ -1,8 +1,9 @@
 import bcrypt from 'bcrypt';
-import { ConflictError, UnauthorizedError } from '../../shared/errors';
+import { ConflictError, ForbiddenError, UnauthorizedError } from '../../shared/errors';
 import { Role } from '../../shared/constants/roles.constant';
 import { sendOtpEmail } from '../../shared/services/mailer.service';
 import { AuthRepository } from './auth.repository';
+import { ClerkIdentity } from './clerk.service';
 import { LoginDtoType, RegisterDtoType, VerifyOtpDtoType } from './auth.dto';
 import { AuthResult, TokenPair } from './auth.types';
 import { TokenService } from './token.service';
@@ -122,8 +123,13 @@ export class AuthService {
     return { user, tokens };
   }
 
-  async clerkSync(dto: { email: string; name?: string; phone?: string }): Promise<AuthResult> {
+  /** `dto` must come from ClerkService.verifySession — never from the request body. */
+  async clerkSync(dto: ClerkIdentity): Promise<AuthResult> {
     let user = await this.authRepository.findByEmail(dto.email);
+    // Staff sign in with a password on /admin/login; a Clerk (email-code / Google) session never yields staff access.
+    if (user && user.role !== Role.CUSTOMER) {
+      throw new ForbiddenError('Staff accounts must sign in from the admin login page', 'USE_ADMIN_LOGIN');
+    }
     if (!user) {
       user = await this.authRepository.createUser({
         name: dto.name?.trim() || dto.email.split('@')[0],

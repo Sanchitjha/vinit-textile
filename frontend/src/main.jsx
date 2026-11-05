@@ -8,21 +8,20 @@ import './index.css'
 import App from './App.jsx'
 
 const PUBLISHABLE_KEY = import.meta.env.VITE_CLERK_PUBLISHABLE_KEY
-const PROXY_URL =
-  import.meta.env.VITE_CLERK_PROXY_URL ||
-  (typeof window !== 'undefined' ? `${window.location.origin}/__clerk` : undefined)
+// Clerk talks to its Frontend API on clerk.vinittextiles.com (DNS is set up and verified). A proxy is
+// opt-in only: a plain Vercel rewrite can't add the headers Clerk's proxy needs, so it answered 501
+// to /v1/environment and /v1/client and the sign-in / sign-up forms did nothing.
+const PROXY_URL = import.meta.env.VITE_CLERK_PROXY_URL || undefined
 
 if (!PUBLISHABLE_KEY) {
   throw new Error('Missing Publishable Key')
 }
 
-const resolvedProxyUrl = PUBLISHABLE_KEY?.startsWith('pk_live_') ? PROXY_URL : undefined
-
 createRoot(document.getElementById('root')).render(
   <StrictMode>
     <ClerkProvider
       publishableKey={PUBLISHABLE_KEY}
-      proxyUrl={resolvedProxyUrl}
+      proxyUrl={PROXY_URL}
       afterSignOutUrl="/"
     >
       <HelmetProvider>

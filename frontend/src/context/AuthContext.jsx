@@ -1,6 +1,6 @@
 import { createContext, useContext, useState, useEffect, useMemo } from 'react';
 import { useUser, useClerk } from '@clerk/react';
-import { apiClient } from '../api/client';
+import { apiClient, syncClerkSession } from '../api/client';
 
 const AuthContext = createContext();
 
@@ -72,16 +72,12 @@ export function AuthProvider({ children }) {
       if (!email) return;
 
       try {
-        const res = await apiClient.post('/auth/clerk-sync', {
-          email,
-          name: clerkUser.fullName || clerkUser.firstName || email.split('@')[0],
-          phone: clerkUser.primaryPhoneNumber?.phoneNumber || undefined,
-        });
-        if (res?.data?.accessToken && customUser?.role !== 'ADMIN') {
-          localStorage.setItem('accessToken', res.data.accessToken);
-          if (res.data.user) {
-            setCustomUser(res.data.user);
-            localStorage.setItem('user', JSON.stringify(res.data.user));
+        const synced = await syncClerkSession();
+        if (synced?.accessToken && customUser?.role !== 'ADMIN') {
+          localStorage.setItem('accessToken', synced.accessToken);
+          if (synced.user) {
+            setCustomUser(synced.user);
+            localStorage.setItem('user', JSON.stringify(synced.user));
           }
         }
       } catch (err) {

@@ -31,6 +31,10 @@ const envSchema = z.object({
   DELHIVERY_API_TOKEN: z.string().optional().default(''),
   DELHIVERY_BASE_URL: z.string().optional().default('https://track.delhivery.com'),
 
+  // Clerk (customer sign-in). The secret key is used to look up the verified email of a Clerk session.
+  CLERK_SECRET_KEY: z.string().optional().default(''),
+  CLERK_ISSUER: z.string().optional().default('https://clerk.vinittextiles.com'),
+
   RESEND_API_KEY: z.string().optional().default(''),
   RESEND_FROM_EMAIL: z.string().optional().default('Vinit Textiles <onboarding@resend.dev>'),
 });
@@ -90,6 +94,12 @@ export const env = {
     apiToken: parsedEnv.DELHIVERY_API_TOKEN,
     baseUrl: parsedEnv.DELHIVERY_BASE_URL.replace(/\/$/, ''),
     isConfigured: Boolean(parsedEnv.DELHIVERY_API_TOKEN),
+  },
+
+  clerk: {
+    secretKey: parsedEnv.CLERK_SECRET_KEY,
+    issuer: parsedEnv.CLERK_ISSUER.replace(/\/$/, ''),
+    isConfigured: Boolean(parsedEnv.CLERK_SECRET_KEY),
   },
 
   resend: {

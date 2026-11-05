@@ -4,6 +4,22 @@ if (rawBase.startsWith('http') && !rawBase.includes('/api/v1')) {
 }
 const BASE_URL = rawBase;
 
+// Exchanges the active Clerk session for our own API access token. The server verifies the Clerk
+// session JWT itself and reads the (verified) email from Clerk, so only the session token is sent.
+export async function syncClerkSession() {
+  const sessionToken = await window.Clerk?.session?.getToken();
+  if (!sessionToken) return null;
+  const res = await fetch(`${BASE_URL}/auth/clerk-sync`, {
+    method: 'POST',
+    credentials: 'include',
+    headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${sessionToken}` },
+    body: '{}',
+  });
+  if (!res.ok) return null;
+  const body = await res.json();
+  return body?.data ?? null;
+}
+
 class ApiError extends Error {
   constructor(message, status, data) {
     super(message);
@@ -51,20 +67,11 @@ async function fetchWithAuth(url, options = {}, retried = false) {
 
   const isAdminPath = typeof window !== 'undefined' && window.location.pathname.startsWith('/admin');
 
-  if (!token && !isAdminSession && !isAdminPath && window.Clerk?.user?.primaryEmailAddress?.emailAddress && !url.startsWith('/auth/')) {
+  if (!token && !isAdminSession && !isAdminPath && window.Clerk?.session && !url.startsWith('/auth/')) {
     try {
-      const syncRes = await fetch(`${BASE_URL}/auth/clerk-sync`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          email: window.Clerk.user.primaryEmailAddress.emailAddress,
-          name: window.Clerk.user.fullName || window.Clerk.user.firstName,
-          phone: window.Clerk.user.primaryPhoneNumber?.phoneNumber,
-        }),
-      });
-      const syncData = await syncRes.json();
-      if (syncData?.data?.accessToken) {
-        token = syncData.data.accessToken;
+      const synced = await syncClerkSession();
+      if (synced?.accessToken) {
+        token = synced.accessToken;
         localStorage.setItem('accessToken', token);
       }
     } catch {
@@ -94,20 +101,11 @@ async function fetchWithAuth(url, options = {}, retried = false) {
   // Access token expired (15 min TTL) — rotate it once or re-sync with Clerk for shoppers
   const isAuthCall = url.startsWith('/auth/refresh') || url.startsWith('/auth/login') || url.startsWith('/auth/clerk-sync');
   if (response.status === 401 && !retried && !isAuthCall) {
-    if (!isAdminSession && !isAdminPath && window.Clerk?.user?.primaryEmailAddress?.emailAddress) {
+    if (!isAdminSession && !isAdminPath && window.Clerk?.session) {
       try {
-        const syncRes = await fetch(`${BASE_URL}/auth/clerk-sync`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            email: window.Clerk.user.primaryEmailAddress.emailAddress,
-            name: window.Clerk.user.fullName || window.Clerk.user.firstName,
-            phone: window.Clerk.user.primaryPhoneNumber?.phoneNumber,
-          }),
-        });
-        const syncData = await syncRes.json();
-        if (syncData?.data?.accessToken) {
-          localStorage.setItem('accessToken', syncData.data.accessToken);
+        const synced = await syncClerkSession();
+        if (synced?.accessToken) {
+          localStorage.setItem('accessToken', synced.accessToken);
           return fetchWithAuth(url, options, true);
         }
       } catch {
