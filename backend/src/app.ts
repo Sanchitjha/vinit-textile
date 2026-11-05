@@ -16,6 +16,9 @@ import { router as apiRouter } from './routes';
 export function createApp(): Application {
   const app = express();
 
+  // Behind Render's proxy: use the real client IP (req.ip) so rate limits are per client, not global.
+  app.set('trust proxy', env.trustProxyHops);
+
   app.use(
     helmet({
       contentSecurityPolicy: {

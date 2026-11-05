@@ -1,15 +1,25 @@
 import 'dotenv/config';
 import { z } from 'zod';
 
+// Development-only fallbacks. They are public (they live in the repo), so a deployed server must never use them.
+const DEV_JWT_ACCESS_SECRET = 'vinit-textiles-access-secret-2026';
+const DEV_JWT_REFRESH_SECRET = 'vinit-textiles-refresh-secret-2026';
+
 const envSchema = z.object({
   NODE_ENV: z.enum(['development', 'test', 'production']).default('development'),
   PORT: z.coerce.number().int().positive().default(5000),
   API_VERSION: z.string().default('v1'),
 
+  // Number of reverse proxies in front of the app (Render's load balancer = 1). Without it every client
+  // appears to have the proxy's IP, so the rate limiters count all users together.
+  TRUST_PROXY_HOPS: z.coerce.number().int().nonnegative().default(1),
+  // Deployed servers set this to "true": the app refuses to start on the development fallbacks below.
+  STRICT_ENV: z.enum(['true', 'false']).default('false'),
+
   MONGO_URI: z.string().default('in-memory'),
 
-  JWT_ACCESS_SECRET: z.string().default('vinit-textiles-access-secret-2026'),
-  JWT_REFRESH_SECRET: z.string().default('vinit-textiles-refresh-secret-2026'),
+  JWT_ACCESS_SECRET: z.string().default(DEV_JWT_ACCESS_SECRET),
+  JWT_REFRESH_SECRET: z.string().default(DEV_JWT_REFRESH_SECRET),
   JWT_ACCESS_EXPIRY: z.string().default('15m'),
   JWT_REFRESH_EXPIRY: z.string().default('7d'),
 
@@ -49,6 +59,18 @@ function loadEnv() {
     console.error('Invalid environment configuration:', parsed.error.flatten().fieldErrors);
     process.exit(1);
   }
+
+  if (parsed.data.STRICT_ENV === 'true') {
+    const missing: string[] = [];
+    if (parsed.data.MONGO_URI === 'in-memory') missing.push('MONGO_URI');
+    if (parsed.data.JWT_ACCESS_SECRET === DEV_JWT_ACCESS_SECRET) missing.push('JWT_ACCESS_SECRET');
+    if (parsed.data.JWT_REFRESH_SECRET === DEV_JWT_REFRESH_SECRET) missing.push('JWT_REFRESH_SECRET');
+    if (missing.length > 0) {
+      // eslint-disable-next-line no-console
+      console.error(`STRICT_ENV is on but these are not set (or still use the public dev defaults): ${missing.join(', ')}`);
+      process.exit(1);
+    }
+  }
   return parsed.data;
 }
 
@@ -60,6 +82,7 @@ export const env = {
   isTest: parsedEnv.NODE_ENV === 'test',
   port: parsedEnv.PORT,
   apiVersion: parsedEnv.API_VERSION,
+  trustProxyHops: parsedEnv.TRUST_PROXY_HOPS,
 
   mongoUri: parsedEnv.MONGO_URI,
 
