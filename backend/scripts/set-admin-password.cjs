@@ -3,7 +3,8 @@
 //   PowerShell:  $env:ADMIN_NEW_PASSWORD = "your new password (12+ characters)"; node scripts/set-admin-password.cjs
 //   bash:        ADMIN_NEW_PASSWORD='your new password' node scripts/set-admin-password.cjs
 //
-// Optional: ADMIN_EMAIL (default admin@vinittextiles.com). The database is taken from MONGO_URI, read from the
+// Optional: ADMIN_EMAIL (default admin@vinittextiles.com); ADMIN_DEACTIVATE_OTHERS=true to disable every other admin
+// account (use it when the admin login moves to a new email). The database is taken from MONGO_URI, read from the
 // environment, then backend/.env.render, then backend/.env. The password is never printed or stored in a file.
 // Signs the admin out everywhere (refresh token is cleared); access tokens already issued last up to 15 minutes.
 const path = require('path');
@@ -38,13 +39,26 @@ if (/^(admin123|password|12345678)/i.test(password)) fail('That password is far 
     if (existing && existing.role !== 'ADMIN') {
       fail(`${email} exists but is not an admin account. Use a different ADMIN_EMAIL.`);
     }
+    let targetId;
     if (existing) {
+      targetId = existing._id;
       await users.updateOne({ _id: existing._id }, { $set: { password: hash, isActive: true, updatedAt: new Date() }, $unset: { refreshTokenHash: '' } });
       console.log(`Password updated for ${email}. All of their sessions were signed out.`);
     } else {
       const now = new Date();
-      await users.insertOne({ name: 'Vinit Pandey', email, password: hash, role: 'ADMIN', isActive: true, avatar: null, addresses: [], refreshTokenHash: null, createdAt: now, updatedAt: now, __v: 0 });
+      const created = await users.insertOne({ name: 'Vinit Pandey', email, password: hash, role: 'ADMIN', isActive: true, avatar: null, addresses: [], refreshTokenHash: null, createdAt: now, updatedAt: now, __v: 0 });
+      targetId = created.insertedId;
       console.log(`Admin account created for ${email}.`);
+    }
+
+    // When the admin login moves to a new email, the old admin account (which may still have the public default
+    // password) must not stay usable: ADMIN_DEACTIVATE_OTHERS=true disables every other admin and wipes its password.
+    if (process.env.ADMIN_DEACTIVATE_OTHERS === 'true') {
+      const others = await users.find({ role: 'ADMIN', _id: { $ne: targetId } }, { projection: { email: 1 } }).toArray();
+      if (others.length > 0) {
+        await users.updateMany({ _id: { $in: others.map((o) => o._id) } }, { $set: { isActive: false, updatedAt: new Date() }, $unset: { password: '', refreshTokenHash: '' } });
+      }
+      console.log(`Deactivated ${others.length} other admin account(s)${others.length ? ': ' + others.map((o) => o.email).join(', ') : ''}.`);
     }
   } finally {
     await client.close();
