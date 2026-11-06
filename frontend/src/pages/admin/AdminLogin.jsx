@@ -1,12 +1,12 @@
 import { useState } from 'react'
 import { useNavigate, Navigate, Link } from 'react-router-dom'
 import { useAuth } from '../../context/AuthContext'
-import { Sparkles, ShieldCheck, ArrowRight, Lock, Mail, Loader2 } from 'lucide-react'
+import { Sparkles, ArrowRight, Lock, Mail, Loader2 } from 'lucide-react'
 
 export default function AdminLogin() {
   const navigate = useNavigate()
   const { user, login, loading } = useAuth()
-  const [form, setForm] = useState({ email: 'admin@vinittextiles.com', password: 'admin123' })
+  const [form, setForm] = useState({ email: '', password: '' })
   const [error, setError] = useState('')
   const [submitting, setSubmitting] = useState(false)
 
@@ -72,25 +72,6 @@ export default function AdminLogin() {
 
         {/* Card */}
         <div className="bg-[#0E1424] border border-[#1C273E] p-8 rounded-3xl shadow-2xl space-y-5">
-          {/* Quick info credentials */}
-          <div className="bg-[#121B2F] border border-[#1F2E4C] rounded-2xl p-3.5 text-xs text-slate-300">
-            <div className="flex items-center justify-between mb-1.5">
-              <span className="font-semibold text-purple-300 flex items-center gap-1.5">
-                <ShieldCheck size={14} /> Default Admin Credentials
-              </span>
-              <button
-                type="button"
-                onClick={() => setForm({ email: 'admin@vinittextiles.com', password: 'admin123' })}
-                className="text-[10px] text-purple-400 hover:text-purple-300 underline font-medium"
-              >
-                Auto-fill
-              </button>
-            </div>
-            <p className="font-mono text-[11px] text-slate-400">
-              admin@vinittextiles.com / admin123
-            </p>
-          </div>
-
           <form className="space-y-4" onSubmit={handleSubmit}>
             <div>
               <label className="block text-xs font-semibold text-slate-300 mb-1.5">
