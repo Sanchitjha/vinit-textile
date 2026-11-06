@@ -1,4 +1,5 @@
-﻿import { Role } from '../constants/roles.constant';
+﻿import { env } from '../../config/env';
+import { Role } from '../constants/roles.constant';
 import { logger } from './logger.util';
 import { UserModel } from '../../modules/user/user.model';
 import { CategoryModel } from '../../modules/category/category.model';
@@ -10,15 +11,25 @@ export async function seedInitialData(): Promise<void> {
     // 1. Seed Admin User
     const existingAdmin = await UserModel.findOne({ role: Role.ADMIN });
     if (!existingAdmin) {
-      const admin = new UserModel({
-        name: 'Vinit Pandey',
-        email: 'admin@vinittextiles.com',
-        password: 'admin123',
-        role: Role.ADMIN,
-        isActive: true,
-      });
-      await admin.save();
-      logger.info('Seeded default admin: admin@vinittextiles.com / admin123');
+      // The development fallback password is public (it is in the repo), so it is only used outside STRICT_ENV.
+      const password = env.admin.password || (env.strictEnv ? '' : 'admin123');
+      if (!password) {
+        logger.warn(
+          'No admin account exists and ADMIN_PASSWORD is not set, so none was created. Set ADMIN_EMAIL and ADMIN_PASSWORD (min 12 characters) and restart.',
+        );
+      } else if (env.strictEnv && password.length < 12) {
+        logger.warn('ADMIN_PASSWORD is shorter than 12 characters, so no admin account was created.');
+      } else {
+        const admin = new UserModel({
+          name: 'Vinit Pandey',
+          email: env.admin.email,
+          password,
+          role: Role.ADMIN,
+          isActive: true,
+        });
+        await admin.save();
+        logger.info(`Seeded admin account ${env.admin.email}`);
+      }
     }
 
     // 2. Seed Categories

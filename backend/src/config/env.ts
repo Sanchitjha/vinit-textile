@@ -16,6 +16,11 @@ const envSchema = z.object({
   // Deployed servers set this to "true": the app refuses to start on the development fallbacks below.
   STRICT_ENV: z.enum(['true', 'false']).default('false'),
 
+  // First-run admin account (only used when the database has no admin yet). On a deployed server (STRICT_ENV=true)
+  // no admin is created unless ADMIN_PASSWORD is set; the public dev default is never used there.
+  ADMIN_EMAIL: z.string().optional().default('admin@vinittextiles.com'),
+  ADMIN_PASSWORD: z.string().optional().default(''),
+
   MONGO_URI: z.string().default('in-memory'),
 
   JWT_ACCESS_SECRET: z.string().default(DEV_JWT_ACCESS_SECRET),
@@ -83,6 +88,11 @@ export const env = {
   port: parsedEnv.PORT,
   apiVersion: parsedEnv.API_VERSION,
   trustProxyHops: parsedEnv.TRUST_PROXY_HOPS,
+  strictEnv: parsedEnv.STRICT_ENV === 'true',
+  admin: {
+    email: parsedEnv.ADMIN_EMAIL.trim().toLowerCase(),
+    password: parsedEnv.ADMIN_PASSWORD,
+  },
 
   mongoUri: parsedEnv.MONGO_URI,
 

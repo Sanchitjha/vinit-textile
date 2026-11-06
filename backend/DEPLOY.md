@@ -26,6 +26,17 @@ The API runs as one Render web service, defined in [`render.yaml`](../render.yam
 service URL (currently `https://vinit-textiles-api.onrender.com/api/$1`), then redeploy the frontend.
 Because of the new JWT secrets, everyone (including the admin) has to sign in again once.
 
+## Admin account
+
+- The admin logs in at `/admin/login` with an email + password stored in MongoDB. The old seed created
+  `admin@vinittextiles.com` with the public password `admin123` (and the login page even displayed it), so **treat that
+  password as known to everyone until it has been changed**.
+- Change it from your own computer (nothing is printed or saved):
+  `cd backend`, then in PowerShell `$env:ADMIN_NEW_PASSWORD = "<12+ characters>"; node scripts/set-admin-password.cjs`.
+  It uses `MONGO_URI` from `backend/.env.render` / `.env`, signs the admin out everywhere and can also create the account.
+- With `STRICT_ENV=true` (Render) the server no longer creates an admin with the default password; to bootstrap an empty
+  database set `ADMIN_EMAIL` and `ADMIN_PASSWORD` (12+ characters) once.
+
 ## After the first deploy
 
 - **Rate limits and NODE_ENV.** Render's Node runtime sets `NODE_ENV=production` by itself, so the API limit is
