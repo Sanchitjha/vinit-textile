@@ -25,7 +25,7 @@ function fail(message) {
 }
 
 if (!mongoUri || mongoUri === 'in-memory') fail('MONGO_URI is not set (looked in the environment, .env.render and .env).');
-if (password.length < 12) fail('Set ADMIN_NEW_PASSWORD to a password of at least 12 characters.');
+if (password.length < 8) fail('Set ADMIN_NEW_PASSWORD to a password of at least 8 characters.');
 if (/^(admin123|password|12345678)/i.test(password)) fail('That password is far too easy to guess. Pick another one.');
 
 (async () => {
